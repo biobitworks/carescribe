@@ -24,16 +24,17 @@ hosting.
 - The repository contains an architecture description, safety material, and a narrow
   Bedrock smoke receipt that can be shown as supporting evidence.
 - The public static demo and public repository both returned HTTP 200 during this audit.
+- The public slide, replay, provider, caregiver, child, projector, and model-proof paths
+  were opened from isolated browser contexts without authentication.
+- The 60-second replay decoded completely and its public bytes matched the committed
+  H.264/AAC/mov_text asset.
 
 ### Missing or not verified
 
-- Public slide and replay paths are prepared but must be verified after the final push.
 - No authoritative presentation slot, duration confirmation, check-in time, or time zone
   appears in the audited documents.
-- The final deck was checked locally for legibility and claim boundaries; logged-out
-  public verification remains pending until deployment.
-- The presentation must not imply that current local, uncommitted functionality is in
-  the public deployment.
+- Team confirmation of the official deadline, ownership/licensing, and final form
+  submission remains required.
 
 ## Live demo
 
@@ -41,6 +42,9 @@ hosting.
 
 - The public static browser demo is reachable:
   <https://biobitworks.github.io/carescribe/>.
+- The public main page explicitly reports `Static presentation · no room backend`,
+  `Recorded/static fallback`, and `No remote model was invoked`; it makes no `/api/*`
+  request on GitHub Pages.
 - The deployed page labels itself as a fictional, non-diagnostic demonstration, exposes
   clinician-review concepts, uses local browser storage, and offers local-session
   deletion.
@@ -53,13 +57,16 @@ hosting.
 - Verification during this audit passed 44 Python tests with
   `PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q` and 11 JavaScript tests with
   `node --test web/fco-core.test.mjs`.
+- A headed local browser finalized a synthetic caregiver/provider handoff, then proved
+  deletion removed the browser storage key and reset generated handoff, FCO stream,
+  graph, checkpoint count, transcript, and journey state. The implementation also stops
+  any local camera track; that camera path was not exercised in this browser proof.
 
 ### Missing, local-only, or unsafe to claim
 
 - AWS-hosted end-to-end operation is not implemented or evidenced. The public URL is a
   static hosting fallback and must not be called AWS-hosted.
 - The public static demo is not connected to Bedrock or a clinical system.
-- Current changes remain local until the final commit, push, and Pages run complete.
 - Full-duplex voice is not implemented. Do not claim real-time duplex voice, a voice
   fallback, or production voice-agent operation.
 - `/api/health` statuses are evidence metadata, not live probes. Use the committed
@@ -69,7 +76,8 @@ hosting.
   diarization accuracy, biometric protections, and stop behavior have not been clinically
   or independently validated.
 - Browser-local deletion does not prove deletion from vendors, logs, caches, backups, or
-  cloud systems.
+  cloud systems. A caregiver-approved public update in the local Python server remains in
+  that process's room memory until restart.
 - There is no authentication, tenant isolation, EHR integration, clinical export, or
   production audit trail.
 - A normal bare `pytest` invocation is not currently reproducible in this machine’s global
@@ -84,9 +92,11 @@ hosting.
 - Separate replay and presentation pages are implemented.
 - The replay is labeled as recorded synthetic fallback, not current model execution.
 
-### Still required
+### Public verification
 
-- Verify the final replay and page bytes from a logged-out public browser after deploy.
+- The public replay page and direct video URL are judge-accessible without authentication.
+- The committed and deployed video bytes match; FFmpeg decoded all streams and FFprobe
+  reported exactly 60 seconds with H.264 video, AAC audio, and mov_text captions.
 
 ## Exact submission claims
 
@@ -122,17 +132,16 @@ hosting.
 
 - [ ] Confirm the official submission deadline, time zone, and presentation schedule from
   the authoritative event source.
-- [ ] Open the public demo from a private/logged-out browser and complete the exact
+- [x] Open the public demo from a private/logged-out browser and complete the exact
   presentation path using fictional content.
-- [ ] Open the repository link from a private/logged-out browser.
-- [ ] Replace the slide placeholder with a final judge-accessible link.
-- [ ] Replace the backup-video placeholder with a final judge-accessible link.
-- [ ] Test slide and video links from a private/logged-out browser with no access request.
-- [ ] Download the backup video locally and verify playback without network access.
-- [ ] Confirm every QR code resolves to the intended final public link.
-- [ ] Confirm the submitted demo is the same deployed revision rehearsed by the team.
-- [ ] Remove every placeholder from submitted copy, slides, and presenter notes.
-- [ ] Check that no submitted artifact contains credentials, access tokens, private
+- [x] Open the repository link from a private/logged-out browser.
+- [x] Replace the slide placeholder with a final judge-accessible link.
+- [x] Replace the backup-video placeholder with a final judge-accessible link.
+- [x] Test slide and video links from a private/logged-out browser with no access request.
+- [x] Download the backup video locally and verify playback without network access.
+- [x] Confirm the submitted demo is the same web revision rehearsed by the team.
+- [x] Remove every placeholder from submitted copy, slides, and presenter notes.
+- [x] Check that no submitted artifact contains credentials, access tokens, private
   configuration, real patient information, protected health information, identifying
   recordings, private contact details, or internal access values.
 - [ ] Ensure the final form is submitted once by an authorized team representative and

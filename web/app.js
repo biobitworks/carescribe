@@ -1046,7 +1046,9 @@ document.querySelector(".care-controls")?.addEventListener("click", event => {
     saveState();
     render();
     sharePendingUpdate();
-    showToast("Caregiver approved a brief advocate intervention");
+    showToast(isStaticPagesHost
+      ? "Approved locally · static page has no shared room backend"
+      : "Caregiver approved a brief advocate intervention");
   }
 });
 

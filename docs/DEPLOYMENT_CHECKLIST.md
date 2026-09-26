@@ -10,18 +10,26 @@ Evidence snapshot: 2026-09-26.
   script, caption file, and replay asset.
 - [x] Local browser checks show the Provider, Caregiver, Projector, and Models pages
   with zero console errors; all seven direct pages and their assets return HTTP 200.
-- [ ] The final pushed commit and Pages run must still be recorded and compared to the
-  public bytes using the post-push steps below.
-- [ ] A docs-only push does not deploy Pages. The workflow runs on changes under
+- [x] A headed, isolated browser completed the public static interaction, handoff, and
+  browser-local deletion paths with zero console errors and no `/api/*` requests.
+- [x] A headed local browser proved that deletion removes `localStorage` and resets
+  transcript, generated handoff, custody graph, custody roots, and journey state. The
+  implementation also stops any local camera track, but no camera device was exercised
+  in this browser proof.
+- [x] A docs-only push does not deploy Pages. The workflow runs on changes under
   `web/**`, changes to `.github/workflows/pages.yml`, or manual dispatch.
+
+The final release handoff must include the exact commit, workflow run, and repeated
+byte comparison. Any subsequent web change invalidates that evidence until this
+checklist is rerun.
 
 ## What GitHub Pages can prove
 
-- [ ] The selected commit's static `web/` files were uploaded by the Pages
+- [x] The selected web commit's static `web/` files were uploaded by the Pages
   workflow and are retrievable over HTTPS.
-- [ ] The static UI loads in the target browsers and its fictional fallback,
+- [x] The static UI loads in desktop and mobile-sized browsers and its fictional fallback,
   controls, and per-browser `localStorage` behavior pass a manual test.
-- [ ] Required static assets return `200` and match the committed bytes.
+- [x] Required static assets return `200` and match the committed bytes.
 
 Pages cannot prove a Python process, `/api/*` endpoint, local model, Amazon
 Bedrock invocation, Nova Sonic execution, cross-device synchronization, durable
@@ -45,7 +53,7 @@ the UI or `/api/health` response is not execution evidence.
 
 ## Before push
 
-- [ ] Confirm every referenced web file is committed:
+- [x] Confirm every referenced web file is committed:
 
   ```bash
   git status --short -- web .github/workflows/pages.yml
@@ -54,7 +62,7 @@ the UI or `/api/health` response is not execution evidence.
     web/assets/carescribe-three-actor-demo.mp4
   ```
 
-- [ ] Run the available local checks:
+- [x] Run the available local checks:
 
   ```bash
   git diff --check -- web .github/workflows/pages.yml
@@ -63,7 +71,8 @@ the UI or `/api/health` response is not execution evidence.
     python -m pytest tests/test_live_server.py -q
   ```
 
-These checks pass against the final local package once the listed files are staged.
+These checks passed against the release candidate. The exact fresh results are recorded
+in `validation/mvp-readiness.json`.
 
 ## Exact post-push verification
 

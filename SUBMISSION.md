@@ -86,21 +86,21 @@ Do not check until every team member responsible for submission confirms:
 - [ ] Third-party materials and dependencies are permitted by their licenses and have
   required notices or attribution.
 - [ ] No copyrighted or proprietary material was knowingly used without permission.
-- [ ] No credentials, patient data, protected health information, or non-consented
+- [x] No credentials, patient data, protected health information, or non-consented
   recordings appear in the repository, demo, slides, or video.
-- [ ] Every team member name is present.
-- [ ] The public demo URL opens in a logged-out browser and the demonstrated workflow was
+- [x] Every team member name is present.
+- [x] The public demo URL opens in a logged-out browser and the demonstrated workflow was
   tested with simulated data.
-- [ ] Repository, slides, and video links have the intended judge access.
-- [ ] The final copy consistently describes clinician-reviewed documentation support
+- [x] Repository, slides, and video links have the intended judge access.
+- [x] The final copy consistently describes clinician-reviewed documentation support
   and makes no autonomous diagnosis, prescription, or treatment claim.
 - [ ] An authorized team representative agrees the required confirmation is accurate
   before checking the box.
 
 ## Final paste checklist
 
-- [ ] Keep every model claim at its documented evidence ceiling; Nova Sonic and browser
+- [x] Keep every model claim at its documented evidence ceiling; Nova Sonic and browser
   full-duplex voice are not implemented.
 - [ ] Paste each answer into the matching numbered form field.
-- [ ] Open every submitted link from a private/logged-out browser window.
+- [x] Open every submitted link from a private/logged-out browser window.
 - [ ] Submit one response for the team before the deadline.

@@ -1,0 +1,88 @@
+{
+  "schema_version": "carescribe.mvp-readiness.v1",
+  "execution_date": "2026-09-26",
+  "execution_state": "MVP_PRESENTATION_READY_WITH_EXPLICIT_GAPS",
+  "single_public_entry": "https://biobitworks.github.io/carescribe/",
+  "verified": {
+    "python_tests": 44,
+    "javascript_tests": 11,
+    "room_stress_tests": 11,
+    "public_required_assets_http_200_and_byte_matched": 14,
+    "public_desktop_console_errors": 0,
+    "public_api_requests_from_main_page": 0,
+    "local_delete_console_errors": 0,
+    "replay_duration_seconds": 60,
+    "replay_streams": [
+      "h264",
+      "aac",
+      "mov_text"
+    ]
+  },
+  "local_browser_rehearsal": {
+    "room": "READY",
+    "participants": [
+      "Julie, SLP",
+      "Maya",
+      "Leo"
+    ],
+    "flow": [
+      "explicit two-part consent",
+      "microphone started then paused",
+      "role-attributed caregiver correction",
+      "caregiver-approved minimized room update",
+      "Nova Micro atomization",
+      "Nova Pro handoff synthesis",
+      "caregiver and provider review",
+      "human-reviewed finalization",
+      "browser deletion"
+    ],
+    "custody_roots_before_delete": 8,
+    "browser_storage_after_delete": null,
+    "visible_state_after_delete": "READY_WITH_ZERO_ROOTS_AND_DEFAULT_HANDOFF",
+    "server_boundary": "A caregiver-approved public room event remains in local Python process memory until server restart."
+  },
+  "model_routes": [
+    {
+      "model": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+      "location": "local laptop Python host",
+      "status": "live synthetic retry verified",
+      "failure_observed": "The first browser request timed out and used the deterministic local fallback."
+    },
+    {
+      "model": "amazon.nova-micro-v1:0",
+      "location": "Amazon Bedrock us-east-1",
+      "status": "live synthetic atomization verified"
+    },
+    {
+      "model": "amazon.nova-pro-v1:0",
+      "location": "Amazon Bedrock us-east-1",
+      "status": "live synthetic handoff route verified; model prose remains untrusted"
+    },
+    {
+      "model": "amazon.nova-2-sonic-v1:0",
+      "location": "Amazon Bedrock",
+      "status": "not run and not integrated"
+    },
+    {
+      "model": "gpt-realtime-2.1",
+      "location": "OpenAI API",
+      "status": "client-secret access verified; browser duplex not implemented"
+    }
+  ],
+  "public_static_behavior": {
+    "model_label": "Recorded/static fallback",
+    "room_label": "Static presentation · no room backend",
+    "handoff_label": "No remote model was invoked",
+    "storage": "per-browser localStorage only",
+    "backend": false
+  },
+  "open_product_gates": [
+    "Nova Sonic or another full-duplex voice implementation",
+    "authenticated and authorized private rooms",
+    "reachable production synchronization backend",
+    "on-phone local inference",
+    "durable external custody and verified deletion",
+    "security, privacy, clinical, and regulatory validation for non-synthetic data"
+  ],
+  "claim_boundary": "Ready for a synthetic hackathon presentation with a static public fallback and a laptop-local live rehearsal. Not production-ready, not PHI-ready, not HIPAA compliant, not an EHR, and not a clinical decision system."
+}

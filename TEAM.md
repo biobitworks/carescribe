@@ -25,14 +25,14 @@ information. Use simulated interactions only.
 
 | Area | Owner | Pull request | Demo or evidence | Status |
 | --- | --- | --- | --- | --- |
-| Responsive web interaction | Byron | Main | `web/` | Implemented; deployment verification pending |
+| Responsive web interaction | Byron | Main | `web/` | Implemented; public deployment browser-verified |
 | Live transcription and speaker roles | Byron | Main | `web/` | Implemented; browser/vendor dependent |
 | Bedrock observations and summaries | Byron | Main | Tests and receipts | Nova Micro and Pro paths live-verified |
 | Real-time questions and duplex voice | Byron | Main | Questions in `web/`; voice fallback documented | Partial; duplex not implemented |
 | Session persistence and deletion | Byron | Main | Browser demo and tests | Browser-local only |
 | AWS hosting and deployment | Julie | Issue 3 | GitHub Pages fallback below | Blocked by workshop IAM |
 | Clinical safety and privacy review | Byron | Main | `docs/` | Prototype audit complete; not PHI-ready |
-| Slides and backup demo video | Byron | Main | Public Pages paths below | Prepared; deployment verification pending |
+| Slides and backup demo video | Byron | Main | Public Pages paths below | Public and locally decoded; judge-accessible |
 
 ## Shared links
 
