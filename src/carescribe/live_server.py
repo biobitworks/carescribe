@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -40,7 +41,38 @@ concern. Separate direct observations, caregiver statements, unknowns, and quest
 the clinician. Preserve uncertainty. Never imply that integrity hashes establish truth."""
 
 LocalGenerator = Callable[[str, str, str, bool], dict[str, Any]]
+RuntimeInspector = Callable[[str], dict[str, Any]]
 DEFAULT_LOCAL_MODEL = "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M"
+
+
+def inspect_local_runtime(model_id: str) -> dict[str, Any]:
+    """Report current Ollama residency separately from historical model evidence."""
+    checked_at = datetime.now(timezone.utc).isoformat()
+    try:
+        with urlopen("http://127.0.0.1:11434/api/ps", timeout=1) as response:
+            result = json.load(response)
+        loaded_models = {
+            str(item.get("model") or item.get("name") or "")
+            for item in result.get("models", [])
+            if isinstance(item, dict)
+        }
+    except Exception:
+        return {
+            "status": "runtime-unreachable",
+            "checked_at": checked_at,
+            "detail": "Ollama runtime did not answer the local residency probe.",
+        }
+    if model_id in loaded_models:
+        return {
+            "status": "loaded-now",
+            "checked_at": checked_at,
+            "detail": "Exact model is currently resident in the laptop Ollama runtime.",
+        }
+    return {
+        "status": "not-loaded",
+        "checked_at": checked_at,
+        "detail": "Ollama answered, but the exact model is not currently resident.",
+    }
 
 
 def default_local_gate(
@@ -164,6 +196,7 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
 
     generator: Callable[[str, str], tuple[str, str]] = staticmethod(default_generate)
     local_generator: LocalGenerator = staticmethod(default_local_gate)
+    runtime_inspector: RuntimeInspector = staticmethod(inspect_local_runtime)
 
     def log_message(self, format: str, *args: Any) -> None:
         # Log method/path/status only; never request or model content.
@@ -180,6 +213,8 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         if self.path == "/api/health":
+            local_model_id = os.getenv("CARESCRIBE_LOCAL_MODEL", DEFAULT_LOCAL_MODEL)
+            local_runtime = self.runtime_inspector(local_model_id)
             self._json(
                 HTTPStatus.OK,
                 {
@@ -190,34 +225,39 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
                     "synthetic_only": True,
                     "models": [
                         {
-                            "id": os.getenv("CARESCRIBE_LOCAL_MODEL", DEFAULT_LOCAL_MODEL),
+                            "id": local_model_id,
                             "location": "local-laptop",
                             "purpose": "privacy gate",
-                            "status": "live-verified",
+                            **local_runtime,
+                            "evidence": "live synthetic retry verified",
                         },
                         {
                             "id": DEFAULT_MODELS["atomize"],
                             "location": "aws-bedrock-us-east-1",
                             "purpose": "event atomization",
-                            "status": "live-verified",
+                            "status": "invocation-verified",
+                            "evidence": "historical synthetic invocation receipt",
                         },
                         {
                             "id": DEFAULT_MODELS["synthesize"],
                             "location": "aws-bedrock-us-east-1",
                             "purpose": "handoff synthesis",
-                            "status": "live-verified",
+                            "status": "invocation-verified",
+                            "evidence": "historical synthetic route observation",
                         },
                         {
                             "id": "amazon.nova-2-sonic-v1:0",
                             "location": "aws-bedrock-us-east-1",
-                            "purpose": "planned full-duplex audio",
-                            "status": "not-run",
+                            "purpose": "full-duplex audio",
+                            "status": "available-not-run",
+                            "evidence": "active model listing; no CareScribe audio invocation",
                         },
                         {
                             "id": "gpt-realtime-2.1",
                             "location": "openai-realtime-api",
-                            "purpose": "client-secret access verified; browser WebRTC not implemented",
+                            "purpose": "possible full-duplex fallback",
                             "status": "access-verified",
+                            "evidence": "client-secret access only; browser WebRTC not implemented",
                         },
                     ],
                 },
@@ -362,10 +402,12 @@ def create_server(
     web_root: Path,
     generator: Callable[[str, str], tuple[str, str]] = default_generate,
     local_generator: LocalGenerator = default_local_gate,
+    runtime_inspector: RuntimeInspector = inspect_local_runtime,
 ) -> ThreadingHTTPServer:
     handler = partial(CareScribeHandler, directory=str(web_root))
     CareScribeHandler.generator = staticmethod(generator)
     CareScribeHandler.local_generator = staticmethod(local_generator)
+    CareScribeHandler.runtime_inspector = staticmethod(runtime_inspector)
     server = ThreadingHTTPServer((host, port), handler)
     server.room_lock = Lock()  # type: ignore[attr-defined]
     server.room_events = defaultdict(  # type: ignore[attr-defined]

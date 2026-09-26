@@ -44,7 +44,8 @@ when hosted on GitHub Pages.
 | Full-duplex audio | Amazon Nova Sonic | Not run |
 | Realtime fallback | OpenAI `gpt-realtime-2.1` | Client-secret API access verified; browser WebRTC not implemented |
 
-Receipts and limitations are in `validation/`, [docs/RED_TEAM.md](docs/RED_TEAM.md), and
+Receipts and limitations are in `validation/`, the
+[gate-by-gate gap matrix](docs/GAP_MATRIX.md), [docs/RED_TEAM.md](docs/RED_TEAM.md), and
 [docs/SUBMISSION_READINESS.md](docs/SUBMISSION_READINESS.md).
 
 ## Setup and validation

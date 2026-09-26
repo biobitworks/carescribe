@@ -27,7 +27,17 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
         calls.append((task, text))
         return "amazon.nova-micro-v1:0", '{"status":"NEEDS_REVIEW"}'
 
-    server = create_server("127.0.0.1", 0, tmp_path, fake_generate)
+    server = create_server(
+        "127.0.0.1",
+        0,
+        tmp_path,
+        fake_generate,
+        runtime_inspector=lambda _model_id: {
+            "status": "loaded-now",
+            "checked_at": "2026-09-26T22:00:00+00:00",
+            "detail": "test runtime",
+        },
+    )
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
     base = f"http://127.0.0.1:{server.server_port}"
@@ -37,10 +47,10 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
         assert health["inference_location"] == "remote"
         assert health["synthetic_only"] is True
         assert [model["status"] for model in health["models"]] == [
-            "live-verified",
-            "live-verified",
-            "live-verified",
-            "not-run",
+            "loaded-now",
+            "invocation-verified",
+            "invocation-verified",
+            "available-not-run",
             "access-verified",
         ]
 
