@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/></svg>">
+  <title>CareScribe · Observed Session Receipt</title>
+  <link rel="stylesheet" href="focus.css">
+  <script src="session-receipt.js" defer></script>
+  <script src="release-proof.js" defer></script>
+</head>
+<body data-focus="receipt">
+  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a href="provider.html">Provider</a><a href="caregiver.html">Caregiver</a><a href="child.html">Child</a><a href="projector.html">Projector</a><a href="models.html">Models</a><a href="voice.html">Voice</a><a href="replay.html">Replay</a><a data-page="receipt" href="session-receipt.html">Receipt</a></nav></header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Observed loud-room session · evidence before claims</p>
+        <h1>What actually happened on the page.</h1>
+        <p class="lead">A source-hash-bound account of the 76.8-second local Nova Sonic interaction: what was visible, what the checkpoint chain recorded, what was cleared, and what remains unproved.</p>
+      </div>
+      <div id="receipt-state" class="runtime-state"><strong>Verifying receipt payload</strong><span>The browser is recomputing its canonical SHA-256.</span></div>
+    </section>
+
+    <section class="receipt-summary">
+      <article class="card accent"><p class="eyebrow">Source anchor</p><h2>Screen recording</h2><dl class="receipt-facts"><div><dt>Created</dt><dd>2026-09-26 22:21:46 UTC</dd></div><div><dt>Duration</dt><dd>76.774 seconds</dd></div><div><dt>SHA-256</dt><dd>f3d3c1b6513e850e8eba7e5f2a478ae39a39bd687264dcdc7cf630cfc70950c0</dd></div></dl></article>
+      <article class="card evidence"><p class="eyebrow">Release anchor</p><h2>Signed page build</h2><dl class="receipt-facts"><div><dt>Release</dt><dd>2026-09-26 22:21:12 UTC</dd></div><div><dt>Commit</dt><dd>de563bcfab6cef87ae56c7fec4c6f64ba39582fa</dd></div><div><dt>FCG root</dt><dd>c4a55e35dd8844595b1c29ca31849684a671c02f792d2edd88713eed9bf99313</dd></div></dl></article>
+    </section>
+
+    <section class="real-example">
+      <p class="eyebrow">Visible page sequence</p>
+      <h2>The checkpoint chain grew, then was deliberately cleared.</h2>
+      <div class="receipt-timeline">
+        <article><time>00:10</time><b>Listening · 2 events</b><code>e78e35b1…a88c237</code><p>Consent controls checked; microphone active.</p></article>
+        <article><time>00:30</time><b>Speaking · 4 events</b><code>46aca407…a767b84</code><p>The page displayed a loud-room request and Advocate response.</p></article>
+        <article><time>00:40</time><b>Speaking · 6 events</b><code>9004f354…85f4f6</code><p>The user asked whether the Advocate could answer questions.</p></article>
+        <article><time>00:50</time><b>Speaking · 8 events</b><code>2b8adc06…92b4fea</code><p>A visit question and bounded, non-diagnostic answer appeared.</p></article>
+        <article><time>01:00</time><b>Listening · 9 events</b><code>1995bbe4…fa1a59</code><p>Human and model words became merged under the caregiver label.</p></article>
+        <article><time>01:10</time><b>Speaking · 11 events</b><code>45188b53…3c02d99</code><p>The final response repeated the clinician-review boundary.</p></article>
+        <article class="terminal"><time>01:14</time><b>Ended · 0 events</b><code>none</code><p>Private transcript cleared; session-local chain reset.</p></article>
+      </div>
+    </section>
+
+    <section class="receipt-grid real-example">
+      <article class="card accent">
+        <p class="eyebrow">What the exchange demonstrated</p>
+        <h2>Observed local full-duplex behavior</h2>
+        <ul>
+          <li>The browser streamed microphone input through the local bridge to <code>amazon.nova-2-sonic-v1:0</code> in Bedrock <code>us-east-1</code>.</li>
+          <li>The Advocate visibly changed between listening and speaking.</li>
+          <li>The model answered a visit question while stating that no conclusions could be drawn from the demonstration.</li>
+          <li>The page accumulated 11 content-free checkpoint events before teardown.</li>
+        </ul>
+      </article>
+      <article class="card evidence">
+        <p class="eyebrow">What the exchange exposed</p>
+        <h2>The loud-room failure was also real</h2>
+        <blockquote>“listening to my voice your observation is noted today we will”</blockquote>
+        <p>The page assigned this mixed human/model fragment to “Maya · caregiver.” Device role selection was manual, so this does not prove who spoke. It demonstrates overlap contamination and the need for diarization or echo suppression.</p>
+      </article>
+      <article class="card">
+        <p class="eyebrow">Privacy outcome</p>
+        <h2>Private ended private</h2>
+        <p>No click on “Approve minimized room update” was observed. At teardown, the DOM transcript and session-local checkpoint chain visibly returned to empty state. CareScribe retained no raw audio; provider-side deletion remains unknown.</p>
+      </article>
+    </section>
+
+    <section class="boundary receipt-boundary">
+      <p class="eyebrow">Claim boundary</p>
+      <h2>This is a hash-bound retrospective receipt, not proof of clinical truth.</h2>
+      <p>The source hash binds these observations to one operator-held recording. The prior software release has a valid Ed25519 signature; this new session receipt is self-hashed but is not operator-signed. Global backend counters corroborated activity, but two sessions briefly overlapped, so they cannot exclusively identify this interaction.</p>
+      <p><b>Receipt payload SHA-256</b><code id="receipt-digest">verifying…</code></p>
+      <p class="artifact-links"><a href="session-receipt.json">Open machine-readable receipt</a><a href="https://github.com/biobitworks/carescribe/blob/60815fe18865b9add83df1ffd246155cc51a9ce6/web/release-receipt.json">Open signed release anchor</a><a href="replay.html">Return to recordings</a></p>
+    </section>
+  </main>
+  <footer>Observed synthetic-data session · content integrity and lineage, not identity or clinical truth</footer>
+</body>
+</html>

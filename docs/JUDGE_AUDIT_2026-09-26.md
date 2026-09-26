@@ -8,7 +8,7 @@ receipts. Scores are evidence-based estimates, not official judge results.
 | --- | ---: | --- | --- |
 | Problem significance and potential impact | 3/5 | Specific incomplete pediatric-evaluation handoff; distinct caregiver and provider needs | No user-discovery evidence, baseline, or measured benefit |
 | Innovation and use of AI | 4/5 | Bounded multi-model roles, local/cloud split, uncertainty preservation, and provenance | No single comparative evaluation or unified end-to-end model receipt |
-| Technical execution | 4/5 | Local room and Sonic services, 52 Python tests, 23 browser tests, signed artifacts, replay/deck package | Public deployment is static; no authenticated production room |
+| Technical execution | 4/5 | Local room and Sonic services, 54 Python tests, 23 browser tests, signed artifacts, replay/deck package | Public deployment is static; no authenticated production room |
 | Real-world viability | 3/5 | Clear clinical-review boundary and plausible SLP workflow | Buyer discovery, pilot evidence, production controls, and cost model remain future work |
 | Strength of demonstration | 4/5 | Three roles, clear outputs, local capture, 60-second fallback, team rehearsal, and runbook | Public experience cannot demonstrate live models and remains information-dense |
 | **Estimated total** | **18/25** | Strong one-day prototype with unusually explicit evidence ceilings | Impact and viability need external validation |

@@ -7,7 +7,7 @@
   <title>CareScribe · Recorded Replay</title><link rel="stylesheet" href="focus.css"><script src="focus.js" defer></script><script src="release-proof.js" defer></script>
 </head>
 <body data-focus="replay">
-  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a data-page="provider" href="provider.html">Provider</a><a data-page="caregiver" href="caregiver.html">Caregiver</a><a data-page="child" href="child.html">Child</a><a data-page="projector" href="projector.html">Projector</a><a data-page="models" href="models.html">Models</a><a data-page="replay" href="replay.html">Replay</a><a href="slides.html">Presentation</a></nav></header>
+  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a data-page="provider" href="provider.html">Provider</a><a data-page="caregiver" href="caregiver.html">Caregiver</a><a data-page="child" href="child.html">Child</a><a data-page="projector" href="projector.html">Projector</a><a data-page="models" href="models.html">Models</a><a data-page="replay" href="replay.html">Replay</a><a href="session-receipt.html">Receipt</a><a href="slides.html">Presentation</a></nav></header>
   <main>
     <section class="hero"><div><p class="eyebrow">Recorded evidence package</p><h1>What happened in there?</h1><p class="lead">A 38-second local Nova Sonic capture, a 60-second synthetic three-role overview, and a consented team rehearsal. Recordings are evidence and fallback—not current public model invocations.</p></div><div id="runtime-state" class="runtime-state"><strong>Checking local server</strong><span>The videos remain available in static mode.</span></div></section>
     <form id="join-form" class="join"><label for="room-input">Room</label><input id="room-input" maxlength="12"><button class="button">Use room</button><a id="workspace-link" class="button secondary" href="index.html">Open full live workspace</a></form>
@@ -17,6 +17,7 @@
       <p>This screen recording shows the local voice page connecting to the laptop bridge, microphone controls, live transcript, speaking avatar, and session-local custody checkpoints. Fictional test content only.</p>
       <video class="replay" controls preload="metadata" src="assets/carescribe-live-nova-sonic-demo.mp4"></video>
       <p class="audio-note"><b>Boundary:</b> this is a recorded local demonstration. The public website does not run the WebSocket bridge or invoke Bedrock.</p>
+      <p><a class="button secondary" href="session-receipt.html">See what happened in the loud-room session</a></p>
     </section>
     <section class="real-example" aria-labelledby="synthetic-fallback-title">
       <p class="eyebrow">Synthetic fallback · 60 seconds</p>

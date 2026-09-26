@@ -1,0 +1,199 @@
+{
+  "schema_version": "carescribe.observed-live-session-receipt.v1",
+  "payload": {
+    "receipt_id": "loud-room-2026-09-26T22:21:46Z",
+    "issued_at": "2026-09-26T22:33:21Z",
+    "evidence_class": "RETROSPECTIVE_OBSERVATION",
+    "llm_in_science_leaf": false,
+    "source_recording": {
+      "filename": "Screen Recording 2026-09-26 at 3.21.45 PM.mov",
+      "availability": "Operator-held local source; not published because it includes surrounding desktop context.",
+      "created_at": "2026-09-26T22:21:46Z",
+      "duration_ms": 76774,
+      "size_bytes": 162941636,
+      "sha256": "f3d3c1b6513e850e8eba7e5f2a478ae39a39bd687264dcdc7cf630cfc70950c0",
+      "video": {
+        "codec": "h264",
+        "width": 3024,
+        "height": 1964
+      },
+      "audio": {
+        "codec": "aac",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "mean_volume_db": "-24.5",
+        "max_peak_dbfs": "-4.9",
+        "integrated_loudness_lufs": "-21.44",
+        "true_peak_dbtp": "-4.92",
+        "silence_test": "No interval of at least 250 ms fell below -35 dB."
+      }
+    },
+    "runtime_observed": {
+      "page": "http://127.0.0.1:8080/voice.html",
+      "browser_context": "Chrome Incognito",
+      "display_name": "Maya",
+      "selected_role": "caregiver",
+      "role_semantics": "Manual device label only; not speaker identification or authentication.",
+      "consent_controls": [
+        "Fictional content only - no PHI",
+        "Microphone audio goes to Amazon Bedrock"
+      ],
+      "model": "amazon.nova-2-sonic-v1:0",
+      "model_location": "Amazon Bedrock us-east-1",
+      "application_audio_persistence": "No raw audio retained by the CareScribe application.",
+      "provider_deletion": "UNKNOWN"
+    },
+    "signed_release_anchor": {
+      "release_id": "carescribe-2026-09-26T22:21:12Z",
+      "issued_34_seconds_before_source_recording": true,
+      "audited_parent_commit": "de563bcfab6cef87ae56c7fec4c6f64ba39582fa",
+      "receipt_commit": "60815fe18865b9add83df1ffd246155cc51a9ce6",
+      "release_mmr_root": "c4a55e35dd8844595b1c29ca31849684a671c02f792d2edd88713eed9bf99313",
+      "signature_algorithm": "Ed25519",
+      "signature_status": "VALID",
+      "relationship": "The signed release receipt identifies the page build visible in the recording. It does not sign this retrospective session receipt."
+    },
+    "visible_page_timeline": [
+      {
+        "offset_seconds": 0,
+        "page_state": "Voice bridge not connected",
+        "checkpoint_events": 0,
+        "checkpoint_root": "none",
+        "observation": "The page disclosed that raw audio would leave the device for Bedrock."
+      },
+      {
+        "offset_seconds": 10,
+        "page_state": "Advocate listening",
+        "checkpoint_events": 2,
+        "checkpoint_root": "e78e35b1e545a4f9225acde71e122aea1e9aba97be9c7d5653c7d7314a88c237",
+        "observation": "Both consent controls were checked and the microphone was active."
+      },
+      {
+        "offset_seconds": 30,
+        "page_state": "Advocate speaking",
+        "checkpoint_events": 4,
+        "checkpoint_root": "46aca4077a3e1d17ea19cece9c941e2b40c093f342470268e3f0ed134a767b84",
+        "observation": "A caregiver-labeled loud-environment request and an Advocate response were visible."
+      },
+      {
+        "offset_seconds": 40,
+        "page_state": "Advocate speaking",
+        "checkpoint_events": 6,
+        "checkpoint_root": "9004f35432ef409d04f8daf33257250aa911e217404ee031a6fde1905085f4f6",
+        "observation": "The user asked whether the Advocate could answer questions."
+      },
+      {
+        "offset_seconds": 50,
+        "page_state": "Advocate speaking",
+        "checkpoint_events": 8,
+        "checkpoint_root": "2b8adc06108794af487197240a61e9f1de2d88824c5e04832dc62af8792b4fea",
+        "observation": "The page showed a visit question and a non-diagnostic model response."
+      },
+      {
+        "offset_seconds": 60,
+        "page_state": "Advocate listening",
+        "checkpoint_events": 9,
+        "checkpoint_root": "1995bbe4fd635819ea501d705a3d521a02564693710c2b33fbbfb04aecfa1a59",
+        "observation": "The caregiver-labeled line visibly merged human speech with Advocate output."
+      },
+      {
+        "offset_seconds": 70,
+        "page_state": "Advocate speaking; microphone paused",
+        "checkpoint_events": 11,
+        "checkpoint_root": "45188b532a406c79c573df85c2d68bcf620c696b71718dbea5d8ad6713c02d99",
+        "observation": "The final visible model turn repeated the clinician-review and no-conclusions boundary."
+      },
+      {
+        "offset_seconds": 74,
+        "page_state": "Private session ended",
+        "checkpoint_events": 0,
+        "checkpoint_root": "none",
+        "observation": "The private transcript was cleared and the session-local checkpoint chain reset."
+      }
+    ],
+    "page_transcript_observations": [
+      {
+        "speaker_label": "Maya - caregiver",
+        "text": "okay is there anything i need to know for today's visit",
+        "status": "VISIBLE_ON_PAGE"
+      },
+      {
+        "speaker_label": "Advocate",
+        "text": "For today, we'll observe how the model captures speech patterns and highlights areas for clinician review, but no conclusions can be drawn from this demonstration alone.",
+        "status": "VISIBLE_ON_PAGE"
+      },
+      {
+        "speaker_label": "Maya - caregiver",
+        "text": "listening to my voice your observation is noted today we will",
+        "status": "VISIBLE_ON_PAGE_WITH_SPEAKER_OVERLAP",
+        "warning": "This line contains human words and apparent Advocate output. It is evidence of attribution contamination, not a reliable caregiver utterance."
+      }
+    ],
+    "backend_transport_corroboration": {
+      "source": "Process-global /ping readings observed around the recording window",
+      "before": {
+        "audio_chunks_in": 13058,
+        "audio_chunks_out": 98,
+        "transcript_events": 11
+      },
+      "after": {
+        "audio_chunks_in": 17434,
+        "audio_chunks_out": 879,
+        "transcript_events": 69,
+        "completed_sessions": 8,
+        "failed_sessions": 2,
+        "model_connections": 10
+      },
+      "delta": {
+        "audio_chunks_in": 4376,
+        "audio_chunks_out": 781,
+        "transcript_events": 58
+      },
+      "attribution": "CORROBORATING_ONLY",
+      "limitation": "Counters were global and two sessions briefly overlapped, so these deltas cannot be attributed exclusively to this recording."
+    },
+    "session_outcomes": {
+      "live_full_duplex_exchange_observed": true,
+      "checkpoint_growth_observed": true,
+      "private_transcript_clear_observed": true,
+      "public_minimized_update_approval_observed": false,
+      "speaker_diarization_proved": false,
+      "clinical_truth_proved": false
+    },
+    "analysis_methods": [
+      "SHA-256 over the operator-held source recording",
+      "FFprobe 9.0.1 stream inspection",
+      "FFmpeg 9.0.1 loudness and silence analysis",
+      "Timestamped frame review with Tesseract 5.5.3 assistance",
+      "Local-only Whisper base.en 20250625 used as secondary audio interpretation"
+    ],
+    "fcg": {
+      "node": {
+        "type": "observed-live-session-receipt",
+        "source_sha256": "f3d3c1b6513e850e8eba7e5f2a478ae39a39bd687264dcdc7cf630cfc70950c0",
+        "maximum_visible_session_root": "45188b532a406c79c573df85c2d68bcf620c696b71718dbea5d8ad6713c02d99",
+        "terminal_session_root": "none",
+        "terminal_event_count": 0
+      },
+      "edges": [
+        {
+          "from": "loud-room-2026-09-26T22:21:46Z",
+          "to": "carescribe-2026-09-26T22:21:12Z",
+          "type": "observed_on_signed_release"
+        },
+        {
+          "from": "loud-room-2026-09-26T22:21:46Z",
+          "to": "f3d3c1b6513e850e8eba7e5f2a478ae39a39bd687264dcdc7cf630cfc70950c0",
+          "type": "evidenced_by_recording"
+        },
+        {
+          "from": "45188b532a406c79c573df85c2d68bcf620c696b71718dbea5d8ad6713c02d99",
+          "to": "none",
+          "type": "cleared_at_private_session_end"
+        }
+      ]
+    },
+    "claim_boundary": "This retrospective receipt binds a source recording hash to timestamped, visible page states and a previously signed software release. It proves that those pixels and audio bytes exist in that recording and that the displayed local checkpoint roots changed as documented. It does not prove actor identity, accurate diarization, transcript accuracy, provider-side deletion, exclusive backend-session attribution, clinical truth, immutability, non-repudiation, HIPAA compliance, or that a public room update occurred."
+  },
+  "payload_sha256": "7c322528a8b2731d4f3b9fa27a11b6033d453c25d4717890ccf606c83f64ddac"
+}
