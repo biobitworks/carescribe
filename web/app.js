@@ -2,6 +2,7 @@
 
 const STORAGE_KEY = "carescribe-live-session-v1";
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const isStaticPagesHost = window.location.hostname.endsWith(".github.io");
 
 const sampleLines = [
   { role: "provider", text: "Tell me what led you to schedule the evaluation." },
@@ -14,6 +15,22 @@ const sampleLines = [
   { role: "provider", text: "Notice two or three examples of how Leo asks for help, asks for more, or wants something to stop." },
   { role: "child", text: "[Nonverbal reach toward bubbles]" }
 ];
+
+const defaultCaregiverActions = `
+  <div class="handoff-item"><small>TODAY</small><strong>Leo’s evaluation started and is not complete.</strong><span>No therapy recommendation or diagnosis was made today.</span></div>
+  <div class="handoff-item"><small>NEXT</small><strong>Capture 2–3 examples of HELP, MORE, or STOP.</strong><span>Words, gestures, sounds, and actions all count.</span></div>
+  <div class="handoff-item"><small>WHO</small><strong>Maya observes; Julie reviews.</strong><span>Shared responsibility remains visible.</span></div>
+  <div class="handoff-item"><small>WHEN</small><strong>Before and at the second evaluation visit.</strong><span>Confirm the appointment date with the clinic.</span></div>`;
+
+const defaultProviderEvidence = `
+  <div class="handoff-item"><small>CAREGIVER REPORT</small><strong>Leo uses “mama,” “no,” and possibly “go.”</strong><span>Source: caregiver statement · family approval pending</span></div>
+  <div class="handoff-item"><small>DIRECT OBSERVATION</small><strong>Sounds, gestures, and actions were observed; meaning remains uncertain.</strong><span>Source: synthetic transcript · provider review pending</span></div>
+  <div class="handoff-item"><small>EVIDENCE STILL NEEDED</small><strong>Understanding, play, speech, sounds, and gestures.</strong><span>First evaluation visit was incomplete.</span></div>
+  <div class="handoff-item"><small>FOLLOW-UP NEEDED</small><strong>Second visit continues evaluation; confirm owner, timing, and caregiver understanding.</strong><span>No diagnosis inferred.</span></div>`;
+
+const defaultProviderFeed = `
+  <article class="update approved"><small>CAREGIVER APPROVED · 09:41</small><b>Needs clear instructions before the second evaluation visit</b><span>Linked to caregiver statement</span></article>
+  <article class="update"><small>NEW · REVIEW NEEDED</small><b>Child used sounds, gestures, and actions</b><span>Meaning remains unknown</span></article>`;
 
 const state = loadState();
 let recognition = null;
@@ -63,6 +80,7 @@ function blankState() {
     questions: [],
     custodyEvents: [],
     custodyEdges: [],
+    custodyCheckpoints: [],
     mmrRoot: null,
     startedOn: Date.now(),
     simulationIndex: 0,
@@ -112,6 +130,43 @@ function escapeHtml(value) {
   const div = document.createElement("div");
   div.textContent = value;
   return div.innerHTML;
+}
+
+function resetDynamicViews() {
+  const caregiverList = document.getElementById("caregiver-action-list");
+  const providerList = document.getElementById("provider-evidence-list");
+  const providerFeed = document.getElementById("provider-live-feed");
+  const eventStream = document.getElementById("fco-event-stream");
+  const graph = document.getElementById("fcg-graph");
+  const handoffPreview = document.getElementById("handoff-preview");
+  const childExpression = document.getElementById("child-expression");
+  const model = document.getElementById("local-model-name");
+  const boundary = document.getElementById("local-boundary-state");
+  const publicPreview = document.getElementById("public-update-preview");
+
+  if (caregiverList) caregiverList.innerHTML = defaultCaregiverActions;
+  if (providerList) providerList.innerHTML = defaultProviderEvidence;
+  if (providerFeed) providerFeed.innerHTML = defaultProviderFeed;
+  if (eventStream) {
+    eventStream.innerHTML = "<article><time>Ready</time><i></i><span><b>Local custody initialized</b><small>Append-only FCO events appear here.</small></span><code>FCO</code></article>";
+  }
+  if (graph) {
+    graph.innerHTML = "<article><small>LOCAL GRAPH</small><b>Waiting for events</b><span>Relationships remain evidence-linked.</span></article>";
+  }
+  if (handoffPreview) {
+    handoffPreview.innerHTML = "<b>Waiting for clinician-reviewed handoff</b><p>No plan is finalized until caregiver and provider confirm it.</p>";
+  }
+  if (childExpression) childExpression.textContent = "[Reaches toward bubbles]";
+  if (model) model.textContent = "Waiting for event";
+  if (boundary) boundary.textContent = "Not shared to room without approval";
+  if (publicPreview) publicPreview.textContent = "Nothing enters the shared room without approval.";
+
+  journeyStep = 1;
+  storyPage = 0;
+  document.getElementById("story-page").textContent = "1";
+  document.getElementById("story-title").textContent = storyPages[0][0];
+  document.getElementById("story-copy").textContent = storyPages[0][1];
+  renderJourney();
 }
 
 function render() {
@@ -455,6 +510,10 @@ async function appendCustodyEventNow(item) {
 }
 
 function queueLocalGate(item, generation) {
+  if (isStaticPagesHost) {
+    applyStaticLocalGate(item, generation);
+    return;
+  }
   localGateChain = localGateChain
     .then(() => generation === sessionGeneration
       ? requestLocalGate(item, generation)
@@ -463,6 +522,27 @@ function queueLocalGate(item, generation) {
       const boundary = document.getElementById("local-boundary-state");
       if (boundary) boundary.textContent = "Local deterministic privacy fallback active";
     });
+}
+
+function applyStaticLocalGate(item, generation) {
+  if (generation !== sessionGeneration) return;
+  const lower = item.text.toLowerCase();
+  const publicUpdate = lower.includes("scream") || lower.includes("loud vocalization")
+    ? "Child emitted a loud vocalization; meaning remains unknown."
+    : lower.includes("nonverbal") || lower.includes("reach")
+      ? "Child used nonverbal communication; meaning remains unknown."
+      : `A ${item.role} event is available for review.`;
+  pendingPublicUpdates.push({
+    role: item.role,
+    publicUpdate,
+    uncertainty: "UNKNOWN",
+  });
+  const model = document.getElementById("local-model-name");
+  const boundary = document.getElementById("local-boundary-state");
+  const preview = document.getElementById("public-update-preview");
+  if (model) model.textContent = "deterministic-static-fallback";
+  if (boundary) boundary.textContent = "STATIC_ONLY · no model or room request";
+  if (preview) preview.textContent = publicUpdate;
 }
 
 async function requestLocalGate(item, generation) {
@@ -527,6 +607,10 @@ async function requestLocalGate(item, generation) {
 async function sharePendingUpdate() {
   const pending = pendingPublicUpdates[0];
   if (!pending) return showToast("No minimized update is waiting");
+  if (isStaticPagesHost) {
+    showToast("Static presentation mode — room sharing requires the local server");
+    return;
+  }
   const publication = window.CareScribeCustody.createRoomPublication({
     room: state.roomCode,
     role: pending.role,
@@ -609,6 +693,11 @@ function renderPublicRoomEvents(events) {
 }
 
 async function pollRoom() {
+  if (isStaticPagesHost) {
+    els["room-sync-state"].textContent = "Static presentation · no room backend";
+    els["room-sync-state"].className = "room-sync-state";
+    return;
+  }
   try {
     const response = await fetch(`/api/room?room=${encodeURIComponent(state.roomCode)}`, {
       headers: { "Accept": "application/json" },
@@ -810,6 +899,7 @@ els["open-info"].addEventListener("click", () => els["info-dialog"].showModal())
 els["confirm-end"].addEventListener("click", endSession);
 els["confirm-delete"].addEventListener("click", () => {
   stopCapture();
+  stopCameraPreview();
   stopTimer();
   sessionGeneration += 1;
   localStorage.removeItem(STORAGE_KEY);
@@ -823,6 +913,10 @@ els["confirm-delete"].addEventListener("click", () => {
   localGateChain = Promise.resolve();
   pendingPublicUpdates = [];
   seenRoomEvents.clear();
+  els["consent-check"].checked = false;
+  els["privacy-check"].checked = false;
+  updateConsentButton();
+  resetDynamicViews();
   render();
   showToast("Session permanently deleted");
 });
@@ -956,39 +1050,47 @@ document.querySelector(".care-controls")?.addEventListener("click", event => {
   }
 });
 
-fetch("/api/health")
-  .then(response => {
-    if (!response.ok) throw new Error("offline");
-    return response.json();
-  })
-  .then(health => {
-    const status = document.getElementById("bedrock-status");
-    if (status) status.textContent = health.inference_location === "remote"
-      ? "Bedrock remote · connected"
-      : "Bedrock remote · disconnected";
-    const list = document.getElementById("model-runtime-list");
-    if (list && Array.isArray(health.models)) {
-      list.innerHTML = health.models.map(model => `<article>
-        <small>${escapeHtml(model.location)}</small>
-        <b>${escapeHtml(model.id)}</b>
-        <span>${escapeHtml(model.purpose)}</span>
-        <i class="${escapeHtml(model.status)}">${escapeHtml(model.status)}</i>
-      </article>`).join("");
-    }
-  })
-  .catch(() => {
-    const status = document.getElementById("bedrock-status");
-    if (status) status.textContent = "Bedrock remote · static demo";
-    const list = document.getElementById("model-runtime-list");
-    if (list) {
-      list.innerHTML = `<article>
-        <small>github-pages</small>
-        <b>Recorded/static fallback</b>
-        <span>No model process or room backend runs on this static host</span>
-        <i class="not-run">static-only</i>
-      </article>`;
-    }
-  });
+function renderStaticModelStatus() {
+  const status = document.getElementById("bedrock-status");
+  if (status) status.textContent = "Bedrock remote · static demo";
+  const list = document.getElementById("model-runtime-list");
+  if (list) {
+    list.innerHTML = `<article>
+      <small>github-pages</small>
+      <b>Recorded/static fallback</b>
+      <span>No model process or room backend runs on this static host</span>
+      <i class="not-run">static-only</i>
+    </article>`;
+  }
+}
+
+function loadModelHealth() {
+  if (isStaticPagesHost) {
+    renderStaticModelStatus();
+    return;
+  }
+  fetch("/api/health")
+    .then(response => {
+      if (!response.ok) throw new Error("offline");
+      return response.json();
+    })
+    .then(health => {
+      const status = document.getElementById("bedrock-status");
+      if (status) status.textContent = health.inference_location === "remote"
+        ? "Bedrock remote · connected"
+        : "Bedrock remote · disconnected";
+      const list = document.getElementById("model-runtime-list");
+      if (list && Array.isArray(health.models)) {
+        list.innerHTML = health.models.map(model => `<article>
+          <small>${escapeHtml(model.location)}</small>
+          <b>${escapeHtml(model.id)}</b>
+          <span>${escapeHtml(model.purpose)}</span>
+          <i class="${escapeHtml(model.status)}">${escapeHtml(model.status)}</i>
+        </article>`).join("");
+      }
+    })
+    .catch(renderStaticModelStatus);
+}
 
 const journeyLabels = [
   "Consent and device setup",
@@ -1052,13 +1154,17 @@ document.getElementById("enable-camera")?.addEventListener("click", async () => 
     showToast("Camera unavailable or permission declined");
   }
 });
-document.getElementById("stop-camera")?.addEventListener("click", () => {
+function stopCameraPreview(showMessage = false) {
   cameraStream?.getTracks().forEach(track => track.stop());
   cameraStream = null;
   const preview = document.getElementById("camera-preview");
   if (preview) preview.srcObject = null;
-  document.getElementById("stop-camera").disabled = true;
-  showToast("Camera preview stopped");
+  const stopButton = document.getElementById("stop-camera");
+  if (stopButton) stopButton.disabled = true;
+  if (showMessage) showToast("Camera preview stopped");
+}
+document.getElementById("stop-camera")?.addEventListener("click", () => {
+  stopCameraPreview(true);
 });
 document.getElementById("story-next")?.addEventListener("click", () => {
   storyPage = (storyPage + 1) % storyPages.length;
@@ -1084,6 +1190,10 @@ document.getElementById("generate-handoff")?.addEventListener("click", async () 
   const preview = document.getElementById("handoff-preview");
   populateHandoffFromSession();
   document.querySelector(".handoff-workspace")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (isStaticPagesHost) {
+    preview.innerHTML = "<b>Static presentation mode</b><p>Using the evidence-linked local draft. No remote model was invoked.</p>";
+    return;
+  }
   preview.innerHTML = "<b>Requesting remote Nova Pro review…</b><p>No plan is final until confirmed.</p>";
   try {
     const text = state.transcript.map(item => `${item.role}: ${item.text}`).join("\n");
@@ -1149,6 +1259,7 @@ window.addEventListener("beforeunload", () => {
 
 render();
 renderJourney();
+loadModelHealth();
 custodyChain = custodyChain.then(async () => {
   if (!custody || !Array.isArray(state.custodyEvents) || !state.custodyEvents.length) return;
   for (const event of state.custodyEvents) await custody.appendFCO(event);
