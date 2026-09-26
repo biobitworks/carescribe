@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 
 import pytest
 
-from carescribe.live_server import build_prompt, create_server
+from carescribe.live_server import ORCHESTRATION_TURNS, build_prompt, create_server
 
 
 def request(url, body=None):
@@ -55,6 +55,7 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
             "loaded-now",
             "invocation-verified",
             "invocation-verified",
+            "invocation-verified",
             "bridge-running",
             "access-verified",
         ]
@@ -66,6 +67,14 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
         assert status == 200
         assert result["requires_clinician_review"] is True
         assert calls == [("atomize", "Caregiver wonders about autism.")]
+
+        status, result = request(
+            f"{base}/api/bedrock",
+            {"task": "orchestrate", "text": '{"step":0}', "synthetic": True},
+        )
+        assert status == 200
+        assert result["model_id"] == "amazon.nova-micro-v1:0"
+        assert calls[-1] == ("orchestrate", '{"step":0}')
     finally:
         server.shutdown()
         server.server_close()
@@ -267,3 +276,16 @@ def test_prompt_forbids_promoting_caregiver_concern_to_diagnosis():
     assert "caregiver-reported" in prompt
     assert "concern" in prompt
     assert "Do not convert concerns into diagnoses" in prompt
+
+
+def test_orchestration_script_has_bounded_three_actor_sequence():
+    assert [turn["role"] for turn in ORCHESTRATION_TURNS] == [
+        "provider",
+        "caregiver",
+        "child",
+        "provider",
+    ]
+    prompt = build_prompt("orchestrate", '{"step":0}')
+    assert "turn router" in prompt
+    assert "identify a voice" in prompt
+    assert "Do not diagnose" in prompt

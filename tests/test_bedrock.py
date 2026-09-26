@@ -42,7 +42,7 @@ def test_generate_uses_bedrock_converse_only():
     client.converse.assert_called_once_with(
         modelId="example.model-v1",
         messages=[{"role": "user", "content": [{"text": "Draft a note"}]}],
-        inferenceConfig={"maxTokens": 256, "temperature": 0},
+        inferenceConfig={"maxTokens": 256},
     )
 
 

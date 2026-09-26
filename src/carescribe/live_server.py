@@ -21,18 +21,54 @@ from .bedrock import BedrockConfig, BedrockInference
 
 MAX_BODY_BYTES = 16_384
 MAX_ROOM_EVENTS = 100
-ALLOWED_TASKS = {"atomize", "synthesize"}
+ALLOWED_TASKS = {"atomize", "synthesize", "orchestrate"}
 ROOM_REQUIRED_FIELDS = {"room", "role", "public_update", "uncertainty"}
 ROOM_ALLOWED_FIELDS = {*ROOM_REQUIRED_FIELDS, "synthetic"}
 ROOM_ROLES = {"provider", "caregiver", "child", "uncertain"}
 DEFAULT_MODELS = {
     "atomize": "amazon.nova-micro-v1:0",
     "synthesize": "amazon.nova-pro-v1:0",
+    "orchestrate": "us.anthropic.claude-sonnet-5",
 }
 DEFAULT_FALLBACK_MODELS = {
     "atomize": ("amazon.nova-lite-v1:0",),
     "synthesize": ("amazon.nova-lite-v1:0", "amazon.nova-micro-v1:0"),
+    "orchestrate": ("amazon.nova-pro-v1:0",),
 }
+ORCHESTRATION_TURNS = (
+    {
+        "role": "provider",
+        "name": "Julie",
+        "invitation": (
+            "Julie, as the provider, please explain what is being evaluated today "
+            "and what remains unknown."
+        ),
+    },
+    {
+        "role": "caregiver",
+        "name": "Maya",
+        "invitation": (
+            "Maya, as the caregiver, please share your main question and what you "
+            "want to understand before the next visit."
+        ),
+    },
+    {
+        "role": "child",
+        "name": "Leo",
+        "invitation": (
+            "Leo, it is your turn. You may say “More bubbles” or make one brief "
+            "fictional sound. Its meaning will remain unknown until reviewed."
+        ),
+    },
+    {
+        "role": "provider",
+        "name": "Julie",
+        "invitation": (
+            "Julie, please close by explaining the next evaluation step, who owns "
+            "it, and when it should happen."
+        ),
+    },
+)
 
 SYSTEM_POLICY = """You are CareScribe, a synthetic pediatric speech-therapy demo.
 Return concise JSON only. Do not diagnose, prescribe, or select treatment frequency.
@@ -151,11 +187,18 @@ def build_prompt(task: str, text: str) -> str:
             "clinical_relevance, status, suggested_edge, and clinician_question. "
             "Use status NEEDS_REVIEW when interpretation is uncertain."
         )
-    else:
+    elif task == "synthesize":
         instruction = (
             "Summarize keys: caregiver_goal, discussed, decisions, medications_tests, "
             "follow_ups, unresolved, caregiver_corrections, and next_actions. "
             "Do not convert concerns into diagnoses."
+        )
+    else:
+        instruction = (
+            "Act only as a turn router. Confirm the supplied canonical next speaker "
+            "and invitation. Do not diagnose, reinterpret speech, identify a voice, "
+            "or add clinical content. Return compact JSON with keys route_confirmed "
+            "and safety_boundary."
         )
     return f"{SYSTEM_POLICY}\n\nTask: {instruction}\nSynthetic encounter text:\n{text}"
 
@@ -165,7 +208,11 @@ def default_generate(task: str, text: str) -> tuple[str, str]:
     env_name = (
         "CARESCRIBE_BEDROCK_MICRO_MODEL"
         if task == "atomize"
-        else "CARESCRIBE_BEDROCK_PRO_MODEL"
+        else (
+            "CARESCRIBE_BEDROCK_ORCHESTRATOR_MODEL"
+            if task == "orchestrate"
+            else "CARESCRIBE_BEDROCK_PRO_MODEL"
+        )
     )
     model_id = os.getenv(env_name, DEFAULT_MODELS[task])
     fallback_ids = tuple(
@@ -187,6 +234,25 @@ def default_generate(task: str, text: str) -> tuple[str, str]:
     )
     result = inference.generate_result(build_prompt(task, text), max_tokens=700)
     model_output = result.text
+    if task == "orchestrate":
+        request = json.loads(text)
+        step = request.get("step") if isinstance(request, dict) else None
+        if not isinstance(step, int) or isinstance(step, bool):
+            raise ValueError("invalid orchestration step")
+        if step < 0 or step >= len(ORCHESTRATION_TURNS):
+            raise ValueError("orchestration complete")
+        model_output = json.dumps(
+            {
+                **ORCHESTRATION_TURNS[step],
+                "step": step,
+                "complete_after_response": step == len(ORCHESTRATION_TURNS) - 1,
+                "model_review": (
+                    "Frontier route confirmed; canonical invitation released. "
+                    "Speaker identity remains operator-selected."
+                ),
+            },
+            sort_keys=True,
+        )
     if task == "synthesize":
         # The model is used as a remote review pass, but its free prose is not trusted.
         # Display a deterministic, source-grounded closeout for this synthetic scenario.
@@ -272,6 +338,13 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
                             "purpose": "handoff synthesis",
                             "status": "invocation-verified",
                             "evidence": "historical synthetic route observation",
+                        },
+                        {
+                            "id": DEFAULT_MODELS["orchestrate"],
+                            "location": "aws-bedrock-us-east-1",
+                            "purpose": "guided actor turn orchestration",
+                            "status": "invocation-verified",
+                            "evidence": "live synthetic exact-response invocation",
                         },
                         {
                             "id": "amazon.nova-2-sonic-v1:0",

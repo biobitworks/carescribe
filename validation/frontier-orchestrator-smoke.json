@@ -1,0 +1,20 @@
+{
+  "schema_version": "carescribe.frontier-orchestrator-smoke.v1",
+  "executed_at": "2026-09-26T23:00:00Z",
+  "execution_state": "OBSERVED_PASS",
+  "synthetic_only": true,
+  "provider": "Amazon Bedrock",
+  "api": "Converse",
+  "region": "us-east-1",
+  "model_id": "us.anthropic.claude-sonnet-5",
+  "expected_response": "CARESCRIBE_ORCHESTRATOR_OK",
+  "observed_response": "CARESCRIBE_ORCHESTRATOR_OK",
+  "guided_turn_observed": {
+    "route": "provider",
+    "name": "Julie",
+    "nova_sonic_spoken_invitation": true,
+    "browser_role_highlighted": true,
+    "custody_checkpoint_appended": true
+  },
+  "claim_boundary": "This records one synthetic frontier-model route and one Nova Sonic spoken invitation. The route used a canonical demo script. It does not prove speaker identity, diarization, multiple simultaneous people, clinical validity, production availability, or HIPAA compliance."
+}

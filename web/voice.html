@@ -19,7 +19,7 @@
     <section class="voice-boundary" role="note"><b>Raw audio leaves this device.</b><span>It is sent to Amazon Bedrock in <code>us-east-1</code>. CareScribe does not persist it, but this prototype cannot prove provider-side deletion. Fictional data only.</span></section>
 
     <section class="demo-script" aria-labelledby="demo-script-title">
-      <div><p class="eyebrow">Two-minute guided interaction</p><h2 id="demo-script-title">Provider → caregiver → child → provider</h2><p>Pause the microphone and choose the next role before each handoff. The backend orchestrates the selected role; this is not biometric speaker identification. This is a repeatable demonstration script, not a standardized clinical instrument.</p></div>
+      <div><p class="eyebrow">Two-minute guided interaction</p><h2 id="demo-script-title">Provider → caregiver → child → provider</h2><p>Pause the microphone and choose the next role before each handoff. The backend orchestrates the selected role; this is not biometric speaker identification. This is a standardized demo script, not a validated clinical instrument.</p></div>
       <ol>
         <li><b>Julie · provider</b><span>“Today begins Leo’s evaluation. We still need more observation before drawing any conclusion.”</span></li>
         <li><b>Maya · caregiver</b><span>“Is the next visit therapy, or more evaluating? What should I notice at home?”</span></li>
@@ -48,6 +48,10 @@
             <span data-role="provider">Provider</span><span data-role="caregiver">Caregiver</span><span data-role="child">Child</span><span data-role="uncertain">Uncertain</span>
           </div>
           <small id="speaker-method">Role is operator-selected, not identified from voice.</small>
+        </div>
+        <div class="orchestrator-panel">
+          <div><p class="eyebrow">Bedrock guided round</p><strong id="orchestrator-status">Ready to invite Provider → Caregiver → Child → Provider</strong><small id="orchestrator-model">Claude Sonnet 5 routes each canonical prompt; Nova Sonic speaks it.</small></div>
+          <button id="start-round" class="button" type="button" disabled>Start guided round</button>
         </div>
         <div class="button-row center"><button id="start-mic" class="button" disabled>Start microphone</button><button id="stop-mic" class="button secondary" disabled>Pause microphone</button></div>
         <p id="voice-error" class="voice-error" hidden></p>

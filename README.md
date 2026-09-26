@@ -52,6 +52,7 @@ signed receipt, and prints the two-minute three-actor judge path.
 | Privacy gate | LiquidAI LFM2.5 1.2B, local laptop | Installed, invoked, and benchmarked on synthetic input |
 | Event atomization | Amazon Nova Micro, Bedrock `us-east-1` | Live synthetic invocation verified |
 | Handoff synthesis | Amazon Nova Pro, Bedrock `us-east-1` | Live synthetic route observed; model prose remains untrusted |
+| Guided actor orchestration | Anthropic Claude Sonnet 5, Bedrock US profile | Live synthetic route and one Nova Sonic spoken Provider invitation observed; no speaker identification |
 | Full-duplex audio | Amazon Nova 2 Sonic, Bedrock `us-east-1` | Synthetic bidirectional invocation and local browser bridge verified; physical-mic reliability and public deployment not proven |
 | Media transcription | Mistral Voxtral Mini, Bedrock | Three consented team recordings transcribed; media workflow only, not live product runtime |
 | Realtime fallback | OpenAI `gpt-realtime-2.1` | Client-secret API access verified; browser WebRTC not implemented |

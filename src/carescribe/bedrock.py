@@ -74,7 +74,7 @@ class BedrockInference:
                 response = self._client.converse(
                     modelId=model_id,
                     messages=[{"role": "user", "content": [{"text": prompt}]}],
-                    inferenceConfig={"maxTokens": max_tokens, "temperature": 0},
+                    inferenceConfig={"maxTokens": max_tokens},
                 )
             except Exception as error:
                 if index == len(model_ids) - 1 or not _allows_model_fallback(error):

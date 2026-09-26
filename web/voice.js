@@ -13,7 +13,8 @@ const els = Object.fromEntries([
   "cloud-consent", "connect-voice", "end-voice", "start-mic", "stop-mic",
   "approve-update", "runtime-state", "avatar", "avatar-state", "voice-error",
   "voice-transcript", "checkpoint-count", "checkpoint-root", "mic-status",
-  "speaker-roles", "speaker-method",
+  "speaker-roles", "speaker-method", "start-round", "orchestrator-status",
+  "orchestrator-model",
 ].map(id => [id, byId(id)]));
 
 let socket;
@@ -24,6 +25,10 @@ let captureNode;
 let playbackContext;
 let playbackCursor = 0;
 let latestUserTranscript = "";
+let guidedStep = -1;
+let expectedRole = "";
+let advanceReady = false;
+let orchestrationBusy = false;
 
 function staticHost() {
   return location.hostname.endsWith("github.io");
@@ -42,12 +47,74 @@ function setAvatar(state) {
 function renderSpeaker(role = els["actor-role"].value, live = Boolean(mediaStream)) {
   for (const chip of els["speaker-roles"].querySelectorAll("[data-role]")) {
     chip.classList.toggle("active", chip.dataset.role === role);
+    chip.classList.toggle("expected", chip.dataset.role === expectedRole);
   }
   const monitor = els["mic-status"].closest(".speaker-monitor");
   monitor.classList.toggle("live", live);
   els["mic-status"].textContent = live
     ? `MIC ON · ${role.toUpperCase()} SPEAKING`
     : `MIC OFF · ${role.toUpperCase()} SELECTED`;
+}
+
+async function orchestrateStep(step) {
+  if (orchestrationBusy || !socket || socket.readyState !== WebSocket.OPEN) return;
+  orchestrationBusy = true;
+  els["start-round"].disabled = true;
+  els["orchestrator-status"].textContent = "Frontier model is routing the next canonical turn…";
+  try {
+    const response = await fetch("/api/bedrock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        task: "orchestrate",
+        text: JSON.stringify({ step }),
+        synthetic: true,
+      }),
+    });
+    if (!response.ok) throw new Error("frontier orchestrator unavailable");
+    const result = await response.json();
+    const turn = JSON.parse(result.output);
+    if (!["provider", "caregiver", "child"].includes(turn.role) || !turn.invitation) {
+      throw new Error("invalid orchestrator route");
+    }
+    stopMicrophone();
+    guidedStep = step;
+    expectedRole = turn.role;
+    els["actor-name"].value = turn.name;
+    els["actor-role"].value = turn.role;
+    actor = normalizeActor(turn.name, turn.role);
+    renderSpeaker(turn.role);
+    sendActorContext();
+    els["orchestrator-status"].textContent = `ASKING ${turn.name.toUpperCase()} · ${turn.role.toUpperCase()}: ${turn.invitation}`;
+    els["orchestrator-model"].textContent = `${result.model_id} routed turn ${step + 1} · Nova Sonic voice`;
+    checkpoint({
+      kind: "frontier-turn-route",
+      actor: turn.role,
+      model: result.model_id,
+      step,
+      identification: "operator_selected",
+    });
+    socket.send(JSON.stringify({
+      type: "bidi_text_input",
+      text: `Facilitate the synthetic evaluation. Say exactly this invitation and nothing else: ${turn.invitation}`,
+    }));
+    const turnBoundary = new StreamingPcmEncoder({
+      inputRate: 16_000,
+      outputRate: 16_000,
+      frameSamples: 640,
+    });
+    for (const frame of turnBoundary.trailingSilence(800)) {
+      if (!sendAudioFrame(frame)) break;
+    }
+    advanceReady = false;
+  } catch (error) {
+    setError(`Guided round error: ${error.message}`);
+    els["orchestrator-status"].textContent = "Guided round paused. Manual role controls remain available.";
+  } finally {
+    orchestrationBusy = false;
+    els["start-round"].disabled = !socket || socket.readyState !== WebSocket.OPEN;
+    els["start-round"].textContent = guidedStep < 0 ? "Start guided round" : "Repeat current prompt";
+  }
 }
 
 function sendActorContext() {
@@ -113,6 +180,7 @@ function addTranscript(role, text, isFinal, actorRole) {
     if (key === "user") {
       latestUserTranscript = text;
       els["approve-update"].disabled = false;
+      if (guidedStep >= 0) advanceReady = true;
     }
     digest(text).then(transcriptHash => checkpoint({
       kind: "actor-transcript",
@@ -158,6 +226,7 @@ function handleVoiceEvent(event) {
     setRuntime("Nova Sonic connected", `${event.model} · Bedrock us-east-1 · raw audio cloud boundary`);
     els["start-mic"].disabled = false;
     els["end-voice"].disabled = false;
+    els["start-round"].disabled = false;
     checkpoint({ kind: "model-invocation", actor: "amazon-bedrock", model: event.model, disclosure: "REMOTE_AUDIO" });
     sendActorContext();
   } else if (event.type === "actor_context_ack") {
@@ -172,6 +241,18 @@ function handleVoiceEvent(event) {
     playPcm(event.audio, event.sample_rate).catch(() => setError("Audio playback failed."));
   } else if (event.type === "bidi_audio_stop") {
     if (!mediaStream) setAvatar("");
+    if (advanceReady) {
+      advanceReady = false;
+      if (guidedStep < 3) {
+        orchestrateStep(guidedStep + 1);
+      } else {
+        expectedRole = "";
+        renderSpeaker(actor.role);
+        els["orchestrator-status"].textContent = "Guided round complete · all three actors responded.";
+        els["start-round"].textContent = "Run guided round again";
+        guidedStep = -1;
+      }
+    }
   } else if (event.type === "bidi_interruption") {
     clearPlayback();
     setAvatar(mediaStream ? "listening" : "");
@@ -216,6 +297,7 @@ async function connect(event) {
     els["connect-voice"].disabled = false;
     els["start-mic"].disabled = true;
     els["end-voice"].disabled = true;
+    els["start-round"].disabled = true;
     setAvatar("");
   };
 }
@@ -310,6 +392,9 @@ async function approveUpdate() {
   });
   if (!response.ok) return setError("The local room backend rejected the minimized update.");
   latestUserTranscript = "";
+  guidedStep = -1;
+  expectedRole = "";
+  advanceReady = false;
   els["approve-update"].disabled = true;
   checkpoint({ kind: "approved-public-update", actor: actor.role, room, ...update });
 }
@@ -332,6 +417,7 @@ els["start-mic"].addEventListener("click", startMicrophone);
 els["stop-mic"].addEventListener("click", () => stopMicrophone());
 els["approve-update"].addEventListener("click", () => approveUpdate().catch(() => setError("Room publication failed.")));
 els["end-voice"].addEventListener("click", endSession);
+els["start-round"].addEventListener("click", () => orchestrateStep(guidedStep < 0 ? 0 : guidedStep));
 els["actor-role"].addEventListener("change", () => {
   if (mediaStream) {
     els["actor-role"].value = actor.role;
