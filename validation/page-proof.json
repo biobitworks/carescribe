@@ -36,5 +36,6 @@
   ],
   "runtime_observation": "Each checked focused page displayed Local server connected, five bounded routes, and the same caregiver-approved JUDGES room event.",
   "static_boundary": "On a host without /api/health or /api/room, focus.js renders Static presentation mode and states that no model process or synchronized room is running.",
+  "public_static_check": "The deployed GitHub Pages host was detected before API probing; the Models page rendered the static disclosure without backend claims.",
   "claim_boundary": "HTTP and browser checks prove these local synthetic pages rendered. They do not establish authentication, production deployment, cross-device privacy, or clinical validity."
 }

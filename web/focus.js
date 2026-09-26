@@ -9,6 +9,7 @@ const workspaceLink = document.getElementById("workspace-link");
 const runtime = document.getElementById("runtime-state");
 const modelList = document.getElementById("model-list");
 const roomFeed = document.getElementById("room-feed");
+const isStaticPagesHost = window.location.hostname.endsWith(".github.io");
 
 if (roomInput) roomInput.value = roomCode;
 if (roomLabel) roomLabel.textContent = roomCode;
@@ -79,6 +80,20 @@ async function pollRoom() {
   }
 }
 
-loadHealth();
-pollRoom();
-window.setInterval(pollRoom, 2000);
+if (isStaticPagesHost) {
+  runtime.className = "runtime-state static";
+  runtime.innerHTML = "<strong>Static presentation mode</strong><span>No model process or synchronized room runs on this host.</span>";
+  renderModels([{
+    location: "github-pages",
+    id: "Recorded/static fallback",
+    purpose: "Use the local Python server for live model and room proof",
+    status: "static-only",
+  }]);
+  if (roomFeed) {
+    roomFeed.innerHTML = '<p class="empty">Static mode: synchronized room events require the local Python server.</p>';
+  }
+} else {
+  loadHealth();
+  pollRoom();
+  window.setInterval(pollRoom, 2000);
+}
