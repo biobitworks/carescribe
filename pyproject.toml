@@ -12,10 +12,17 @@ dependencies = ["boto3>=1.34.131"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+voice = [
+  "aws-sdk-bedrock-runtime>=0.11,<0.12",
+  "fastapi>=0.135,<1",
+  "strands-agents[bidi]>=1.57.1,<1.58",
+  "uvicorn[standard]>=0.40,<1",
+]
 
 [project.scripts]
 carescribe-bedrock-smoke = "carescribe.smoke:main"
 carescribe-live-demo = "carescribe.live_server:main"
+carescribe-sonic = "carescribe.sonic_server:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

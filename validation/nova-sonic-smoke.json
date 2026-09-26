@@ -1,0 +1,71 @@
+{
+  "schema_version": "carescribe.nova-sonic-smoke.v1",
+  "executed_at": "2026-09-26T22:14:00Z",
+  "execution_state": "OBSERVED_PASS",
+  "synthetic_only": true,
+  "provider": "Amazon Bedrock",
+  "model_id": "amazon.nova-2-sonic-v1:0",
+  "region": "us-east-1",
+  "adapter": {
+    "framework": "strands-agents",
+    "framework_version": "1.57.1",
+    "bedrock_runtime_sdk": "aws-sdk-bedrock-runtime",
+    "bedrock_runtime_sdk_version": "0.11.0",
+    "python_version": "3.13.9"
+  },
+  "input": {
+    "source": "macOS generated Samantha voice",
+    "format": "pcm_s16le",
+    "sample_rate_hz": 16000,
+    "channels": 1,
+    "bytes": 271848,
+    "sha256": "c4d7ce76a618d108a6af9f839bbb5af80f77e732fcae2880f5f0b3739c7a1a74"
+  },
+  "observed": {
+    "elapsed_ms": 10798,
+    "user_transcript_complete": true,
+    "assistant_transcript_complete": true,
+    "audio_output_bytes": 312320,
+    "event_counts": {
+      "bidi_connection_start": 1,
+      "bidi_usage": 27,
+      "bidi_response_start": 1,
+      "bidi_transcript_start": 2,
+      "bidi_transcript_delta": 4,
+      "bidi_transcript_stop": 2,
+      "bidi_audio_start": 1,
+      "bidi_audio_delta": 120,
+      "bidi_audio_stop": 1
+    }
+  },
+  "browser_bridge_observed": {
+    "execution_state": "OBSERVED_PASS",
+    "transport": "ws://127.0.0.1:8081/ws",
+    "elapsed_ms": 9247,
+    "user_transcript_complete": true,
+    "assistant_transcript_complete": true,
+    "audio_output_bytes": 256000,
+    "event_counts": {
+      "bidi_connection_start": 1,
+      "bidi_transcript_stream": 6,
+      "bidi_audio_start": 1,
+      "bidi_audio_stream": 98,
+      "bidi_audio_stop": 1
+    },
+    "server_counters_after_close": {
+      "completed_sessions": 1,
+      "failed_sessions": 0,
+      "model_connections": 1,
+      "audio_chunks_in": 329,
+      "audio_chunks_out": 98,
+      "transcript_events": 6
+    }
+  },
+  "retention": {
+    "input_audio_committed": false,
+    "output_audio_committed": false,
+    "transcript_committed": false,
+    "application_persistence": false
+  },
+  "claim_boundary": "This proves synthetic bidirectional Nova 2 Sonic invocation and the local WebSocket bridge using generated PCM. It does not prove a physical browser microphone, speaker identity, diarization accuracy, three-device operation, production availability, provider-side deletion, clinical validity, or HIPAA compliance."
+}

@@ -84,7 +84,8 @@
 #model-runtime-list i.live-verified,
 #model-runtime-list i.access-verified,
 #model-runtime-list i.invocation-verified,
-#model-runtime-list i.loaded-now { background: var(--mint2); color: var(--teal); }
+#model-runtime-list i.loaded-now,
+#model-runtime-list i.bridge-running { background: var(--mint2); color: var(--teal); }
 #model-runtime-list i.not-run,
 #model-runtime-list i.not-loaded,
 #model-runtime-list i.available-not-run { background: #f4e8d0; color: #7a5714; }

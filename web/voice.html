@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/></svg>">
+  <title>CareScribe · Live Voice</title>
+  <link rel="stylesheet" href="focus.css">
+  <link rel="stylesheet" href="voice.css">
+  <script type="module" src="voice.js"></script>
+  <script src="release-proof.js" defer></script>
+</head>
+<body data-focus="voice">
+  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a href="provider.html">Provider</a><a href="caregiver.html">Caregiver</a><a href="child.html">Child</a><a href="projector.html">Projector</a><a href="models.html">Models</a><a data-page="voice" href="voice.html">Voice</a><a href="replay.html">Replay</a></nav></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">Live synthetic voice · explicit cloud boundary</p><h1>The advocate can listen and respond without silently publishing the room.</h1><p class="lead">Browser microphone audio streams to Amazon Nova 2 Sonic through the laptop bridge. Transcripts remain private on this page until someone explicitly approves a minimized update.</p></div><div id="runtime-state" class="runtime-state"><strong>Voice bridge not connected</strong><span>Start the optional service on port 8081.</span></div></section>
+
+    <section class="voice-boundary" role="note"><b>Raw audio leaves this device.</b><span>It is sent to Amazon Bedrock in <code>us-east-1</code>. CareScribe does not persist it, but this prototype cannot prove provider-side deletion. Fictional data only.</span></section>
+
+    <section class="demo-script" aria-labelledby="demo-script-title">
+      <div><p class="eyebrow">Two-minute guided interaction</p><h2 id="demo-script-title">Provider → caregiver → child → provider</h2><p>Choose the named role before each turn and reconnect between actors. Role selection is manual—not speaker identification. This is a repeatable demonstration script, not a standardized clinical instrument.</p></div>
+      <ol>
+        <li><b>Julie · provider</b><span>“Today begins Leo’s evaluation. We still need more observation before drawing any conclusion.”</span></li>
+        <li><b>Maya · caregiver</b><span>“Is the next visit therapy, or more evaluating? What should I notice at home?”</span></li>
+        <li><b>Leo · child</b><span>Say “More bubbles,” make a brief fictional sound, or use the child signal controls. Meaning remains <strong>UNKNOWN</strong>.</span></li>
+        <li><b>Julie · provider</b><span>“I observed communication, but its meaning needs context. The second visit continues the evaluation.”</span></li>
+      </ol>
+    </section>
+
+    <section class="voice-layout">
+      <form id="voice-setup" class="card voice-setup">
+        <p class="eyebrow">1 · Identify this device</p>
+        <label>Temporary display name<input id="actor-name" maxlength="40" value="Maya"></label>
+        <label>Role<select id="actor-role"><option value="caregiver">Caregiver</option><option value="provider">Provider</option><option value="child">Child / communication signal</option><option value="uncertain">Uncertain speaker</option></select></label>
+        <label>Room code<input id="room-code" maxlength="12" value="READY"></label>
+        <label class="check"><input id="synthetic-consent" type="checkbox"> I will use fictional content only—no PHI.</label>
+        <label class="check"><input id="cloud-consent" type="checkbox"> I understand microphone audio goes to Amazon Bedrock.</label>
+        <div class="button-row"><button id="connect-voice" class="button" type="submit">Connect advocate</button><button id="end-voice" class="button secondary" type="button" disabled>End private session</button></div>
+      </form>
+
+      <section class="card voice-stage" aria-live="polite">
+        <div id="avatar" class="voice-avatar"><span>◇</span><b>Advocate</b><small id="avatar-state">waiting</small></div>
+        <div class="button-row center"><button id="start-mic" class="button" disabled>Start microphone</button><button id="stop-mic" class="button secondary" disabled>Pause microphone</button></div>
+        <p id="voice-error" class="voice-error" hidden></p>
+        <div class="transcript-head"><div><p class="eyebrow">Private live transcript</p><h2>Nothing is shared automatically</h2></div><button id="approve-update" class="button secondary" disabled>Approve minimized room update</button></div>
+        <div id="voice-transcript" class="voice-transcript"><p class="empty">Connect the advocate, then start the microphone.</p></div>
+      </section>
+
+      <aside class="card custody-panel">
+        <p class="eyebrow">Session-local custody</p>
+        <h2>Chained checkpoints</h2>
+        <dl><div><dt>Events</dt><dd id="checkpoint-count">0</dd></div><div><dt>Latest root</dt><dd id="checkpoint-root">none</dd></div><div><dt>Model</dt><dd>amazon.nova-2-sonic-v1:0</dd></div><div><dt>Location</dt><dd>Bedrock us-east-1</dd></div></dl>
+        <p>This chain covers local event metadata, not clinical truth. It is cleared when this private session ends and is not an externally anchored custody system.</p>
+      </aside>
+    </section>
+  </main>
+  <footer>Simulated-data prototype · not approved for PHI · no HIPAA compliance claim</footer>
+</body>
+</html>

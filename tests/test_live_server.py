@@ -37,6 +37,11 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
             "checked_at": "2026-09-26T22:00:00+00:00",
             "detail": "test runtime",
         },
+        sonic_inspector=lambda: {
+            "status": "bridge-running",
+            "detail": "test bridge",
+            "evidence": "live-smoke-verified",
+        },
     )
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -50,7 +55,7 @@ def test_health_and_synthetic_bedrock_route(tmp_path: Path):
             "loaded-now",
             "invocation-verified",
             "invocation-verified",
-            "available-not-run",
+            "bridge-running",
             "access-verified",
         ]
 

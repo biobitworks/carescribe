@@ -34,6 +34,15 @@ caregiver, child, projector, model proof, replay, and presentation surfaces. Eac
 shows the live `/api/health` and room response locally, and an explicit static-only state
 when hosted on GitHub Pages.
 
+Run the Gum-powered laptop readiness check at any time:
+
+```bash
+./scripts/demo-doctor.sh
+```
+
+It verifies the core UI, actor pages, tests, local services, public presentation,
+signed receipt, and prints the two-minute three-actor judge path.
+
 ## Model evidence
 
 | Function | Model and location | Evidence ceiling |

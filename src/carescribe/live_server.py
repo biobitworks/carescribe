@@ -42,6 +42,7 @@ the clinician. Preserve uncertainty. Never imply that integrity hashes establish
 
 LocalGenerator = Callable[[str, str, str, bool], dict[str, Any]]
 RuntimeInspector = Callable[[str], dict[str, Any]]
+SonicInspector = Callable[[], dict[str, Any]]
 DEFAULT_LOCAL_MODEL = "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M"
 
 
@@ -72,6 +73,31 @@ def inspect_local_runtime(model_id: str) -> dict[str, Any]:
         "status": "not-loaded",
         "checked_at": checked_at,
         "detail": "Ollama answered, but the exact model is not currently resident.",
+    }
+
+
+def inspect_sonic_runtime() -> dict[str, Any]:
+    """Distinguish a currently running bridge from the saved live smoke receipt."""
+    try:
+        with urlopen("http://127.0.0.1:8081/ping", timeout=1) as response:
+            result = json.load(response)
+        if result.get("status") != "ready" or result.get("model_id") != (
+            "amazon.nova-2-sonic-v1:0"
+        ):
+            raise ValueError("unexpected Sonic bridge response")
+    except Exception:
+        return {
+            "status": "live-smoke-verified",
+            "detail": "Saved synthetic duplex receipt exists; local bridge is not reachable.",
+            "evidence": "synthetic speech, transcript, and audio response observed",
+        }
+    return {
+        "status": "bridge-running",
+        "detail": (
+            f"Local WebSocket bridge ready; active sessions "
+            f"{int(result.get('active_sessions') or 0)}."
+        ),
+        "evidence": str(result.get("evidence_status") or "adapter-ready"),
     }
 
 
@@ -197,6 +223,7 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
     generator: Callable[[str, str], tuple[str, str]] = staticmethod(default_generate)
     local_generator: LocalGenerator = staticmethod(default_local_gate)
     runtime_inspector: RuntimeInspector = staticmethod(inspect_local_runtime)
+    sonic_inspector: SonicInspector = staticmethod(inspect_sonic_runtime)
 
     def log_message(self, format: str, *args: Any) -> None:
         # Log method/path/status only; never request or model content.
@@ -215,6 +242,7 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
         if self.path == "/api/health":
             local_model_id = os.getenv("CARESCRIBE_LOCAL_MODEL", DEFAULT_LOCAL_MODEL)
             local_runtime = self.runtime_inspector(local_model_id)
+            sonic_runtime = self.sonic_inspector()
             self._json(
                 HTTPStatus.OK,
                 {
@@ -249,8 +277,7 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
                             "id": "amazon.nova-2-sonic-v1:0",
                             "location": "aws-bedrock-us-east-1",
                             "purpose": "full-duplex audio",
-                            "status": "available-not-run",
-                            "evidence": "active model listing; no CareScribe audio invocation",
+                            **sonic_runtime,
                         },
                         {
                             "id": "gpt-realtime-2.1",
@@ -403,11 +430,13 @@ def create_server(
     generator: Callable[[str, str], tuple[str, str]] = default_generate,
     local_generator: LocalGenerator = default_local_gate,
     runtime_inspector: RuntimeInspector = inspect_local_runtime,
+    sonic_inspector: SonicInspector = inspect_sonic_runtime,
 ) -> ThreadingHTTPServer:
     handler = partial(CareScribeHandler, directory=str(web_root))
     CareScribeHandler.generator = staticmethod(generator)
     CareScribeHandler.local_generator = staticmethod(local_generator)
     CareScribeHandler.runtime_inspector = staticmethod(runtime_inspector)
+    CareScribeHandler.sonic_inspector = staticmethod(sonic_inspector)
     server = ThreadingHTTPServer((host, port), handler)
     server.room_lock = Lock()  # type: ignore[attr-defined]
     server.room_events = defaultdict(  # type: ignore[attr-defined]
