@@ -162,9 +162,9 @@ in `validation/mvp-readiness.json`.
 - [ ] Use a production synchronization design. The current browser polls every
   two seconds; there is no WebSocket/SSE channel, delivery acknowledgement, or
   offline reconciliation.
-- [ ] Validate each remote dependency with a real, attributable invocation.
-  Current status strings do not establish Bedrock availability and there is no
-  inspected evidence of Nova Sonic execution.
+- [ ] Revalidate each remote dependency for the target deployment. Committed receipts
+  establish bounded synthetic Nova Micro, Nova Pro, Nova Sonic, and Voxtral observations;
+  status strings alone do not establish current availability.
 - [ ] Complete an independent security, privacy, retention, and regulatory
   assessment before using non-synthetic data. This checklist makes no HIPAA
   compliance claim.

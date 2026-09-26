@@ -67,11 +67,13 @@ hosting.
 - AWS-hosted end-to-end operation is not implemented or evidenced. The public URL is a
   static hosting fallback and must not be called AWS-hosted.
 - The public static demo is not connected to Bedrock or a clinical system.
-- Full-duplex voice is not implemented. Do not claim real-time duplex voice, a voice
-  fallback, or production voice-agent operation.
+- Nova 2 Sonic completed a synthetic bidirectional invocation and local browser-bridge
+  test using generated PCM. Do not extend that evidence to physical-microphone
+  reliability, public voice deployment, speaker identity, diarization, production
+  operation, or clinical validity.
 - `/api/health` statuses are evidence metadata, not live probes. Use the committed
-  LiquidAI benchmark, Nova Micro receipt, local Nova Pro route observation, and explicit
-  Nova Sonic/OpenAI limitations.
+  LiquidAI benchmark, Nova Micro receipt, local Nova Pro route observation, Nova Sonic
+  receipt, and explicit OpenAI limitations.
 - Browser speech recognition is browser/vendor dependent; transcription quality,
   diarization accuracy, biometric protections, and stop behavior have not been clinically
   or independently validated.
@@ -121,7 +123,7 @@ hosting.
 - HIPAA compliant, HIPAA certified, HIPAA ready, or suitable for protected health
   information.
 - Accurate speaker identification, validated diarization, or biometric privacy.
-- Full-duplex or real-time voice-agent operation.
+- Public, production, or clinically validated full-duplex voice-agent operation.
 - EHR integration, chart submission, production authentication, verified cloud deletion,
   or production auditability.
 - Multiple model paths “live verified” based only on the single-model smoke receipt.

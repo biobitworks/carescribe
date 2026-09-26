@@ -93,9 +93,11 @@ synthetic public event has been added.” Do not invent a synchronization result
   server-side Bedrock `Converse` boundary.”
 - **Status labels:** “A model label in the UI or `/api/health` response is routing metadata,
   not a runtime probe or execution receipt.”
-- **Voice paths:** “Nova Sonic was not run; OpenAI `gpt-realtime-2.1` has client-secret
-  access verified, but browser WebRTC is not implemented and no realtime voice path is
-  demonstrated.”
+- **Voice paths:** “Nova 2 Sonic completed a synthetic bidirectional Bedrock invocation
+  and local browser-bridge test using generated PCM. This does not prove
+  physical-microphone reliability, public deployment, speaker identity, diarization, or
+  production operation. OpenAI `gpt-realtime-2.1` remains access-only and is not the
+  implemented path.”
 - **Custody:** “Self-hashed FCOs, edges, MMR roots, and checkpoints demonstrate
   deterministic local self-consistency, not identity, clinical truth, immutability,
   non-repudiation, or durable external custody.”

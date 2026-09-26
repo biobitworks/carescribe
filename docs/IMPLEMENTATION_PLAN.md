@@ -24,7 +24,7 @@ Date: 2026-09-26
 | Laptop-local privacy gate | LiquidAI LFM2.5 1.2B GGUF | Synthetic local-server input only |
 | Approved public event atomization | Amazon Nova Micro | Untrusted remote draft |
 | Handoff synthesis | Amazon Nova Pro | Full synthetic transcript; human review required |
-| Full-duplex audio | Amazon Nova Sonic | Not run; not integrated |
+| Full-duplex audio | Amazon Nova 2 Sonic | Local synthetic invocation and browser bridge verified; public deployment not integrated |
 | Realtime alternative | OpenAI gpt-realtime-2.1 | API access only; browser duplex not integrated |
 | Privacy/claims review | GPT-5.6 Sol subagent | Claim ceiling and residual findings |
 | Replay/demo review | GPT-5.6 Terra subagent | Media and judge-flow QA |

@@ -17,7 +17,8 @@ static presentation/replay fallback disconnected from model and clinical systems
 | Speaker-role controls and fictional fallback | **IMPLEMENTED**; browser-tested |
 | Focused Provider/Caregiver/Child/Projector pages | **IMPLEMENTED** |
 | Three-actor recorded fallback | **IMPLEMENTED**; 60 seconds with captions |
-| Full-duplex voice / Nova Sonic | **NOT RUN / NOT IMPLEMENTED** |
+| Full-duplex voice / Nova 2 Sonic | **LOCAL SYNTHETIC INVOCATION + BRIDGE VERIFIED**; physical microphone reliability and public deployment not proven |
+| Voxtral media transcription | **THREE CONSENTED TEAM RECORDINGS TRANSCRIBED**; media-preparation workflow, not live runtime |
 | Authenticated private rooms / AgentCore | **NOT IMPLEMENTED** |
 | AWS-hosted end-to-end workflow | **NOT IMPLEMENTED**; target architecture only |
 
@@ -28,7 +29,10 @@ static presentation/replay fallback disconnected from model and clinical systems
    data.
 3. Inspect `src/carescribe/bedrock.py` for the separate inference boundary.
 4. Run `pytest` for offline request-shape and domain-contract validation.
-5. Run `carescribe-bedrock-smoke` with authorized AWS credentials for live validation.
+5. Inspect `validation/nova-sonic-smoke.json` and
+   `validation/real-team-audio-receipts.json` for the bounded voice/media evidence.
+6. Run `carescribe-bedrock-smoke` with authorized AWS credentials for fresh text-model
+   validation.
 
 ## Verification policy
 

@@ -28,7 +28,7 @@ information. Use simulated interactions only.
 | Responsive web interaction | Byron | Main | `web/` | Implemented; public deployment browser-verified |
 | Live transcription and speaker roles | Byron | Main | `web/` | Implemented; browser/vendor dependent |
 | Bedrock observations and summaries | Byron | Main | Tests and receipts | Nova Micro and Pro paths live-verified |
-| Real-time questions and duplex voice | Byron | Main | Questions in `web/`; voice fallback documented | Partial; duplex not implemented |
+| Real-time questions and duplex voice | Byron | Main | `web/voice.html`; `validation/nova-sonic-smoke.json` | Local synthetic Nova Sonic path implemented; public bridge and production operation not implemented |
 | Session persistence and deletion | Byron | Main | Browser demo and tests | Browser-local only |
 | AWS hosting and deployment | Julie | Issue 3 | GitHub Pages fallback below | Blocked by workshop IAM |
 | Clinical safety and privacy review | Byron | Main | `docs/` | Prototype audit complete; not PHI-ready |

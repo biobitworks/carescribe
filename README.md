@@ -52,10 +52,13 @@ signed receipt, and prints the two-minute three-actor judge path.
 | Privacy gate | LiquidAI LFM2.5 1.2B, local laptop | Installed, invoked, and benchmarked on synthetic input |
 | Event atomization | Amazon Nova Micro, Bedrock `us-east-1` | Live synthetic invocation verified |
 | Handoff synthesis | Amazon Nova Pro, Bedrock `us-east-1` | Live synthetic route observed; model prose remains untrusted |
-| Full-duplex audio | Amazon Nova Sonic | Not run |
+| Full-duplex audio | Amazon Nova 2 Sonic, Bedrock `us-east-1` | Synthetic bidirectional invocation and local browser bridge verified; physical-mic reliability and public deployment not proven |
+| Media transcription | Mistral Voxtral Mini, Bedrock | Three consented team recordings transcribed; media workflow only, not live product runtime |
 | Realtime fallback | OpenAI `gpt-realtime-2.1` | Client-secret API access verified; browser WebRTC not implemented |
 
 Receipts and limitations are in `validation/`, the
+[canonical model-evidence manifest](docs/MODEL_EVIDENCE.md),
+[independent judge audit](docs/JUDGE_AUDIT_2026-09-26.md),
 [gate-by-gate gap matrix](docs/GAP_MATRIX.md), [docs/RED_TEAM.md](docs/RED_TEAM.md), and
 [docs/SUBMISSION_READINESS.md](docs/SUBMISSION_READINESS.md).
 
@@ -68,7 +71,7 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src pytest -q
-node --test web/fco-core.test.mjs
+node --test web/*.test.mjs
 ```
 
 The explicit plugin setting avoids an unrelated broken global pytest plugin on the demo

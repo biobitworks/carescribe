@@ -1,7 +1,8 @@
 # CareScribe: 3-minute pitch and demo run-of-show
 
-> Use simulated encounter content only. The public Pages build is static; use the local
-> server for live model/room proof and label the replay when used.
+> Use simulated encounter content only. The public Pages build is static; use
+> `http://127.0.0.1:8080/voice.html` plus the local bridge for live Nova Sonic proof and
+> label the replay when used.
 
 ## 0:00–0:25 — Problem
 
@@ -33,9 +34,10 @@ must review, edit, and approve.”
 
 1. **0:45–0:55 — Open**
 
-   “Here is the public CareScribe Live browser demo.”
+   “Here is the supervised laptop-local CareScribe voice demo. The public link is our
+   judge-accessible static interaction and evidence package.”
 
-   Open https://biobitworks.github.io/carescribe/ after verifying the deployment.
+   Open http://127.0.0.1:8080/voice.html after running `./scripts/demo-doctor.sh`.
 
 2. **0:55–1:15 — Provide simulated input**
 
@@ -66,12 +68,13 @@ must review, edit, and approve.”
 
 **Speaker:** Byron
 
-“Under the hood, implemented text inference uses two explicit boundaries: LiquidAI
-LFM2.5 on the laptop host for the local synthetic privacy-gate path, and Amazon Bedrock
-Runtime’s `Converse` API for Nova Micro and Nova Pro. We committed a LiquidAI benchmark,
-a Nova Micro smoke receipt, and browser custody checkpoints for successful synthetic
-LiquidAI, Nova Micro, and Nova Pro calls. Those receipts prove only those checks—not
-clinical validity, production availability, security completeness, or compliance.”
+“Under the hood, LiquidAI LFM2.5 runs on the laptop for the synthetic privacy-gate path;
+Nova Micro and Nova Pro use Amazon Bedrock for event atomization and handoff review; and
+Nova 2 Sonic provides the local bidirectional voice path. We committed bounded receipts
+for synthetic model and bridge checks. Voxtral Mini also transcribed our consented team
+rehearsal recordings as a media workflow. Those receipts prove only the recorded
+checks—not physical-microphone reliability, clinical validity, public availability,
+security completeness, or compliance.”
 
 **On screen:** Architecture slide or `validation/bedrock-smoke.json`.
 
@@ -117,7 +120,8 @@ live workflow.”
 
 - [ ] Team names and speaking roles are assigned.
 - [ ] All placeholders are resolved.
-- [ ] AWS demo opens from a logged-out browser and the exact demo path succeeds.
+- [ ] Local room and Sonic services pass `./scripts/demo-doctor.sh`; public static links
+  open from a logged-out browser.
 - [ ] Only simulated, non-PHI content is loaded.
 - [ ] Slides and video open without requesting access.
 - [ ] Backup video is downloaded locally as well as linked.
