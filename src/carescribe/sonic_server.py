@@ -14,6 +14,7 @@ DEFAULT_REGION = "us-east-1"
 INPUT_SAMPLE_RATE = 16_000
 OUTPUT_SAMPLE_RATE = 16_000
 CHANNELS = 1
+ACTOR_ROLES = {"provider", "caregiver", "child", "uncertain"}
 MAX_AUDIO_CHUNK_BYTES = 65_536
 MAX_TEXT_CHARS = 1_000
 MAX_WS_MESSAGE_BYTES = 131_072
@@ -36,6 +37,13 @@ demonstration content only."""
 
 class BrowserProtocolError(ValueError):
     """A browser message violates the bounded synthetic voice protocol."""
+
+
+@dataclass(frozen=True)
+class ActorContext:
+    """A non-biometric, operator-selected actor handoff."""
+
+    role: str
 
 
 @dataclass
@@ -94,11 +102,18 @@ def allowed_origins() -> set[str]:
     }
 
 
-def decode_browser_input(payload: Any) -> str | dict[str, Any]:
+def decode_browser_input(payload: Any) -> str | dict[str, Any] | ActorContext:
     """Validate one browser event and convert it to a Strands input."""
     if not isinstance(payload, dict):
         raise BrowserProtocolError("message_must_be_object")
     event_type = payload.get("type")
+    if event_type == "actor_context":
+        if set(payload) != {"type", "role"}:
+            raise BrowserProtocolError("unexpected_actor_fields")
+        role = payload.get("role")
+        if role not in ACTOR_ROLES:
+            raise BrowserProtocolError("invalid_actor_role")
+        return ActorContext(role)
     if event_type == "bidi_text_input":
         if set(payload) != {"type", "text"}:
             raise BrowserProtocolError("unexpected_text_fields")
@@ -256,20 +271,33 @@ def create_app(
         agent = agent_factory()
         state.active_sessions += 1
         await websocket.accept()
+        actor_role = "uncertain"
 
         async def receive_input() -> str | dict[str, Any]:
+            nonlocal actor_role
             try:
-                message = await websocket.receive()
-                if message["type"] == "websocket.disconnect":
-                    raise WebSocketDisconnect(message.get("code", 1000))
-                raw = message.get("text")
-                if raw is None or len(raw.encode("utf-8")) > MAX_WS_MESSAGE_BYTES:
-                    raise BrowserProtocolError("invalid_message_size")
-                payload = json.loads(raw)
-                decoded = decode_browser_input(payload)
-                if isinstance(decoded, dict):
-                    state.audio_chunks_in += 1
-                return decoded
+                while True:
+                    message = await websocket.receive()
+                    if message["type"] == "websocket.disconnect":
+                        raise WebSocketDisconnect(message.get("code", 1000))
+                    raw = message.get("text")
+                    if raw is None or len(raw.encode("utf-8")) > MAX_WS_MESSAGE_BYTES:
+                        raise BrowserProtocolError("invalid_message_size")
+                    payload = json.loads(raw)
+                    decoded = decode_browser_input(payload)
+                    if isinstance(decoded, ActorContext):
+                        actor_role = decoded.role
+                        await websocket.send_json(
+                            {
+                                "type": "actor_context_ack",
+                                "role": actor_role,
+                                "identification": "operator_selected",
+                            }
+                        )
+                        continue
+                    if isinstance(decoded, dict):
+                        state.audio_chunks_in += 1
+                    return decoded
             except (json.JSONDecodeError, BrowserProtocolError) as error:
                 state.last_error_code = (
                     str(error) if isinstance(error, BrowserProtocolError) else "invalid_json"
@@ -293,6 +321,8 @@ def create_app(
                 state.audio_chunks_out += 1
             elif outgoing["type"] == "bidi_transcript_stream":
                 state.transcript_events += 1
+                if outgoing["role"] == "user":
+                    outgoing["actor_role"] = actor_role
             await websocket.send_json(outgoing)
 
         try:

@@ -34,6 +34,13 @@
 .voice-avatar small { color: var(--muted); }
 .voice-avatar.listening { border-color: var(--gold); box-shadow: 0 0 0 10px #e7b84522; }
 .voice-avatar.speaking { border-color: var(--teal); box-shadow: 0 0 0 10px #168b7b22; transform: scale(1.03); }
+.speaker-monitor { margin: 0 auto 14px; padding: 12px; max-width: 430px; border: 1px solid var(--line); border-radius: 12px; background: #f8faf9; text-align: center; }
+.speaker-monitor strong { display: block; margin: 2px 0 9px; color: #8c3028; font-size: 18px; letter-spacing: .08em; }
+.speaker-monitor.live strong { color: #087568; }
+.speaker-monitor small { color: var(--muted); }
+.speaker-roles { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.speaker-roles span { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11px; font-weight: 800; }
+.speaker-roles span.active { border-color: var(--teal); background: #dff4ed; color: var(--forest); }
 .transcript-head { margin-top: 24px; display: flex; align-items: end; justify-content: space-between; gap: 12px; }
 .transcript-head h2 { margin: 2px 0 0; }
 .voice-transcript { margin-top: 12px; max-height: 280px; overflow: auto; }

@@ -3,6 +3,7 @@ import base64
 import pytest
 
 from carescribe.sonic_server import (
+    ActorContext,
     BrowserProtocolError,
     MODEL_ID,
     SonicRuntimeState,
@@ -10,6 +11,18 @@ from carescribe.sonic_server import (
     decode_browser_input,
     encode_browser_output,
 )
+
+
+def test_actor_context_is_closed_and_contains_no_identity():
+    assert decode_browser_input(
+        {"type": "actor_context", "role": "provider"}
+    ) == ActorContext("provider")
+    with pytest.raises(BrowserProtocolError, match="invalid_actor_role"):
+        decode_browser_input({"type": "actor_context", "role": "clinician"})
+    with pytest.raises(BrowserProtocolError, match="unexpected_actor_fields"):
+        decode_browser_input(
+            {"type": "actor_context", "role": "provider", "name": "must-not-cross"}
+        )
 
 
 def test_audio_input_is_strictly_bounded_and_decoded():

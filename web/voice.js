@@ -12,7 +12,8 @@ const els = Object.fromEntries([
   "voice-setup", "actor-name", "actor-role", "room-code", "synthetic-consent",
   "cloud-consent", "connect-voice", "end-voice", "start-mic", "stop-mic",
   "approve-update", "runtime-state", "avatar", "avatar-state", "voice-error",
-  "voice-transcript", "checkpoint-count", "checkpoint-root",
+  "voice-transcript", "checkpoint-count", "checkpoint-root", "mic-status",
+  "speaker-roles", "speaker-method",
 ].map(id => [id, byId(id)]));
 
 let socket;
@@ -36,6 +37,22 @@ function setError(message = "") {
 function setAvatar(state) {
   els.avatar.className = `voice-avatar ${state}`;
   els["avatar-state"].textContent = state || "waiting";
+}
+
+function renderSpeaker(role = els["actor-role"].value, live = Boolean(mediaStream)) {
+  for (const chip of els["speaker-roles"].querySelectorAll("[data-role]")) {
+    chip.classList.toggle("active", chip.dataset.role === role);
+  }
+  const monitor = els["mic-status"].closest(".speaker-monitor");
+  monitor.classList.toggle("live", live);
+  els["mic-status"].textContent = live
+    ? `MIC ON · ${role.toUpperCase()} SPEAKING`
+    : `MIC OFF · ${role.toUpperCase()} SELECTED`;
+}
+
+function sendActorContext() {
+  if (!actor || !canSendAudio(socket)) return;
+  socket.send(JSON.stringify({ type: "actor_context", role: actor.role }));
 }
 
 function bytesToBase64(bytes) {
@@ -73,7 +90,7 @@ function setRuntime(title, detail) {
   els["runtime-state"].replaceChildren(strong, span);
 }
 
-function addTranscript(role, text, isFinal) {
+function addTranscript(role, text, isFinal, actorRole) {
   if (!text) return;
   if (els["voice-transcript"].querySelector(".empty")) els["voice-transcript"].innerHTML = "";
   const key = role === "assistant" ? "assistant" : "user";
@@ -83,7 +100,8 @@ function addTranscript(role, text, isFinal) {
     line.className = `voice-line ${key}`;
     line.dataset.liveRole = key;
     const label = document.createElement("b");
-    label.textContent = key === "assistant" ? "Advocate" : `${actor.name} · ${actor.role}`;
+    const attributedRole = actorRole || actor.role;
+    label.textContent = key === "assistant" ? "Advocate" : `${actor.name} · ${attributedRole}`;
     const content = document.createElement("span");
     line.append(label, content);
     els["voice-transcript"].append(line);
@@ -98,7 +116,7 @@ function addTranscript(role, text, isFinal) {
     }
     digest(text).then(transcriptHash => checkpoint({
       kind: "actor-transcript",
-      actor: key === "assistant" ? "advocate" : actor.role,
+      actor: key === "assistant" ? "advocate" : (actorRole || actor.role),
       disclosure: "LOCAL_ONLY",
       transcript_sha256: transcriptHash,
     }, checkpointToken));
@@ -141,8 +159,13 @@ function handleVoiceEvent(event) {
     els["start-mic"].disabled = false;
     els["end-voice"].disabled = false;
     checkpoint({ kind: "model-invocation", actor: "amazon-bedrock", model: event.model, disclosure: "REMOTE_AUDIO" });
+    sendActorContext();
+  } else if (event.type === "actor_context_ack") {
+    renderSpeaker(event.role);
+    els["speaker-method"].textContent = `${event.role} acknowledged by orchestrator · operator-selected`;
+    checkpoint({ kind: "actor-handoff", actor: event.role, identification: event.identification });
   } else if (event.type === "bidi_transcript_stream") {
-    addTranscript(event.role, event.text, event.is_final);
+    addTranscript(event.role, event.text, event.is_final, event.actor_role);
   } else if (event.type === "bidi_audio_start") {
     setAvatar("speaking");
   } else if (event.type === "bidi_audio_stream" && event.audio) {
@@ -229,6 +252,7 @@ async function startMicrophone() {
     els["start-mic"].disabled = true;
     els["stop-mic"].disabled = false;
     setAvatar("listening");
+    renderSpeaker(actor.role, true);
     checkpoint({ kind: "microphone-start", actor: actor.role, disclosure: "REMOTE_AUDIO" });
   } catch (error) {
     setError(`Microphone error: ${error.message}`);
@@ -271,6 +295,7 @@ function stopMicrophone({ record = true, sendSilence = true } = {}) {
     checkpoint({ kind: "microphone-stop", actor: actor?.role || "uncertain" });
   }
   setAvatar("");
+  renderSpeaker(actor?.role);
 }
 
 async function approveUpdate() {
@@ -307,6 +332,19 @@ els["start-mic"].addEventListener("click", startMicrophone);
 els["stop-mic"].addEventListener("click", () => stopMicrophone());
 els["approve-update"].addEventListener("click", () => approveUpdate().catch(() => setError("Room publication failed.")));
 els["end-voice"].addEventListener("click", endSession);
+els["actor-role"].addEventListener("change", () => {
+  if (mediaStream) {
+    els["actor-role"].value = actor.role;
+    return setError("Pause the microphone before handing off to another actor.");
+  }
+  try {
+    actor = normalizeActor(els["actor-name"].value, els["actor-role"].value);
+    renderSpeaker(actor.role);
+    sendActorContext();
+  } catch (error) {
+    setError(error.message);
+  }
+});
 window.addEventListener("pagehide", () => {
   checkpointChain.reset();
   stopMicrophone({ record: false, sendSilence: false });
@@ -322,3 +360,4 @@ for (const consentId of ["synthetic-consent", "cloud-consent"]) {
 if (staticHost()) {
   setRuntime("Static presentation only", "No WebSocket or model runs on GitHub Pages.");
 }
+renderSpeaker();
