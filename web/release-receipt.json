@@ -1,10 +1,10 @@
 {
   "schema_version": "carescribe.fcg-release-receipt.v1",
   "payload": {
-    "release_id": "carescribe-2026-09-26T22:34:05Z",
-    "issued_at": "2026-09-26T22:34:05Z",
+    "release_id": "carescribe-2026-09-26T22:36:13Z",
+    "issued_at": "2026-09-26T22:36:13Z",
     "public_url": "https://biobitworks.github.io/carescribe/",
-    "audited_parent_commit": "7e0df3abe6728866687df25d94cdbb5f689f89c8",
+    "audited_parent_commit": "b270ed39c2a372b290ff05580b22360f02a8a4a7",
     "artifact_scope": "Bytes read from audited_parent_commit before this receipt commit.",
     "fcg": {
       "node": {
@@ -16,26 +16,30 @@
       },
       "edges": [
         {
-          "from": "carescribe-2026-09-26T22:34:05Z",
+          "from": "carescribe-2026-09-26T22:36:13Z",
           "to": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
           "type": "attests_to_prior_checkpoint"
         },
         {
-          "from": "carescribe-2026-09-26T22:34:05Z",
-          "to": "7e0df3abe6728866687df25d94cdbb5f689f89c8",
+          "from": "carescribe-2026-09-26T22:36:13Z",
+          "to": "b270ed39c2a372b290ff05580b22360f02a8a4a7",
           "type": "built_from_commit"
         }
       ]
     },
     "artifacts": [
       {"path": "web/index.html", "sha256": "ab372a3b3ff5688f51ebc86011b1ec617410d000596ffdfae7b73fb6dbe1dd5d"},
-      {"path": "web/replay.html", "sha256": "25fe711a893468e4ee470e99dcd4c6749e8aa2db533cf40c1964388ce87a1194"},
+      {"path": "web/replay.html", "sha256": "a4c5f7686e464fefb470516d6dd60beb2d14bd69ed78bebb66a57acbd8afbd21"},
       {"path": "web/models.html", "sha256": "5eb581b392d054e47c47193bba1ace1565aa115f6a6bd5070662267f764a8401"},
       {"path": "web/slides.html", "sha256": "b97d2ab486c180ba6c0a76b3cc8d7554b654dd63e972d9d98f8e5e30440ce8c4"},
       {"path": "SUBMISSION.md", "sha256": "e464d44d8fde2540f2f5275539b0b8c2730ce6a604e9ec994da756fc0b0c96d2"},
       {"path": "docs/MODEL_EVIDENCE.md", "sha256": "d37b54abc444beb5f805b3269c1a673c98a123e4af9abcdaddf6840997a0cf56"},
-      {"path": "docs/JUDGE_AUDIT_2026-09-26.md", "sha256": "ea7d7450d1216255f569f1583a3af32e59f785e1b78809930f5a534b3677b50d"},
-      {"path": "web/voice.html", "sha256": "6d13870c78f4f4336d7d94051a398e2811bf507b9a6dfad11b0e4bff7a9b9e43"},
+      {"path": "docs/JUDGE_AUDIT_2026-09-26.md", "sha256": "085de994137a08a0dbf857232d6aad3035cbc713a90ae5de85751d5410229387"},
+      {"path": "web/voice.html", "sha256": "abae8bf8926f472c7b1f8bead21fd1c0fcb206127610fa9db7e2ff187639a051"},
+      {"path": "web/focus.css", "sha256": "00563aa7c699f6c69ae9d6d7ce64f9cb8d24b18284bb66e702860993be961ae6"},
+      {"path": "web/session-receipt.html", "sha256": "93bc709c46dff73b09a325d3b8d6951abbe9d4ee6233fb97f4f64823658f0ff6"},
+      {"path": "web/session-receipt.js", "sha256": "30c261d3ef09f7ed3a686e7a7b08700c34a770794f401be60c40059d82517f3e"},
+      {"path": "web/session-receipt.json", "sha256": "e58ee6c36b9739a0047b897bb5a8b301f1ccbe9fb5c2b346864559b1f49d2cf8"},
       {"path": "web/voice.js", "sha256": "e8119ee5e54d65f08d26bb5632f184352d0c20890d8750cec12ee61d087e5b29"},
       {"path": "web/audio-core.mjs", "sha256": "fbe0fd22791407648bb7cae7b01b2d7f08021f098f0c4da5be87814963b3656c"},
       {"path": "web/audio-capture.worklet.js", "sha256": "a5f020285e9d85b36b1f858d9ef1ba4c95b0b8e7ec069387fba314ef76361706"},
@@ -52,6 +56,6 @@
     "algorithm": "Ed25519",
     "canonicalization": "recursive-lexicographic-json-v1",
     "public_key_spki_base64": "MCowBQYDK2VwAyEAMXMDzDbuQQiWdswDF8tsReiIEJaUa4QaS9G6HGN88R4=",
-    "value_base64": "7S5lmwDtUt/RnPv2D1eRDLj2Z2v7Ej+FHBq/4Z0aqQ9FGHlDxC+5JIxWXK2cQNIazJiGomRPiB58uHaP0ubUBQ=="
+    "value_base64": "7xXbN3JvNrZl/4TbLhtNicwEEUbk8eVXR09+Kb9+tCdL42+zJY/npeqlLLdfviI6FN7Gy3do7g0JMHAkh8VHCw=="
   }
 }
