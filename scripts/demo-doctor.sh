@@ -7,6 +7,8 @@ cd "$ROOT"
 GUM="${GUM:-$(command -v gum 2>/dev/null || true)}"
 CURL="${CURL:-$(command -v curl 2>/dev/null || true)}"
 PYTHON="${PYTHON:-$(command -v python 2>/dev/null || command -v python3 2>/dev/null || true)}"
+OLLAMA="${OLLAMA:-$(command -v ollama 2>/dev/null || true)}"
+LIQUID_MODEL="hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M"
 failures=0
 warnings=0
 
@@ -36,6 +38,27 @@ style --bold --border rounded --padding "0 2" "CareScribe Demo Doctor"
 check_command node
 check_command gum
 check_command curl
+
+if [[ -n "$OLLAMA" ]] && "$OLLAMA" show "$LIQUID_MODEL" >/dev/null 2>&1; then
+  pass "LiquidAI LFM2.5 installed locally"
+  if "$CURL" -fsS http://127.0.0.1:11434/api/ps 2>/dev/null |
+     jq -e --arg model "$LIQUID_MODEL" '.models[]? | select((.name // .model) == $model)' >/dev/null; then
+    pass "LiquidAI LFM2.5 loaded now · local privacy fallback ready"
+  else
+    warn "LiquidAI installed but cold · warm with: ollama run '$LIQUID_MODEL'"
+  fi
+else
+  warn "LiquidAI local fallback is not installed"
+fi
+
+if jq -e '
+  .bedrock_transcription.model_id == "mistral.voxtral-mini-3b-2507" and
+  .bedrock_transcription.execution_state == "OBSERVED_PASS"
+' validation/real-team-audio-receipts.json >/dev/null 2>&1; then
+  pass "Voxtral Mini Bedrock media receipt · offline fallback only"
+else
+  warn "Voxtral media-transcription receipt unavailable"
+fi
 
 for file in \
   web/index.html web/voice.html web/provider.html web/caregiver.html web/child.html \
