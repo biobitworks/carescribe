@@ -1,0 +1,42 @@
+{
+  "schema": "fcg.ontology.bootstrap.v1",
+  "project_id": "carescribe",
+  "bootstrap_version": "1.3.0+tree",
+  "ts_utc": "2026-09-26T19:51:32Z",
+  "edge_types": [
+    "depends_on",
+    "forked_from",
+    "reuses_protocol",
+    "reuses_dataset",
+    "reuses_model",
+    "reuses_instrument",
+    "derived_from",
+    "validated_by",
+    "contradicted_by",
+    "published_as",
+    "presented_at",
+    "licensed_to",
+    "transferred_to",
+    "supersedes_project",
+    "shares_claim",
+    "shares_risk",
+    "used_by"
+  ],
+  "privacy": {
+    "portfolio_graph_allows": [
+      "project_identifiers",
+      "public_manifests",
+      "shared_protocol_hashes",
+      "release_roots",
+      "dependency_relationships"
+    ],
+    "portfolio_graph_forbids": [
+      "PHI",
+      "trade_secrets",
+      "private_model_weights",
+      "restricted_datasets",
+      "identity_vault_mappings"
+    ]
+  },
+  "llm_in_science_leaf": false
+}

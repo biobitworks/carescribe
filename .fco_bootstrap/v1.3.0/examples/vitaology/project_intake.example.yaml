@@ -1,0 +1,40 @@
+project:
+  name: "vitaology"
+  root: "/Users/byron/projects/active/vitaology"
+  type:
+    - "computational_biology_hybrid"
+    - "model_substrate"
+  owner: "OPERATOR"
+  stage: "future_example_scaffold"
+  goal: "Custody-valid Pythia-compatible research model substrate + wound adapter boundary"
+  timebox: "UNKNOWN"
+  budget: "UNKNOWN"
+  public_private_mode: "hybrid"
+  regulated_domain: "NONE"
+  target_users:
+    - "OPERATOR;research_agents;wound_adapter_later"
+  expected_outputs:
+    - "BOOTSTRAP_REPORT;model_manifest;MSM records;credibility assessments"
+
+governance:
+  claim_ceiling: "HYPOTHESIS_STAGE_1_computational_proxy"
+  single_writer: true
+  append_only_custody: true
+  preserve_failures: true
+  prompt_provenance: true
+  artifact_sha256: true
+  example_only: true
+  notes: "Scaffold from universal-project-bootstrap examples/vitaology — not live"
+
+naming_boundary:
+  platform: "Vitaology"
+  historical_source_immutable: "Vitalogy 1927"
+  source_id: "historical-vitalogy-1927"
+  model_family: "vitaology-pythia"
+
+adapters:
+  - name: "wound_gtm"
+    role: "domain_adapter_over_base"
+    clinical_decision_authority: false
+
+llm_in_science_leaf: false

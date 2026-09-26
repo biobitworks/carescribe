@@ -1,0 +1,16 @@
+{
+  "schema": "portfolio.example_project_pointer.v1",
+  "example_id": "vitaology",
+  "package_version": "1.3.0+tree",
+  "status": "future_scaffold",
+  "docs": [
+    "VITAOLOGY_PYTHIA_MODEL_SUBSTRATE.md",
+    "VITALOGY_TO_VITAOLOGY_MIGRATION.md",
+    "WOUND_GTM_VITAOLOGY_ADAPTER.md",
+    "FCO_REPO_VITAOLOGY_PATCH_PLAN.md",
+    "GOVERNANCE_LOOP_BREAKER.md",
+    "OLLARMA_CONNECT_INTEGRATION_PATCH.md"
+  ],
+  "llm_in_science_leaf": false,
+  "ts": "2026-07-26T03:49:07Z"
+}

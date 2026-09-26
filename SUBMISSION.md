@@ -30,9 +30,13 @@ Bedrock invocation on September 26, 2026 using Amazon Nova Micro in `us-east-1`.
 We also built a privacy-first browser workflow that captures live speech when the browser
 supports it, provides a clearly labeled fictional fallback, tracks provider, caregiver,
 child, or uncertain speaker roles, and displays evidence-linked observations and
-follow-up questions for clinician review. Sessions persist only in that browser and can
-be deleted by the user. This static demonstration is not connected to Bedrock or a
-clinical system; the repository validates the Bedrock inference boundary separately.
+follow-up questions for clinician review. Its five-step journey includes separate
+camera/microphone permissions, a bounded child story, caregiver-controlled advocate,
+provider EHR-style review, and shared closeout. Sessions persist only in that browser and
+can be deleted by the user. The public static demonstration remains disconnected from
+clinical systems. A local MagicPro path invokes remote Amazon Nova Micro and Nova Pro
+through server-side Bedrock credentials while local FCO/FCG/MMR custody preserves
+append-only evidence and corrections.
 
 ## 5. What is the path to real-world impact?
 

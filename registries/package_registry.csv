@@ -1,0 +1,2 @@
+name,ecosystem,version,purpose,license,source,maintenance_status,security_status,determinism_notes,alternatives,validation_test,fco_hash
+fco-fcg-universal-project-bootstrap,fco,1.3.0+tree,project_intake_protocol,UNKNOWN,fractal-custody-objects,active,UNKNOWN,tree_hash_in_PACKAGE_RECEIPT,none,shasum_CHECKSUMS,UNKNOWN

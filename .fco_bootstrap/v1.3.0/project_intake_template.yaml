@@ -1,0 +1,53 @@
+project:
+  name: "{{PROJECT_NAME}}"
+  root: "{{PROJECT_ROOT}}"
+  type:
+    - "{{PROJECT_TYPE}}"
+  owner: "{{PROJECT_OWNER}}"
+  stage: "{{PROJECT_STAGE}}"
+  goal: "{{PROJECT_GOAL}}"
+  timebox: "{{TIMEBOX}}"
+  budget: "{{BUDGET_OR_UNKNOWN}}"
+  public_private_mode: "{{PUBLIC_PRIVATE_HYBRID}}"
+  regulated_domain: "{{REGULATED_DOMAIN_OR_NONE}}"
+  target_users:
+    - "{{TARGET_USERS}}"
+  expected_outputs:
+    - "{{EXPECTED_OUTPUTS}}"
+
+governance:
+  claim_ceiling: "{{CLAIM_CEILING}}"
+  single_writer: true
+  append_only_custody: true
+  preserve_failures: true
+  prompt_provenance: true
+  artifact_sha256: true
+  voice_labels:
+    - USER
+    - SOURCE
+    - MEASURED
+    - AGENT
+    - INFERRED
+    - SPECULATIVE
+    - UNKNOWN
+    - FORBIDDEN/UNSUPPORTED
+
+anticube:
+  identity:
+    - self
+    - non-self
+  safety:
+    - safe
+    - non-safe
+
+required_registries:
+  - asset_inventory
+  - skills_registry
+  - dataset_registry
+  - package_registry
+  - source_registry
+  - terminology_matrix
+  - risk_register
+  - decision_log
+  - failure_register
+  - release_manifest

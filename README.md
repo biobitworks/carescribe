@@ -4,6 +4,18 @@ CareScribe is an early, public prototype for collaborative development and judgi
 
 **Live static demo:** https://biobitworks.github.io/carescribe/
 
+The public URL provides the five-step visual-story fallback. For the live synthetic
+Bedrock path on MagicPro:
+
+```bash
+export AWS_REGION=us-east-1
+PYTHONPATH=src python -m carescribe.live_server --host 127.0.0.1 --port 8080
+```
+
+Then open <http://127.0.0.1:8080>. Amazon Bedrock inference is remote; FCO/FCG/MMR
+custody and canonical session state remain locally controlled. See
+[docs/LIVE_BEDROCK_DEMO.md](docs/LIVE_BEDROCK_DEMO.md).
+
 > **Validation status:** the Amazon Bedrock inference boundary has offline test coverage,
 > and a live smoke invocation was observed successfully on 2026-09-26. Teammates and judges
 > can reproduce that check with their own authorized AWS account.

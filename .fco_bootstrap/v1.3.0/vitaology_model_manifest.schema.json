@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vitaology Model Release Manifest",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "project_id",
+    "model_id",
+    "release_version",
+    "training_mode",
+    "source_dataset_roots",
+    "ordered_sequence_root",
+    "tokenizer_fco",
+    "architecture_fco",
+    "training_protocol_fco",
+    "environment_fco",
+    "checkpoint_fcos",
+    "evaluation_fcos",
+    "claim_ceiling",
+    "release_status"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string"
+    },
+    "project_id": {
+      "const": "vitaology"
+    },
+    "model_id": {
+      "type": "string"
+    },
+    "release_version": {
+      "type": "string"
+    },
+    "training_mode": {
+      "enum": [
+        "from_scratch",
+        "continued_pretraining",
+        "fine_tune",
+        "adapter",
+        "quantized_derivative"
+      ]
+    },
+    "base_model_fco": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_dataset_roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dataset_multiset_root": {
+      "type": "string"
+    },
+    "ordered_sequence_root": {
+      "type": "string"
+    },
+    "split_manifest_fco": {
+      "type": "string"
+    },
+    "tokenizer_fco": {
+      "type": "string"
+    },
+    "architecture_fco": {
+      "type": "string"
+    },
+    "initialization_fco": {
+      "type": "string"
+    },
+    "training_protocol_fco": {
+      "type": "string"
+    },
+    "environment_fco": {
+      "type": "string"
+    },
+    "hardware_fco": {
+      "type": "string"
+    },
+    "skill_release_roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checkpoint_fcos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evaluation_fcos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "anticube_assessment_fcos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "credibility_assessment_fco": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claim_ceiling": {
+      "type": "string"
+    },
+    "prohibited_uses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "release_status": {
+      "enum": [
+        "draft",
+        "research_only",
+        "shadow_trial",
+        "design_controlled",
+        "released",
+        "revoked",
+        "superseded"
+      ]
+    },
+    "signature": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

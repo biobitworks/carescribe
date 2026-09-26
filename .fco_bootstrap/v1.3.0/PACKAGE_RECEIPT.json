@@ -1,0 +1,187 @@
+{
+  "schema": "portfolio.universal_bootstrap_package_receipt.v1",
+  "version": "1.3.0+tree",
+  "sealed": false,
+  "tree_sealed": true,
+  "source": "inbox/fco-fcg-universal-project-bootstrap-v1.3.0 + examples/vitaology",
+  "expected_official_zip_sha256": "sha256:00324fdfe4d69ba771c38e6f9cc2199e6ae8f74380c083c84abf1351a00fe732",
+  "prior_v1_1_0_official_sha256": "sha256:ba0ebc9e24e6f6ff5fc9c4ecbaddf9838f3af9cba7fb0dd98810ab8df378387c",
+  "intermediate_banked": "v1.1.2 (inbox v1.1-2.0)",
+  "example_project": "examples/vitaology",
+  "pytest": "9 passed (governance_kernel + reproducibility_roots)",
+  "supersedes": [
+    "1.1.0+tree",
+    "1.1.2+tree",
+    "1.0.0+tree"
+  ],
+  "file_count": 33,
+  "files": [
+    {
+      "path": "AI_COMPUTATIONAL_REPRODUCIBILITY_GAPS.csv",
+      "sha256": "00d2d7825b24e7fe749ba125a04413024ed6b51f68b851cdfb0a15a84cb75d0b",
+      "bytes": 5024
+    },
+    {
+      "path": "BIOSIMULATIONS_FCO_FCG_EXPORT_PROFILE.md",
+      "sha256": "0703f7e5c8747299ea02b40dd8bdbb717bfff8734e9cf39344c876b8c7b5f46b",
+      "bytes": 2873
+    },
+    {
+      "path": "CHECKSUMS.sha256",
+      "sha256": "52ac29f8c64cb3505f6f25c4e55c4abb29995db24095b433f58e9e32586989b8",
+      "bytes": 3111
+    },
+    {
+      "path": "FCO_REPO_VITAOLOGY_PATCH_PLAN.md",
+      "sha256": "ee66c107915f59fd75e4eacda7bdbfece9a1c407d31d70f3dc5e6377231ff4e8",
+      "bytes": 2257
+    },
+    {
+      "path": "GOVERNANCE_LOOP_BREAKER.md",
+      "sha256": "a43c871783968463489d8c3e963b2edfb63a2a83ad80f0fff3a50c1de4b0a346",
+      "bytes": 12208
+    },
+    {
+      "path": "MODEL_CREDIBILITY_CONTROL_PLANE.md",
+      "sha256": "6ecd437174c031a445213e32c840025ce909c0373bac35c3e595c00c8e0beedf",
+      "bytes": 9670
+    },
+    {
+      "path": "OLLARMA_CONNECT_INTEGRATION_PATCH.md",
+      "sha256": "a8a355418c18f3e609dd0ba6862b5469596335688c1814f70de9ab0197b97d70",
+      "bytes": 1935
+    },
+    {
+      "path": "README.md",
+      "sha256": "1b1af9799038728e252b28156fe593eb2a558e31d476f62ad81f5fcfa39bea2b",
+      "bytes": 1773
+    },
+    {
+      "path": "SKILL_EXPANSION_GOVERNANCE.md",
+      "sha256": "b66dde1881186cdb65514a74ccb59aea02fea1e229019cf229474b52d3626113",
+      "bytes": 1919
+    },
+    {
+      "path": "TEST_RESULTS.txt",
+      "sha256": "8e104645c31c0a8b392860c43ab9d3ab3e6733fc623a50747c28b3eafe4e3788",
+      "bytes": 1368
+    },
+    {
+      "path": "UNIVERSAL_FCO_FCG_PROJECT_BOOTSTRAP_PROMPT.md",
+      "sha256": "15b11890b7ea1010ccc7f6caff599353dff50883a03190f0b9336c2862cf8afa",
+      "bytes": 22532
+    },
+    {
+      "path": "VITALOGY_TO_VITAOLOGY_MIGRATION.md",
+      "sha256": "c5b61a32d3ef0e96b5452b719b4f4fa32dcdb74cf33ee7da43c182e4efcd5a9f",
+      "bytes": 3246
+    },
+    {
+      "path": "VITAOLOGY_PYTHIA_MODEL_SUBSTRATE.md",
+      "sha256": "9274d2f8df519c1c45393bfe5b84336203e106d8c8f3dd8740db2daa0524491a",
+      "bytes": 7708
+    },
+    {
+      "path": "WOUND_GTM_VITAOLOGY_ADAPTER.md",
+      "sha256": "8033b10e318591e8f95a901d0cb46fef7633a4cf43768316c5014113054f3c37",
+      "bytes": 2444
+    },
+    {
+      "path": "anticube_assessment.schema.json",
+      "sha256": "618679b18ec1ad442fa5964bdb470c4b6ee9d1ff719deaba5cd9344496403cfa",
+      "bytes": 1611
+    },
+    {
+      "path": "credibility_dimensions.csv",
+      "sha256": "a9914f68d20678ed130d394168c5b9bf2b0f15d6b51dc03c4c76afbcca68bda5",
+      "bytes": 2778
+    },
+    {
+      "path": "credibility_evaluation_template.yaml",
+      "sha256": "3866c07cdd29d9ad8553262c3af132c8f1fd8ec6baf6f5f09604440d22a351ad",
+      "bytes": 1302
+    },
+    {
+      "path": "examples/vitaology/PACKAGE_POINTER.json",
+      "sha256": "2c7d740f41456fd20880e391ee8896ecb54053999ffd597e258093bce4e3f99e",
+      "bytes": 471
+    },
+    {
+      "path": "examples/vitaology/README.md",
+      "sha256": "d73473a5d1c9261c1b1c35b0ce0806cdaf4a2fb69b13068719a60ce65cfe42e4",
+      "bytes": 1732
+    },
+    {
+      "path": "examples/vitaology/project_intake.example.yaml",
+      "sha256": "40c7d4543c7c9d15636025d6008947e09780c00e1664d5096685dd1f11e95bb7",
+      "bytes": 1163
+    },
+    {
+      "path": "fco_minimum_schema.json",
+      "sha256": "04db1d2a0d6ec223ef9efad0a7b676abe8f7b988ea2d00e31943b2a38dac1b67",
+      "bytes": 2502
+    },
+    {
+      "path": "governance_kernel.py",
+      "sha256": "d5205c8e8d7d69d22eb5ad625cfaab10f81fbb3d77cc0431931eb1f5caed3ba4",
+      "bytes": 5564
+    },
+    {
+      "path": "governance_loop_breaker.yaml",
+      "sha256": "df699430d844e708a8a679184f5183a74f2cfceb640a7d46954d4ab62d8852c5",
+      "bytes": 840
+    },
+    {
+      "path": "governance_request_schema.json",
+      "sha256": "71a8ed3ed2d3f4aff5c792d34955452de778a2928351023c138fbdd3674bd226",
+      "bytes": 1722
+    },
+    {
+      "path": "model_credibility_schema.json",
+      "sha256": "475bdf5868494a9fc44b141f246b9dd6110859e9fdff3ec6f7b6f0283d4d5fca",
+      "bytes": 5130
+    },
+    {
+      "path": "msm_scientific_record.schema.json",
+      "sha256": "27b5a78e7020e679b08bfa37e7b67ca21b36117ff8c8a7ec045f5c5146c426ea",
+      "bytes": 2042
+    },
+    {
+      "path": "project_intake_template.yaml",
+      "sha256": "592a1a19d3b55672e74ab0f499fd97cc95cf21a617717d19d06fdf0e48bc374a",
+      "bytes": 1059
+    },
+    {
+      "path": "release_manifest_template.json",
+      "sha256": "e02cd3522b6d0ba8ce327848d2bfe1a9a8b63ce681c06b0a663049a74239bcec",
+      "bytes": 715
+    },
+    {
+      "path": "reproducibility_roots.py",
+      "sha256": "c2b2ef723af5d879b63fb77852e2fb5146a8a4c5daed56cc75f14d6afb2ee00b",
+      "bytes": 1896
+    },
+    {
+      "path": "source_registry.csv",
+      "sha256": "b47bcb46772fa09031b0fed96b7cc91607ccbcee4f138dd14b3edd5d4f796d6b",
+      "bytes": 1276
+    },
+    {
+      "path": "test_governance_kernel.py",
+      "sha256": "c4bd3a75e21639e588ba631105117e92862615338f86d243ea822d18ae51eac3",
+      "bytes": 2075
+    },
+    {
+      "path": "test_reproducibility_roots.py",
+      "sha256": "235d8a27f19af09e478b92bb41cb3a48521115fa4c5ca41ddc3ee236989436e9",
+      "bytes": 819
+    },
+    {
+      "path": "vitaology_model_manifest.schema.json",
+      "sha256": "3ab764729a6c00e69a581cee6d0d281e8ca76a084265ae7a4ff708778d5d0922",
+      "bytes": 2609
+    }
+  ],
+  "llm_in_science_leaf": false,
+  "ts": "2026-07-26T03:49:07Z"
+}

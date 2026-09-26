@@ -1,201 +1,144 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#123e3a" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='32' fill='%23123e3a'/><path d='M20 34h7l5-14 6 27 5-13h5' fill='none' stroke='%23a9ded2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
-    <meta
-      name="description"
-      content="CareScribe Live — a privacy-first, non-diagnostic session documentation demo."
-    />
-    <title>CareScribe Live</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
-  </head>
-  <body>
-    <header class="app-header">
-      <a class="brand" href="#" aria-label="CareScribe Live home">
-        <span class="brand-mark" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-        <span>
-          <strong>CareScribe</strong>
-          <small>LIVE</small>
-        </span>
-      </a>
-      <div class="header-meta">
-        <span class="privacy-pill">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3m-9 0h8a2 2 0 0 1 2 2v7H6v-7a2 2 0 0 1 2-2Z"/></svg>
-          Stored on this device
-        </span>
-        <button class="icon-button" id="open-info" aria-label="Privacy and demo information">?</button>
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <meta name="description" content="CareScribe Room — privacy-first, non-diagnostic pediatric speech therapy documentation.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/><path d='M18 34h9l5-15 6 28 6-13h4' fill='none' stroke='%2379d9bc' stroke-width='5' stroke-linecap='round'/></svg>">
+  <title>CareScribe Room</title><link rel="stylesheet" href="styles.css"><script src="fco-core.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+  <input class="presentation-toggle" id="presentation-mode" type="checkbox">
+  <header class="app-header">
+    <a class="brand" href="#" aria-label="CareScribe home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>CareScribe</strong><small>ROOM</small></span></a>
+    <div class="header-meta"><span class="privacy-pill">▣ Local-only · consent required</span><label class="present-button" for="presentation-mode"><span>↗</span><b>Present</b></label><button id="open-info" class="icon-button" aria-label="Privacy and demo information">i</button></div>
+  </header>
+
+  <main>
+    <section class="session-bar" aria-label="Session controls">
+      <div><p class="eyebrow">Live care workspace · Room 4</p><div class="session-title-row"><h1 id="session-title">Developmental visit</h1><span id="status-chip" class="status-chip ready"><i></i> Ready</span></div><p class="session-subtitle"><span id="session-date"></span><span>•</span><span id="timer">00:00</span><span>•</span><span>Fictional demo family</span></p></div>
+      <div class="session-actions">
+        <button id="start-session" class="button primary">◉ Start session</button>
+        <button id="pause-session" class="button secondary hidden"><span class="pause-icon"></span> Pause</button>
+        <button id="end-session" class="button danger hidden">End session</button>
+        <button id="delete-session" class="button ghost" title="Delete session">⌫ <span>Delete</span></button>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <section class="session-bar" aria-label="Session controls">
-        <div>
-          <p class="eyebrow">Current session</p>
-          <div class="session-title-row">
-            <h1 id="session-title">Developmental visit</h1>
-            <span class="status-chip ready" id="status-chip"><i></i> Ready</span>
+    <section class="boundary" role="note"><b>◇ Support, never diagnosis.</b><span>The family controls capture. The therapist reviews every update before it enters the visit note.</span><div><i>Consent active</i><i>FCO state local</i><i id="bedrock-status">Bedrock remote · checking</i><i>Human approval</i></div></section>
+
+    <section class="journey-card" aria-labelledby="journey-title">
+      <header class="section-head"><div><p class="eyebrow">Five-step guided visit</p><h2 id="journey-title">Keep the child engaged while adults keep the plan clear</h2></div><b id="journey-progress" class="pill">STEP 1 OF 5</b></header>
+      <nav class="journey-tabs" aria-label="Visit steps">
+        <button data-step="1" class="active"><b>1</b><span>Consent</span></button>
+        <button data-step="2"><b>2</b><span>Story</span></button>
+        <button data-step="3"><b>3</b><span>Advocate</span></button>
+        <button data-step="4"><b>4</b><span>Provider review</span></button>
+        <button data-step="5"><b>5</b><span>Confirm plan</span></button>
+      </nav>
+      <div class="journey-stage">
+        <article class="journey-pane active" data-pane="1">
+          <div><small>CAREGIVER CONTROL</small><h3>Choose what the room may use</h3><p>Microphone and camera are separate, revocable permissions. The camera preview is never recorded by this prototype.</p>
+            <div class="permission-actions"><button id="enable-camera" class="button secondary">Enable camera preview</button><button id="stop-camera" class="button ghost" disabled>Stop camera</button></div>
           </div>
-          <p class="session-subtitle"><span id="session-date"></span> <span aria-hidden="true">•</span> <span id="timer">00:00</span></p>
-        </div>
-        <div class="session-actions">
-          <button class="button button-primary" id="start-session">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Zm-6 9a6 6 0 0 0 12 0m-6 6v3m-3 0h6"/></svg>
-            Start session
-          </button>
-          <button class="button button-secondary hidden" id="pause-session">
-            <span class="pause-icon" aria-hidden="true"></span> Pause
-          </button>
-          <button class="button button-danger hidden" id="end-session">End session</button>
-          <button class="button button-ghost" id="delete-session" title="Delete session">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/></svg>
-            <span>Delete</span>
-          </button>
-        </div>
+          <video id="camera-preview" muted playsinline aria-label="Local camera preview"></video>
+        </article>
+        <article class="journey-pane" data-pane="2">
+          <div class="story-book" aria-label="Child-friendly fictional story"><small>LEO'S SPACE BOOK · PAGE <span id="story-page">1</span></small><h3 id="story-title">The little rocket gets ready</h3><p id="story-copy">Leo helps the rocket find three red blocks before launch.</p><div class="story-art" aria-hidden="true">🚀 <span>▪</span><span>▪</span><span>▪</span></div><button id="story-next" class="button secondary">Turn the page</button></div>
+          <div><small>BOUNDED CHILD VIEW</small><h3>A calm activity, not a clinical agent</h3><p>The story can speak and progress, but it does not assess the child, solicit secrets, or make care recommendations.</p><button id="read-story" class="button primary">Read this page aloud</button></div>
+        </article>
+        <article class="journey-pane" data-pane="3">
+          <div><small>CAREGIVER ADVOCATE</small><h3>Capture concerns without promoting conclusions</h3><p>Example: “I read this could be autism.” CareScribe records that as a caregiver question and asks the provider to clarify—not as a diagnosis.</p><button id="run-concern" class="button primary">Run fictional concern</button></div>
+          <div class="instruction-card"><b>Caregiver instructions</b><ol><li>Correct the exact words if needed.</li><li>Approve only important interventions.</li><li>Mute or dismiss the advocate at any time.</li></ol></div>
+        </article>
+        <article class="journey-pane" data-pane="4">
+          <div><small>PROVIDER EHR-STYLE VIEW</small><h3>Review evidence, source, and uncertainty</h3><p>This is a prototype workspace—not an EHR integration. Remote Bedrock suggestions remain untrusted until reviewed.</p><div class="model-routes"><span><b>Nova Micro</b> Verified · event atomization</span><span><b>Nova Pro</b> Verified · synthesis</span><span><b>Liquid AI / Mistral vision</b> Adapter planned · model ID unverified</span></div></div>
+          <div id="ehr-preview" class="ehr-preview"><header>FICTIONAL EHR PREVIEW <b>NOT CONNECTED</b></header><p><strong>Caregiver concern:</strong> Possible autism question — needs clinician response.</p><p><strong>Observed:</strong> No diagnostic conclusion generated.</p></div>
+        </article>
+        <article class="journey-pane" data-pane="5">
+          <div><small>SHARED CLOSEOUT</small><h3>Confirm what happens next</h3><p>Before ending, identify unresolved questions, responsible party, timing, and what the caregiver understood.</p><button id="generate-handoff" class="button primary">Generate review draft with Nova Pro</button></div>
+          <div id="handoff-preview" class="instruction-card"><b>Waiting for clinician-reviewed handoff</b><p>No plan is finalized until caregiver and provider confirm it.</p></div>
+        </article>
+      </div>
+      <footer class="journey-controls"><button id="journey-back" class="button ghost" disabled>← Back</button><span id="journey-label">Consent and device setup</span><button id="journey-next" class="button secondary">Next: child story →</button></footer>
+    </section>
+
+    <section class="room-card" aria-labelledby="room-title">
+      <header class="section-head"><div><p class="eyebrow">Shared context</p><h2 id="room-title">One room, three voices, one reviewed record</h2></div><p class="legend"><i></i> Family voice <i></i> Reviewed update</p></header>
+      <div class="room-scene">
+        <article class="actor caregiver">
+          <div class="actor-id"><div class="avatar maya" aria-hidden="true"><i></i></div><div><small>Caregiver</small><h3>Maya</h3><p>Owns consent &amp; corrections</p></div></div>
+          <div class="phone" aria-label="Caregiver phone advocate">
+            <div class="phone-status"><span>9:42</span><i></i></div>
+            <div class="advocate"><b>C</b><span><strong>Your advocate</strong><small>Listening with permission</small></span></div>
+            <blockquote>“A short warning helps with transitions.”</blockquote>
+            <div class="phone-alert"><small>PRIORITY</small><b>Share transition strategy?</b></div>
+            <div class="care-controls" aria-label="Caregiver controls"><button data-advocate-action="mute">◉<small>Mute</small></button><button data-advocate-action="dismiss">×<small>Dismiss</small></button><button data-advocate-action="correct">✎<small>Correct</small></button><button data-advocate-action="approve" class="ok">✓<small>Approve</small></button></div>
+          </div>
+        </article>
+        <div class="flow"><span>permissioned</span></div>
+        <article class="actor child">
+          <div class="avatar leo" aria-hidden="true"><i></i></div><small>Child</small><h3>Leo, age 5</h3><blockquote>“More red blocks, please.”</blockquote><p>Playing · building · communicating</p>
+        </article>
+        <div class="flow reviewed"><span>reviewed</span></div>
+        <article class="actor provider">
+          <div class="actor-id"><div class="avatar elena" aria-hidden="true"><i></i></div><div><small>Pediatric speech therapist</small><h3>Dr. Elena Chen, SLP</h3><p>Clinical judgment stays with provider</p></div></div>
+          <div class="desktop" aria-label="Provider desktop receiving updates">
+            <header><i>● ● ●</i><b>CareScribe provider view</b><small>LIVE</small></header>
+            <div class="desktop-body"><nav aria-hidden="true">—<br>—<br>—<br>—</nav><div id="provider-live-feed">
+              <article class="update approved"><small>CAREGIVER APPROVED · 09:41</small><b>Advance notice supports transitions</b><span>Linked to caregiver statement</span></article>
+              <article class="update"><small>NEW · REVIEW NEEDED</small><b>Spontaneous 4-word request observed</b><span>Transcript evidence attached</span></article>
+            </div></div>
+          </div>
+        </article>
+      </div>
+      <footer class="room-steps"><span><b>1</b>Capture with consent</span><span><b>2</b>Organize, don’t interpret</span><span><b>3</b>Family confirms meaning</span><span><b>4</b>Provider reviews</span></footer>
+    </section>
+
+    <section class="workflow" aria-label="Live session intelligence">
+      <section class="panel transcript-panel">
+        <header class="panel-head"><div><p class="eyebrow">Live transcript</p><h2>What was actually said</h2></div><div id="audio-state" class="audio-state"><i></i><span id="audio-label">Mic off</span></div></header>
+        <div class="speaker-control"><span>Speaking as</span><div id="role-tabs" class="role-tabs" role="radiogroup" aria-label="Current speaker">
+          <button data-role="provider" role="radio" aria-checked="true" class="active"><i></i> Therapist</button><button data-role="caregiver" role="radio" aria-checked="false"><i></i> Caregiver</button><button data-role="child" role="radio" aria-checked="false"><i></i> Child</button><button data-role="uncertain" role="radio" aria-checked="false"><i></i> Uncertain</button>
+        </div></div>
+        <div id="transcript-list" class="transcript-list" aria-live="polite"><div id="transcript-empty" class="empty-state"><div class="wave">▂▅▇▅▂</div><h3>The room is ready</h3><p>Start after informed consent. If the microphone is unavailable, a clearly labeled fictional sample plays.</p></div></div>
+        <form id="manual-form" class="manual-entry"><label for="manual-text">Caregiver or provider correction</label><div><input id="manual-text" maxlength="500" placeholder="Add the exact spoken words…" autocomplete="off"><button class="button secondary" type="submit">Add</button></div></form>
       </section>
 
-      <section class="notice" role="note">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-14v5m0 4h.01"/></svg>
-        <p><strong>Documentation support only.</strong> CareScribe does not diagnose, assess, or replace clinical judgment. Review all generated notes before use.</p>
-      </section>
-
-      <div class="workspace">
-        <section class="panel transcript-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Live capture</p>
-              <h2>Conversation</h2>
-            </div>
-            <div class="audio-state" id="audio-state"><span class="audio-dot"></span><span id="audio-label">Mic off</span></div>
-          </div>
-
-          <div class="speaker-control">
-            <span>Speaking as</span>
-            <div class="role-tabs" id="role-tabs" role="radiogroup" aria-label="Current speaker">
-              <button data-role="provider" role="radio" aria-checked="true" class="active"><i></i> Provider</button>
-              <button data-role="caregiver" role="radio" aria-checked="false"><i></i> Caregiver</button>
-              <button data-role="child" role="radio" aria-checked="false"><i></i> Child</button>
-              <button data-role="uncertain" role="radio" aria-checked="false"><i></i> Uncertain</button>
-            </div>
-          </div>
-
-          <div class="transcript-list" id="transcript-list" aria-live="polite">
-            <div class="empty-state" id="transcript-empty">
-              <div class="empty-visual">
-                <span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <h3>Ready when you are</h3>
-              <p>Start the session to capture the conversation. If live transcription is unavailable, a clearly labeled sample will play.</p>
-            </div>
-          </div>
-
-          <form class="manual-entry" id="manual-form">
-            <label for="manual-text">Add or correct transcript</label>
-            <div>
-              <input id="manual-text" type="text" maxlength="500" placeholder="Type a spoken line…" autocomplete="off" />
-              <button class="button button-secondary" type="submit">Add</button>
-            </div>
-          </form>
+      <div class="operations">
+        <section class="panel"><header class="panel-head compact"><div><p class="eyebrow">Priority queue</p><h2>Needs attention now</h2></div><b class="count">3</b></header>
+          <ol id="priority-list" class="priority-list"><li><b>READY</b><span><strong>Start the fictional encounter</strong><small>Caregiver controls every intervention</small></span><time>Now</time></li></ol>
         </section>
-
-        <aside class="insights-column">
-          <section class="panel observations-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Structured notes</p>
-                <h2>Observations <span class="count" id="observation-count">0</span></h2>
-              </div>
-              <span class="review-label">Requires review</span>
-            </div>
-            <div id="observations-list" class="card-list">
-              <div class="mini-empty" id="observations-empty">Observations will appear here as the conversation unfolds.</div>
-            </div>
-          </section>
-
-          <section class="panel questions-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Consider asking</p>
-                <h2>Follow-up questions <span class="count" id="question-count">0</span></h2>
-              </div>
-            </div>
-            <div id="questions-list" class="question-list">
-              <div class="mini-empty" id="questions-empty">Contextual prompts will appear during the session.</div>
-            </div>
-          </section>
-        </aside>
+        <section class="panel"><header class="panel-head compact"><div><p class="eyebrow">FCO event stream</p><h2>Family-controlled observations</h2></div><b class="pill">LIVE</b></header>
+          <div id="fco-event-stream" class="event-stream"><article><time>Ready</time><i></i><span><b>Local custody initialized</b><small>Append-only FCO events appear here.</small></span><code>FCO</code></article></div>
+        </section>
       </div>
-    </main>
 
-    <footer>
-      <span>CareScribe Live demo</span>
-      <span>Local-only browser experience · No data is sent to a server</span>
-    </footer>
+      <section class="panel fcg-panel"><header class="panel-head compact"><div><p class="eyebrow">FCG relationships</p><h2>Why each update exists</h2></div><b class="pill">TRACEABLE</b></header>
+        <div id="fcg-graph" class="graph"><article><small>LOCAL GRAPH</small><b>Waiting for events</b><span>Relationships remain evidence-linked.</span></article></div>
+      </section>
 
-    <dialog id="consent-dialog" class="modal consent-modal">
-      <form method="dialog">
-        <div class="modal-icon consent-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Zm-3 9 2 2 4-5"/></svg>
-        </div>
-        <p class="eyebrow">Before you begin</p>
-        <h2>Confirm privacy & consent</h2>
-        <p class="modal-copy">Only capture a conversation after everyone present understands and agrees. This demo stores session data in this browser only.</p>
-        <label class="check-row">
-          <input type="checkbox" id="consent-check" />
-          <span><strong>I have informed consent</strong><small>Everyone present has agreed to audio capture and transcription.</small></span>
-        </label>
-        <label class="check-row">
-          <input type="checkbox" id="privacy-check" />
-          <span><strong>I understand this is a demo</strong><small>Content is non-diagnostic and must be reviewed by a qualified clinician.</small></span>
-        </label>
-        <div class="modal-actions">
-          <button class="button button-ghost" value="cancel">Cancel</button>
-          <button class="button button-primary" id="confirm-consent" value="default" disabled>Agree & start</button>
-        </div>
-      </form>
-    </dialog>
+      <section class="panel mmr-panel"><header class="panel-head compact"><div><p class="eyebrow">MMR checkpoint</p><h2>Append-only custody</h2></div><b id="mmr-count" class="pill">0 EVENTS</b></header>
+        <div class="meaning"><blockquote><small>INTEGRITY CHECKPOINT — NOT CLINICAL TRUTH</small><span id="mmr-root">No canonical events appended yet.</span></blockquote><div><p><i>✓</i><span><b>Canonical bytes</b><small>Exact persisted FCO payload</small></span><strong>Local</strong></p><p><i>✓</i><span><b>Corrections</b><small>Successor events preserve history</small></span><strong>Append-only</strong></p><p><i>•</i><span><b>Clinical meaning</b><small>Requires caregiver and provider review</small></span><strong>Pending</strong></p></div></div>
+      </section>
 
-    <dialog id="end-dialog" class="modal">
-      <form method="dialog">
-        <div class="modal-icon end-icon">✓</div>
-        <h2>End this session?</h2>
-        <p class="modal-copy">The transcript and reviewed observations will remain saved on this device.</p>
-        <div class="modal-actions">
-          <button class="button button-ghost" value="cancel">Keep recording</button>
-          <button class="button button-danger" id="confirm-end" value="default">End session</button>
-        </div>
-      </form>
-    </dialog>
+      <aside class="insights">
+        <section class="panel"><header class="panel-head compact"><div><p class="eyebrow">Provider updates</p><h2>Review queue <span id="observation-count" class="count">0</span></h2></div><b class="review-label">HUMAN REVIEW</b></header><div id="observations-list" class="card-list"><div id="observations-empty" class="mini-empty">Evidence-linked updates appear as the conversation unfolds.</div></div></section>
+        <section class="panel"><header class="panel-head compact"><div><p class="eyebrow">Provider prompts</p><h2>Consider asking <span id="question-count" class="count">0</span></h2></div></header><div id="questions-list" class="question-list"><div id="questions-empty" class="mini-empty">Optional contextual prompts will appear here.</div></div></section>
+      </aside>
+    </section>
 
-    <dialog id="delete-dialog" class="modal">
-      <form method="dialog">
-        <div class="modal-icon delete-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7"/></svg>
-        </div>
-        <h2>Delete this session?</h2>
-        <p class="modal-copy">This permanently removes the transcript, observations, and questions from this browser.</p>
-        <div class="modal-actions">
-          <button class="button button-ghost" value="cancel">Cancel</button>
-          <button class="button button-danger" id="confirm-delete" value="default">Delete permanently</button>
-        </div>
-      </form>
-    </dialog>
+    <section class="output-card" aria-labelledby="output-title"><div><p class="eyebrow">End-of-visit output</p><h2 id="output-title">A review-ready handoff, not an automated conclusion</h2><p>Source, context, and authorship stay visible so the family and therapist can verify what leaves the room.</p><div class="badges"><span>Family-reviewed</span><span>Evidence-linked</span><span>Clinician-authored</span></div></div>
+      <article class="visit-note"><header><span><small>Draft visit summary</small><b>Pediatric speech therapy · Sep 26</b></span><strong>DRAFT</strong></header><section><small>FAMILY CONTEXT</small><p>Caregiver reports that a two-minute warning may support transitions away from preferred activities at home.</p><i>Source: FCO-19 · caregiver approved</i></section><section><small>SESSION OBSERVATION</small><p>Child used “More red blocks, please” during shared block play.</p><i>Source: Transcript 09:42 · provider review pending</i></section><footer>▣ Clinician sign-off required <button>Export after review →</button></footer></article>
+    </section>
+  </main>
 
-    <dialog id="info-dialog" class="modal">
-      <form method="dialog">
-        <div class="modal-icon consent-icon">i</div>
-        <h2>About this demo</h2>
-        <p class="modal-copy">CareScribe Live demonstrates browser-based documentation support. Live transcription depends on browser support and may use the browser vendor’s speech service. The safe simulation contains fictional, non-identifying sample content.</p>
-        <p class="modal-copy"><strong>No AWS service or clinical system is connected.</strong> Data remains in local browser storage until you delete it.</p>
-        <div class="modal-actions"><button class="button button-primary" value="default">Got it</button></div>
-      </form>
-    </dialog>
+  <footer class="site-footer"><span>CareScribe Room · fictional demonstration</span><span>Local browser storage · delete anytime · no diagnosis generated</span></footer>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  </body>
+  <dialog id="consent-dialog" class="modal"><form method="dialog"><div class="modal-icon">✓</div><p class="eyebrow">Family control starts here</p><h2>Confirm privacy &amp; consent</h2><p class="modal-copy">Only capture after everyone present understands and agrees. The caregiver can mute, correct, dismiss, or approve throughout the visit.</p><label class="check-row"><input id="consent-check" type="checkbox"><span><b>I have informed consent</b><small>Everyone present has agreed to capture and transcription.</small></span></label><label class="check-row"><input id="privacy-check" type="checkbox"><span><b>I understand the boundary</b><small>This local demo is non-diagnostic and requires clinician review.</small></span></label><div class="modal-actions"><button class="button ghost" value="cancel">Cancel</button><button id="confirm-consent" class="button primary" value="default" disabled>Agree &amp; start</button></div></form></dialog>
+  <dialog id="end-dialog" class="modal"><form method="dialog"><div class="modal-icon">✓</div><h2>Prepare the visit handoff?</h2><p class="modal-copy">Ending stops capture. Reviewed content remains on this device for clinician sign-off.</p><div class="modal-actions"><button class="button ghost" value="cancel">Keep recording</button><button id="confirm-end" class="button danger" value="default">End session</button></div></form></dialog>
+  <dialog id="delete-dialog" class="modal"><form method="dialog"><div class="modal-icon danger-icon">⌫</div><h2>Delete this session?</h2><p class="modal-copy">This permanently removes the session from this browser.</p><div class="modal-actions"><button class="button ghost" value="cancel">Cancel</button><button id="confirm-delete" class="button danger" value="default">Delete permanently</button></div></form></dialog>
+  <dialog id="info-dialog" class="modal"><form method="dialog"><div class="modal-icon">i</div><h2>About CareScribe Room</h2><p class="modal-copy">This fictional demo shows family-controlled documentation support. It does not diagnose or recommend treatment. Live speech may use the browser vendor’s service.</p><p class="modal-copy"><b>No clinical system is connected.</b> Local data remains until deleted.</p><div class="modal-actions"><button class="button primary" value="default">Got it</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
 </html>

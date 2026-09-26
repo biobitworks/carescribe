@@ -15,8 +15,8 @@ dev = ["pytest>=8,<9"]
 
 [project.scripts]
 carescribe-bedrock-smoke = "carescribe.smoke:main"
+carescribe-live-demo = "carescribe.live_server:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-

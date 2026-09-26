@@ -1,0 +1,23 @@
+{
+  "release_name": "{{RELEASE_NAME}}",
+  "release_version": "{{RELEASE_VERSION}}",
+  "project_id": "{{PROJECT_ID}}",
+  "created_at": "{{ISO8601}}",
+  "claim_ceiling": "{{CLAIM_CEILING}}",
+  "artifacts": [
+    {
+      "path": "{{RELATIVE_PATH}}",
+      "media_type": "{{MEDIA_TYPE}}",
+      "size": 0,
+      "sha256": "{{SHA256}}",
+      "fco_type": "{{FCO_TYPE}}",
+      "privacy_class": "{{PUBLIC_PRIVATE_CONFIDENTIAL_PHI}}",
+      "license": "{{LICENSE_OR_UNKNOWN}}",
+      "source_or_derivative": "{{SOURCE_DERIVATIVE_COMPOSITE}}",
+      "parent_hashes": [],
+      "release_status": "{{DRAFT_RELEASED_QUARANTINED}}"
+    }
+  ],
+  "release_root_sha256": "{{COMPUTE_AFTER_CANONICALIZATION}}",
+  "signature": null
+}

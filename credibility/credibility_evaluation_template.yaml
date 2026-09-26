@@ -1,0 +1,54 @@
+assessment:
+  assessment_id: "{{ASSESSMENT_ID}}"
+  model_fco: "sha256:{{MODEL_FCO_HASH}}"
+  claim_fco: "sha256:{{CLAIM_FCO_HASH}}"
+
+context_of_use:
+  decision: "{{DECISION_SUPPORTED}}"
+  population_or_domain: "{{TARGET_DOMAIN}}"
+  conditions:
+    - "{{CONDITION}}"
+  outputs:
+    - "{{MODEL_OUTPUT}}"
+  exclusions:
+    - "{{EXCLUSION}}"
+
+risk:
+  decision_consequence: "{{low|moderate|high|critical}}"
+  model_influence: "{{supporting|important|primary|controlling}}"
+  required_tier: "{{C0|C1|C2|C3|C4}}"
+
+mandatory_gates:
+  - gate: "identity_and_authorization"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "data_and_model_rights"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "source_custody"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "executable_package"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "verification"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "validation_and_applicability"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "uncertainty_and_limitations"
+    status: "unknown"
+    evidence_fcos: []
+  - gate: "critical_contradictions_resolved"
+    status: "unknown"
+    evidence_fcos: []
+
+anticube:
+  identity: "unknown"
+  safety: "unknown"
+  rationale: ""
+
+status: "UNASSESSED"
+claim_ceiling: ""
+next_mechanically_decisive_test: ""

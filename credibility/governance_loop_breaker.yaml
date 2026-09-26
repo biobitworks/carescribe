@@ -1,0 +1,41 @@
+governance:
+  authority: "fco-admission-kernel"
+  max_hops: 4
+  max_same_blocker_replays: 1
+  automatic_retry_budget: 0
+  skill_expansion_retry_budget: 1
+  human_required_after_cycle: true
+  cache_decisions_by_state_roots: true
+  forbid_recursive_connect_calls: true
+  capability_default_max_uses: 1
+  capability_default_ttl_seconds: 900
+
+terminal_blockers:
+  - RECOVERY_REQUIRED
+  - STRANDED_WORKTREE
+  - POSSIBLE_WORK_LOSS
+  - RECOVERY_SWEEP_REQUIRED
+  - KB_SOURCES_UNDECLARED
+  - KB_SOURCE_MISSING
+  - KB_NOT_BUILT
+  - KB_STALE
+  - ANTIGENCE_BLOCK
+  - GOVERNANCE_CYCLE_DETECTED
+
+read_only_fail_open:
+  enabled: true
+  only_for:
+    - helper_chat
+    - local_file_discovery
+    - non-authoritative_summary
+
+fail_closed_actions:
+  - execute
+  - write
+  - train
+  - promote
+  - publish
+  - sign
+  - use_key
+  - egress
+  - clinical_decision

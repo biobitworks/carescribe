@@ -1,0 +1,8 @@
+source_id,organization,title,url,use
+SRC-001,Reproducible Biomodels,Model credibility,https://reproduciblebiomodels.org/research/model-credibility/,Reproducibility-to-credibility motivation
+SRC-002,BioSimulations,Creating simulation projects,https://docs.biosimulations.org/users/creating-projects/,"COMBINE/OMEX, SED-ML, metadata, model and visualization packaging"
+SRC-003,BioSimulations,Validating projects,https://docs.biosimulations.org/users/validating-projects/,Static validation and limitations
+SRC-004,BioSimulations,Simulation run logs,https://docs.biosimulations.org/concepts/conventions/simulation-run-logs/,"Execution status, arguments, stdout/stderr, failures and duration"
+SRC-005,BioSimulations,Simulator capabilities,https://docs.biosimulations.org/concepts/conventions/simulator-capabilities/,"Framework, algorithm, format, parameter, version, container and license metadata"
+SRC-006,FDA,Recognized consensus standard: ASME V&V 40-2018,https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfstandards/detail.cfm?standard__identification_no=38534,Context- and decision-specific model credibility
+SRC-007,GitHub: biobitworks/ollarma-public,README,https://github.com/biobitworks/ollarma-public,"Bounded execution, receipt chain, recovery and determinism"

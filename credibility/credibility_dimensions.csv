@@ -1,0 +1,21 @@
+dimension_id,dimension,minimum_evidence_question,gate_class
+CRED-01,Context of use,"Decision, population, conditions, outputs, exclusions, and model influence are explicit",Mandatory
+CRED-02,Provenance and custody,"Model, data, code, prompts, tools, authorship, licenses, and transformations are traceable",Mandatory
+CRED-03,Technical executability,Declared archive validates and executes in a pinned environment,Mandatory
+CRED-04,Reported-output reproduction,"Published tables, figures, and observables are reproduced within declared tolerances",Mandatory when prior results claimed
+CRED-05,Conceptual/biophysical appropriateness,"Structure, assumptions, mechanisms, conservation rules, and abstractions fit the context",Mandatory
+CRED-06,Implementation verification,Code correctly implements the conceptual and mathematical model,Mandatory
+CRED-07,Numerical verification,"Discretization, solver, tolerance, convergence, stochastic, and numerical error are characterized",When applicable
+CRED-08,Data credibility,"Measurements, labels, provenance, calibration, missingness, bias, and rights are adequate",Mandatory
+CRED-09,Calibration and identifiability,Parameter estimation avoids leakage and characterizes identifiability and equifinality,When calibrated
+CRED-10,Validation,Predictions are compared with independent and relevant evidence,Mandatory for decision qualification
+CRED-11,Sensitivity,"Influential parameters, assumptions, and inputs are characterized",Mandatory for consequential use
+CRED-12,Uncertainty,"Parameter, structural, numerical, measurement, and scenario uncertainty are quantified or bounded",Mandatory for consequential use
+CRED-13,Robustness/failure domain,"Known failure modes, OOD behavior, edge cases, and invalid regimes are mapped",Mandatory
+CRED-14,Applicability/domain coverage,"Validation evidence matches the target population, scale, device, site, or biological domain",Mandatory
+CRED-15,Cross-tool corroboration,"Alternative simulator, solver, implementation, or analysis corroborates results",Recommended/high-risk mandatory
+CRED-16,Independent replication,A party independent of the original modeler reproduces or tests the decisive result,Recommended/high-risk mandatory
+CRED-17,Transparency/reusability,"Documentation, metadata, formats, identifiers, and licenses support independent use",Mandatory for public release
+CRED-18,Governance/change control,"Review, versioning, approval, skill expansion, and release controls are explicit",Mandatory
+CRED-19,Monitoring/credibility decay,"Triggers for reassessment, drift, contradiction, and revocation are operational",Mandatory for ongoing use
+CRED-20,Claim-evidence completeness,Every released claim maps to sufficient supporting and contradicting evidence,Mandatory

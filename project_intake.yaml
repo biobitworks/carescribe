@@ -1,0 +1,59 @@
+project:
+  name: "carescribe"
+  root: "/Users/byron/projects/active/carescribe"
+  type:
+    - "hybrid_research_software"
+  owner: "OPERATOR"
+  stage: "retrofit_bootstrap"
+  goal: "Privacy-first caregiver-controlled pediatric encounter advocate prototype"
+  timebox: "Healthcare AI Hackathon ending 2026-09-26 15:00 America/Los_Angeles"
+  budget: "UNKNOWN"
+  public_private_mode: "public code; private local session state; remote Bedrock inference explicitly labeled"
+  regulated_domain: "healthcare prototype; PHI prohibited in hackathon demo"
+  target_users:
+    - "caregivers"
+    - "pediatric speech therapists"
+    - "authorized providers"
+    - "hackathon judges using synthetic data"
+  expected_outputs:
+    - "browser MVP"
+    - "FCO/FCG/MMR local custody prototype"
+    - "synthetic audio/video/text presentation"
+    - "judge-facing documentation"
+
+governance:
+  claim_ceiling: "PROTOTYPE_WORKFLOW_DEMONSTRATION_ONLY_NO_CLINICAL_CLAIMS"
+  single_writer: true
+  append_only_custody: true
+  preserve_failures: true
+  prompt_provenance: true
+  artifact_sha256: true
+  voice_labels:
+    - USER
+    - SOURCE
+    - MEASURED
+    - AGENT
+    - INFERRED
+    - SPECULATIVE
+    - UNKNOWN
+    - FORBIDDEN/UNSUPPORTED
+
+anticube:
+  identity:
+    - self
+    - non-self
+  safety:
+    - safe
+    - non-safe
+
+required_registries:
+  - asset_inventory
+  - skills_registry
+  - dataset_registry
+  - package_registry
+  - source_registry
+  - terminology_matrix
+  - risk_register
+  - decision_log
+  - failure_register
+  - release_manifest

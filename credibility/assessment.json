@@ -1,0 +1,7 @@
+{
+  "schema_version": "model_credibility.v1",
+  "status": "seed",
+  "reproducibility_status": "NOT_EXECUTABLE",
+  "aggregation_rule": "mandatory_gates_plus_profile_no_average",
+  "llm_in_science_leaf": false
+}

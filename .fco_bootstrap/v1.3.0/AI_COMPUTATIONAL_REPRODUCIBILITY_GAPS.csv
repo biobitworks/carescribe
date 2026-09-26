@@ -1,0 +1,25 @@
+gap_id,gap,current_risk,severity,required_change,verification
+REP-001,Ordered dataset identity,Current multiset Merkle root is order-independent while language-model training depends on token order,Critical,Add ordered sequence manifest and sequence root; bind batch/sample order,Dataset release tests
+REP-002,Architecture authority,Training runner references a Pythia builder that is not visible in the current inspected models module,Critical,Freeze one architecture implementation/config and add import/shape/parameter tests,Architecture conformance suite
+REP-003,Complete code identity,"Fixed five-file code SHA omits executed scripts, configs, lockfiles, tokenizer, adapters, and evaluation code",Critical,"Canonical source-tree manifest with path, size and hash; bind Git commit and dirty diff",Tree-root recomputation
+REP-004,Code concatenation ambiguity,Raw concatenation of file bytes does not encode path or boundaries,High,Hash canonical file manifest rather than concatenated bytes,Boundary-collision fixture
+REP-005,Tokenizer identity,"Tokenizer JSON, normalization, special tokens and library version must be one FCO",Critical,Freeze bytes and tokenizer behavior test vectors,Encode/decode golden tests
+REP-006,Training sample order,Dataset root alone does not bind epoch/batch ordering or dropped/padded samples,Critical,Sampler-order manifest per run/epoch,Replay first/last N batches
+REP-007,RNG completeness,"Python, NumPy, torch CPU/device, sampler, augmentation and worker RNG streams need distinct records",High,RNG state manifest and worker seeding,Restart/resume equivalence
+REP-008,Environment identity,"Best-effort pip freeze does not bind system libraries, compiler, drivers or backend",Critical,"Pixi/uv lock, container digest, OS/kernel, torch build, BLAS and accelerator manifest",Clean-environment replay
+REP-009,Backend determinism tiers,MPS/CUDA/TPU may not be bit-identical across runs or releases,Critical,Declare artifact/pipeline/pinned/cross-platform tiers and tolerances,Device-stratified replay
+REP-010,Optimizer and scheduler custody,"Optimizer state, LR schedule, gradient accumulation, clipping and scaler state must be frozen",Critical,Training-state FCO at every checkpoint,Resume-from-checkpoint equivalence
+REP-011,Checkpoint schedule,Learning-dynamics claims require fixed checkpoint cadence including step 0,High,Checkpoint schedule FCO and missing-checkpoint detection,Sequence completeness test
+REP-012,Data rights and withdrawal,"Authorized use, public-domain edition identity and withdrawal/correction triggers need linkage",Critical,Data-rights FCO and revocation graph,Release gate
+REP-013,Evaluation leakage,Training corpora and MSM examples can contaminate credibility/evaluation prompts,High,"Locked test roots, deduplication and overlap reports",Leakage audit
+REP-014,Model behavior reproducibility,Same weights do not ensure same generation without inference config,High,"Bind decoding config, seed, prompt template, tokenizer and runtime",Golden generation tests
+REP-015,Prompt/tool reproducibility,"Agent results depend on system prompts, tools, permissions, retrieval state and skill versions",Critical,Prompt/tool/skill FCOs and receipt chain,Agent replay fixtures
+REP-016,Governance recursion,Fail-closed agents can repeatedly reinterpret unchanged blockers,Critical,"Single Admission Kernel, decision-key cache, terminal blockers, hop budget",Deadlock tests
+REP-017,Quantization identity,Quantized weights are a new numerical implementation with possible behavior drift,Critical,"Derivative FCO, calibration dataset root and equivalence/failure tests",Pre/post quantization evaluation
+REP-018,Adapter isolation,Domain adapters can overwrite or contaminate the base model identity,High,Frozen base root; adapter-only derivative manifests,Base hash unchanged
+REP-019,Public/private mirrors,Public repositories can diverge from private authoritative releases,High,Signed delta manifest and public-release projection root,Mirror reconciliation
+REP-020,Claim-specific credibility,Reproducible execution does not establish biological or clinical credibility,Critical,Context-of-use credibility assessment with mandatory gates,Claim-evidence graph audit
+REP-021,Failure-set preservation,Aggregate scores can hide repeated or safety-critical failure modes,High,Frozen failure set and contradiction roots,Regression gate
+REP-022,BioSimulations compatibility,"Biomedical simulation tasks need COMBINE/OMEX, SED-ML and simulator-capability metadata",Medium,Standards-compatible export profile and sidecar custody,Static validation and execution test
+REP-023,Scientific source authority,Historical authors and model-generated text must not become evidence authorities,Critical,Source-type and evidence-grade policy,Citation and claim promotion tests
+REP-024,Human review authority,"Model, Antigence and Ollarma cannot self-authorize clinical or release decisions",Critical,Named approval roles and signed decision FCO,Unauthorized promotion test

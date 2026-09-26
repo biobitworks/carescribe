@@ -1,0 +1,2 @@
+dataset_id,owner,source,version,retrieval_date,license,consent_or_use_basis,population_or_domain,labels,calibration,known_bias,leakage_risk,allowed_uses,prohibited_uses,source_hash,manifest_root,notes
+UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,research_only,claim_promotion,UNKNOWN,UNKNOWN,fill_from_existing_source_intake

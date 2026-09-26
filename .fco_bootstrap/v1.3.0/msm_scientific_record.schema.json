@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MSM Scientific Record",
+  "type": "object",
+  "required": [
+    "record_id",
+    "question",
+    "operational_definitions",
+    "hypothesis",
+    "null_hypothesis",
+    "method",
+    "controls",
+    "failure_criteria",
+    "evidence_labels",
+    "claim_ceiling",
+    "source_fco_roots"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "operational_definitions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "hypothesis": {
+      "type": "string"
+    },
+    "null_hypothesis": {
+      "type": "string"
+    },
+    "alternative_explanations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "method": {
+      "type": "string"
+    },
+    "controls": {
+      "type": "object"
+    },
+    "measurement": {
+      "type": "object"
+    },
+    "calibration": {
+      "type": "object"
+    },
+    "exclusion_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observations": {
+      "type": "array"
+    },
+    "results": {
+      "type": "object"
+    },
+    "uncertainty": {
+      "type": "object"
+    },
+    "falsification_status": {
+      "enum": [
+        "untested",
+        "not_falsified",
+        "falsified",
+        "inconclusive"
+      ]
+    },
+    "evidence_labels": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "DIRECT",
+          "MEASURED",
+          "INFERRED",
+          "SPECULATIVE",
+          "UNKNOWN",
+          "FORBIDDEN_UNSUPPORTED"
+        ]
+      }
+    },
+    "claim_ceiling": {
+      "type": "string"
+    },
+    "next_mechanically_decisive_test": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_fco_roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

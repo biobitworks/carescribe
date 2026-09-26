@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Governance Request Envelope",
+  "type": "object",
+  "required": [
+    "governance_run_id",
+    "root_action_id",
+    "action_id",
+    "correlation_id",
+    "subject_root",
+    "requested_action",
+    "actor_identity",
+    "workload_identity",
+    "policy_root",
+    "evidence_bundle_roots",
+    "trust_snapshot_root",
+    "hop_count",
+    "max_hops",
+    "visited_authorities",
+    "retry_budget"
+  ],
+  "properties": {
+    "governance_run_id": {
+      "type": "string"
+    },
+    "root_action_id": {
+      "type": "string"
+    },
+    "action_id": {
+      "type": "string"
+    },
+    "parent_action_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "subject_root": {
+      "type": "string"
+    },
+    "requested_action": {
+      "type": "string"
+    },
+    "actor_identity": {
+      "type": "string"
+    },
+    "workload_identity": {
+      "type": "string"
+    },
+    "policy_root": {
+      "type": "string"
+    },
+    "evidence_bundle_roots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "trust_snapshot_root": {
+      "type": "string"
+    },
+    "hop_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_hops": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16
+    },
+    "visited_authorities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retry_budget": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "state_roots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

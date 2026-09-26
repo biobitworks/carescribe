@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claim-specific model credibility assessment FCO payload",
+  "type": "object",
+  "required": [
+    "assessment_id",
+    "model_fco",
+    "claim_fco",
+    "context_of_use",
+    "decision_consequence",
+    "model_influence",
+    "required_tier",
+    "mandatory_gates",
+    "dimensions",
+    "anticube",
+    "status",
+    "review"
+  ],
+  "properties": {
+    "assessment_id": {
+      "type": "string"
+    },
+    "model_fco": {
+      "type": "string"
+    },
+    "claim_fco": {
+      "type": "string"
+    },
+    "context_of_use": {
+      "type": "object",
+      "required": [
+        "decision",
+        "population_or_domain",
+        "conditions",
+        "outputs",
+        "exclusions"
+      ],
+      "properties": {
+        "decision": {
+          "type": "string"
+        },
+        "population_or_domain": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "decision_consequence": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "critical"
+      ]
+    },
+    "model_influence": {
+      "enum": [
+        "supporting",
+        "important",
+        "primary",
+        "controlling"
+      ]
+    },
+    "required_tier": {
+      "enum": [
+        "C0",
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ]
+    },
+    "mandatory_gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "gate",
+          "status",
+          "evidence_fcos"
+        ],
+        "properties": {
+          "gate": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "conditional",
+              "not_applicable",
+              "unknown"
+            ]
+          },
+          "evidence_fcos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "dimension_id",
+          "maturity",
+          "evidence_grade",
+          "confidence",
+          "supporting_fcos",
+          "contradicting_fcos"
+        ],
+        "properties": {
+          "dimension_id": {
+            "type": "string"
+          },
+          "maturity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "evidence_grade": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "UNKNOWN"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "supporting_fcos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contradicting_fcos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_decisive_test": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "anticube": {
+      "type": "object",
+      "required": [
+        "identity",
+        "safety"
+      ],
+      "properties": {
+        "identity": {
+          "enum": [
+            "self",
+            "non-self",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "safety": {
+          "enum": [
+            "safe",
+            "non-safe",
+            "conditional",
+            "unknown"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "UNASSESSED",
+        "NON_EXECUTABLE",
+        "EXECUTABLE_UNVERIFIED",
+        "REPRODUCED",
+        "VERIFIED_FOR_IMPLEMENTATION",
+        "VALIDATED_FOR_BOUNDED_CONTEXT",
+        "DECISION_QUALIFIED",
+        "CONDITIONALLY_QUALIFIED",
+        "OUTSIDE_CONTEXT",
+        "CONTRADICTED",
+        "REVOKED",
+        "SUPERSEDED"
+      ]
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "reviewer",
+        "reviewed_at",
+        "authority",
+        "signature_or_attestation"
+      ],
+      "properties": {
+        "reviewer": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "signature_or_attestation": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
