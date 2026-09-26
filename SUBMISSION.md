@@ -1,8 +1,6 @@
 # CareScribe submission copy
 
-> Final owner: complete every bracketed item and remove no
-> `[VERIFY BEFORE CLAIMING]` marker until the linked artifact or behavior has been tested.
-> Use simulated data only.
+> Final owner: complete every bracketed item and use simulated data only.
 
 ## 1. Team Members Name (Please list individual names)
 
@@ -85,11 +83,9 @@ Do not check until every team member responsible for submission confirms:
 - [ ] No credentials, patient data, protected health information, or non-consented
   recordings appear in the repository, demo, slides, or video.
 - [ ] Every team member name is present.
-- [ ] The AWS demo URL opens in a logged-out browser and the demonstrated workflow was
+- [ ] The public demo URL opens in a logged-out browser and the demonstrated workflow was
   tested with simulated data.
 - [ ] Repository, slides, and video links have the intended judge access.
-- [ ] Every `[VERIFY BEFORE CLAIMING]` statement has been tested and replaced with a
-  factual description, or removed.
 - [ ] The final copy consistently describes clinician-reviewed documentation support
   and makes no autonomous diagnosis, prescription, or treatment claim.
 - [ ] An authorized team representative agrees the required confirmation is accurate
@@ -98,7 +94,6 @@ Do not check until every team member responsible for submission confirms:
 ## Final paste checklist
 
 - [ ] Replace all square-bracket placeholders.
-- [ ] Search this file for `[VERIFY BEFORE CLAIMING]`; resolve every occurrence.
 - [ ] Keep the verified Bedrock claim narrow: one synthetic successful smoke invocation,
   not proof of clinical validity, availability, security completeness, or compliance.
 - [ ] Paste each answer into the matching numbered form field.

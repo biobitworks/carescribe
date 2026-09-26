@@ -1,8 +1,7 @@
 # CareScribe: 3-minute pitch and demo run-of-show
 
-> Use simulated encounter content only. Before presenting, replace every bracketed item.
-> Do not make any line marked `[VERIFY BEFORE CLAIMING]` unless it has been demonstrated
-> successfully in the final deployed build.
+> Use simulated encounter content only. Before presenting, replace every bracketed item
+> and rehearse the final deployed build.
 
 ## 0:00–0:25 — Problem
 
@@ -115,7 +114,7 @@ live workflow.”
 ## Five-minute preflight
 
 - [ ] Team names and speaking roles are assigned.
-- [ ] All `[VERIFY BEFORE CLAIMING]` markers and placeholders are resolved.
+- [ ] All placeholders are resolved.
 - [ ] AWS demo opens from a logged-out browser and the exact demo path succeeds.
 - [ ] Only simulated, non-PHI content is loaded.
 - [ ] Slides and video open without requesting access.

@@ -2,22 +2,28 @@
 
 ## Current status
 
-This repository contains a minimal Amazon Bedrock Runtime inference boundary and offline
-tests. It does not yet contain a user-facing CareScribe workflow.
+This repository contains a local-only browser workflow, privacy-first domain contracts,
+and an independently validated Amazon Bedrock Runtime inference boundary. The static web
+demo is intentionally disconnected from AWS inference and clinical systems.
 
 | Check | Status |
 | --- | --- |
 | Bedrock-only inference boundary | Implemented; offline tested |
 | Bedrock `Converse` request shape | Implemented; offline tested |
 | Live AWS inference | **OBSERVED PASS** on 2026-09-26; see `validation/bedrock-smoke.json` |
-| End-to-end CareScribe workflow | **NOT IMPLEMENTED** |
+| Browser interaction workflow | **IMPLEMENTED**; live transcription depends on browser support |
+| Speaker-role controls and fictional fallback | **IMPLEMENTED**; browser-tested |
+| Evidence-linked observations and review | **IMPLEMENTED IN STATIC DEMO**; deterministic, not Bedrock-connected |
+| AWS-hosted end-to-end workflow | **NOT IMPLEMENTED**; target architecture only |
 
 ## Review path
 
 1. Read the project and safety scope in `README.md`.
-2. Inspect `src/carescribe/bedrock.py` for the inference boundary.
-3. Run `pytest` for offline request-shape validation.
-4. Run `carescribe-bedrock-smoke` with authorized AWS credentials for live validation.
+2. Open the [public static demo](https://biobitworks.github.io/carescribe/) with simulated
+   data.
+3. Inspect `src/carescribe/bedrock.py` for the separate inference boundary.
+4. Run `pytest` for offline request-shape and domain-contract validation.
+5. Run `carescribe-bedrock-smoke` with authorized AWS credentials for live validation.
 
 ## Verification policy
 

@@ -44,6 +44,12 @@ information. Use simulated interactions only.
 - Submission form:
   https://docs.google.com/forms/d/e/1FAIpQLSfWlRj2fPWD0bdkF57VJxkKp49qtdzXR66z40jxxuC9HLsC4w/viewform
 
+## Remaining deadline issues
+
+- [AWS hosting deployment](https://github.com/biobitworks/carescribe/issues/1)
+- [Slides and backup video](https://github.com/biobitworks/carescribe/issues/2)
+- [Final form submission](https://github.com/biobitworks/carescribe/issues/3)
+
 ## Definition of done
 
 A feature is `Done` only when:
