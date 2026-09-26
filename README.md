@@ -53,6 +53,8 @@ for the selected resource.
 
 ## For judges and contributors
 
+- [Agent Toolkit and Strands setup](docs/AGENT_TOOLKIT.md)
+
 See [JUDGING.md](JUDGING.md) for an honest status matrix and [CONTRIBUTING.md](CONTRIBUTING.md)
 for the pull-request workflow.
 
