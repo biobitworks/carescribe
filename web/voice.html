@@ -14,7 +14,7 @@
 <body data-focus="voice">
   <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a href="provider.html">Provider</a><a href="caregiver.html">Caregiver</a><a href="child.html">Child</a><a href="projector.html">Projector</a><a href="models.html">Models</a><a data-page="voice" href="voice.html">Voice</a><a href="replay.html">Replay</a><a href="session-receipt.html">Receipt</a></nav></header>
   <main>
-    <section class="hero"><div><p class="eyebrow">Live synthetic voice · explicit cloud boundary</p><h1>The advocate can listen and respond without silently publishing the room.</h1><p class="lead">Browser microphone audio streams to Amazon Nova 2 Sonic through the laptop bridge. Transcripts remain private on this page until someone explicitly approves a minimized update.</p></div><div id="runtime-state" class="runtime-state"><strong>Voice bridge not connected</strong><span>Start the optional service on port 8081.</span></div></section>
+    <section class="hero"><div><p class="eyebrow">Live synthetic voice · explicit cloud boundary</p><h1>The advocate can listen and respond without silently publishing the room.</h1><p class="lead">Microphone audio is processed by Amazon Bedrock. The transcript is not shared with the room until someone explicitly approves a minimized update.</p></div><div id="runtime-state" class="runtime-state"><strong>Voice bridge not connected</strong><span>Start the optional service on port 8081.</span></div></section>
 
     <section class="voice-boundary" role="note"><b>Raw audio leaves this device.</b><span>It is sent to Amazon Bedrock in <code>us-east-1</code>. CareScribe does not persist it, but this prototype cannot prove provider-side deletion. Fictional data only.</span></section>
 
@@ -30,30 +30,43 @@
 
     <section class="voice-layout">
       <form id="voice-setup" class="card voice-setup">
-        <p class="eyebrow">1 · Identify this device</p>
+        <p class="eyebrow">1 · Connect the room</p>
         <label>Temporary display name<input id="actor-name" maxlength="40" value="Maya"></label>
         <label>Role<select id="actor-role"><option value="caregiver">Caregiver</option><option value="provider">Provider</option><option value="child">Child / communication signal</option><option value="uncertain">Uncertain speaker</option></select></label>
         <label>Room code<input id="room-code" maxlength="12" value="READY"></label>
+        <label class="check"><input id="actor-confirm" type="checkbox"> <span id="actor-confirm-label">I confirm I am acting as Maya · Caregiver in this fictional demo.</span></label>
+        <button id="verify-actor" class="button secondary" type="button">Verify selected actor</button>
+        <div id="actor-receipt" class="actor-receipt" role="status" aria-live="polite" tabindex="-1" hidden></div>
         <label class="check"><input id="synthetic-consent" type="checkbox"> I will use fictional content only—no PHI.</label>
         <label class="check"><input id="cloud-consent" type="checkbox"> I understand microphone audio goes to Amazon Bedrock.</label>
         <div class="button-row"><button id="connect-voice" class="button" type="submit">Connect advocate</button><button id="end-voice" class="button secondary" type="button" disabled>End private session</button></div>
       </form>
 
-      <section class="card voice-stage" aria-live="polite">
+      <section class="card voice-stage">
         <div id="avatar" class="voice-avatar"><span>◇</span><b>Advocate</b><small id="avatar-state">waiting</small></div>
         <div class="speaker-monitor">
           <p class="eyebrow">Live microphone</p>
-          <strong id="mic-status">MIC OFF</strong>
+          <strong id="mic-status" role="status" aria-live="polite">MIC OFF</strong>
           <div id="speaker-roles" class="speaker-roles" aria-label="Operator-selected speaker">
             <span data-role="provider">Provider</span><span data-role="caregiver">Caregiver</span><span data-role="child">Child</span><span data-role="uncertain">Uncertain</span>
           </div>
-          <small id="speaker-method">Role is operator-selected, not identified from voice.</small>
+          <small id="speaker-method">The highlighted role is selected by the facilitator, not identified from voice.</small>
         </div>
         <div class="orchestrator-panel">
-          <div><p class="eyebrow">Bedrock guided round</p><strong id="orchestrator-status">Ready to invite Provider → Caregiver → Child → Provider</strong><small id="orchestrator-model">Claude Sonnet 5 routes each canonical prompt; Nova Sonic speaks it.</small></div>
+          <div><p class="eyebrow">2 · Start the guided round</p><strong id="orchestrator-status" role="status" aria-live="polite">Ready to invite Provider → Caregiver → Child → Provider</strong><small id="orchestrator-model">Claude Sonnet 5 validates/routes the fixed four-turn script; Nova Sonic speaks it.</small></div>
           <button id="start-round" class="button" type="button" disabled>Start guided round</button>
         </div>
-        <div class="button-row center"><button id="start-mic" class="button" disabled>Start microphone</button><button id="stop-mic" class="button secondary" disabled>Pause microphone</button></div>
+        <div class="button-row center round-controls">
+          <button id="continue-round" class="button" type="button" disabled>Continue</button>
+          <button id="pause-round" class="button secondary" type="button" disabled>Pause</button>
+          <button id="stop-round" class="button secondary" type="button" disabled>Stop</button>
+        </div>
+        <div class="button-row center"><button id="start-mic" class="button" disabled>3 · Start response microphone</button><button id="stop-mic" class="button secondary" disabled>Stop response</button></div>
+        <form id="typed-response-form" class="typed-response">
+          <label for="typed-response">Accessible fallback response</label>
+          <div><input id="typed-response" maxlength="1000" placeholder="Type the prompted actor’s fictional response"><button id="send-typed-response" class="button secondary" type="submit" disabled>Send typed response</button></div>
+          <small>Fallback only: no microphone audio is captured. Actor role still requires confirmation.</small>
+        </form>
         <p id="voice-error" class="voice-error" hidden></p>
         <div class="transcript-head"><div><p class="eyebrow">Private live transcript</p><h2>Nothing is shared automatically</h2></div><button id="approve-update" class="button secondary" disabled>Approve minimized room update</button></div>
         <div id="voice-transcript" class="voice-transcript"><p class="empty">Connect the advocate, then start the microphone.</p></div>

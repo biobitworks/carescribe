@@ -24,6 +24,7 @@
 .voice-setup input, .voice-setup select { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
 .voice-setup .check { flex-direction: row; align-items: flex-start; font-weight: 500; }
 .voice-setup .check input { margin-top: 2px; }
+.actor-receipt { padding: 9px; border-left: 3px solid var(--teal); border-radius: 7px; background: #eef9f5; color: var(--forest); font: 700 10px/1.45 monospace; overflow-wrap: anywhere; }
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .button-row.center { justify-content: center; }
 .button:disabled { cursor: not-allowed; filter: grayscale(1); opacity: .45; }
@@ -47,6 +48,13 @@
 .orchestrator-panel strong { font-size: 13px; }
 .orchestrator-panel small { margin-top: 4px; color: var(--muted); font-size: 10px; }
 .orchestrator-panel .button { flex: 0 0 auto; }
+.round-controls { margin: 0 auto 10px; justify-content: center; }
+.typed-response { margin: 12px auto 0; max-width: 520px; }
+.typed-response label, .typed-response small { display: block; color: var(--muted); font-size: 11px; }
+.typed-response label { margin-bottom: 5px; font-weight: 800; }
+.typed-response div { display: flex; gap: 7px; }
+.typed-response input { min-width: 0; flex: 1; padding: 9px; border: 1px solid var(--line); border-radius: 8px; }
+.typed-response small { margin-top: 5px; }
 .transcript-head { margin-top: 24px; display: flex; align-items: end; justify-content: space-between; gap: 12px; }
 .transcript-head h2 { margin: 2px 0 0; }
 .voice-transcript { margin-top: 12px; max-height: 280px; overflow: auto; }

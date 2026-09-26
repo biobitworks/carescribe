@@ -14,6 +14,11 @@ const isStaticPagesHost = window.location.hostname.endsWith(".github.io");
 if (roomInput) roomInput.value = roomCode;
 if (roomLabel) roomLabel.textContent = roomCode;
 if (workspaceLink) workspaceLink.href = `index.html?room=${encodeURIComponent(roomCode)}`;
+document.querySelectorAll('a[href^="voice.html"]').forEach(link => {
+  const href = new URL(link.getAttribute("href"), window.location.href);
+  href.searchParams.set("room", roomCode);
+  link.href = href.toString();
+});
 
 document.querySelectorAll("nav a[data-page]").forEach(link => {
   const href = new URL(link.getAttribute("href"), window.location.href);

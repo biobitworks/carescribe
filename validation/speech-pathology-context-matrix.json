@@ -1,0 +1,32 @@
+{
+  "schema_version": "carescribe.speech-context-matrix.v1",
+  "executed_at": "2026-09-26T23:11:00Z",
+  "execution_state": "OBSERVED_PASS",
+  "synthetic_only": true,
+  "routes": {
+    "remote": {
+      "provider": "Amazon Bedrock",
+      "model_id": "amazon.nova-micro-v1:0",
+      "task": "bounded event atomization"
+    },
+    "local": {
+      "provider": "laptop Ollama gateway",
+      "reported_model_id": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+      "task": "privacy-gated minimization"
+    }
+  },
+  "cases": [
+    {"id": "provider_phonology", "actor": "provider", "context": "synthetic velar-fronting observation", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"},
+    {"id": "caregiver_language", "actor": "caregiver", "context": "synthetic two-word-combination concern", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"},
+    {"id": "child_articulation", "actor": "child", "context": "synthetic “tat” for “cat” sample", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"},
+    {"id": "child_fluency", "actor": "child", "context": "synthetic sound repetition sample", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"},
+    {"id": "child_vocalization", "actor": "child", "context": "synthetic loud vocalization", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"},
+    {"id": "provider_receptive", "actor": "provider", "context": "synthetic one-step-direction observation", "remote": "PASS", "local": "PASS", "uncertainty": "UNKNOWN"}
+  ],
+  "retention": {
+    "model_output_committed": false,
+    "audio_used": false,
+    "real_patient_data_used": false
+  },
+  "claim_boundary": "This matrix proves successful routing of six fictional speech-pathology contexts through the two bounded demo endpoints. It does not measure model accuracy, diagnose a condition, validate a clinical instrument, prove speaker identity, or establish suitability for PHI."
+}

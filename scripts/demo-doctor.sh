@@ -41,6 +41,8 @@ for file in \
   web/index.html web/voice.html web/provider.html web/caregiver.html web/child.html \
   web/replay.html web/session-receipt.html web/session-receipt.json \
   web/session-receipt.js web/release-receipt.json web/release-proof.js \
+  web/voice-accessibility.test.mjs \
+  validation/speech-pathology-context-matrix.json \
   src/carescribe/live_server.py src/carescribe/sonic_server.py; do
   [[ -f "$file" ]] && pass "$file" || fail "$file missing"
 done
@@ -57,6 +59,12 @@ if node --test web/*.test.mjs >/dev/null 2>&1; then
   pass "browser unit tests"
 else
   fail "browser unit tests failed"
+fi
+
+if node --test web/voice-accessibility.test.mjs >/dev/null 2>&1; then
+  pass "accessibility-first voice control contract"
+else
+  fail "voice controls or accessible labels failed"
 fi
 
 if PYTHONPATH=src PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 "$PYTHON" -m pytest -q >/dev/null 2>&1; then
@@ -97,10 +105,10 @@ fi
 
 printf '\n'
 style --bold "Two-minute judge path"
-style --foreground 39 "1. Caregiver (Maya): consent → connect → ask the fictional concern."
-style --foreground 39 "2. Child (Leo): select Child → demonstrate one nonverbal or loud signal; meaning stays unknown."
-style --foreground 39 "3. Provider (Julie, SLP): explain next step → review evidence → caregiver confirms understanding."
-style --foreground 39 "4. Show transcript + speaking avatar → approve minimized update → show FCG receipt."
+style --foreground 39 "1. Open voice.html?room=JUDGES → consent → connect → Start guided round."
+style --foreground 39 "2. For each prompt: check actor → Verify selected actor → show role receipt → start response."
+style --foreground 39 "3. Use Pause / Continue / Stop visibly; highlighted role is facilitator-selected."
+style --foreground 39 "4. Show transcript → approve minimized update → confirm it on actor-specific JUDGES links."
 style --foreground 39 "5. If voice fails, open replay.html immediately."
 
 printf '\n'
