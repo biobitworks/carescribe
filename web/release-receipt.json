@@ -1,10 +1,10 @@
 {
   "schema_version": "carescribe.fcg-release-receipt.v1",
   "payload": {
-    "release_id": "carescribe-2026-09-26T22:36:13Z",
-    "issued_at": "2026-09-26T22:36:13Z",
+    "release_id": "carescribe-2026-09-26T22:37:37Z",
+    "issued_at": "2026-09-26T22:37:37Z",
     "public_url": "https://biobitworks.github.io/carescribe/",
-    "audited_parent_commit": "b270ed39c2a372b290ff05580b22360f02a8a4a7",
+    "audited_parent_commit": "a9a12beac4fd9b1d977a4de0196bca05414935e6",
     "artifact_scope": "Bytes read from audited_parent_commit before this receipt commit.",
     "fcg": {
       "node": {
@@ -16,13 +16,13 @@
       },
       "edges": [
         {
-          "from": "carescribe-2026-09-26T22:36:13Z",
+          "from": "carescribe-2026-09-26T22:37:37Z",
           "to": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
           "type": "attests_to_prior_checkpoint"
         },
         {
-          "from": "carescribe-2026-09-26T22:36:13Z",
-          "to": "b270ed39c2a372b290ff05580b22360f02a8a4a7",
+          "from": "carescribe-2026-09-26T22:37:37Z",
+          "to": "a9a12beac4fd9b1d977a4de0196bca05414935e6",
           "type": "built_from_commit"
         }
       ]
@@ -40,6 +40,7 @@
       {"path": "web/session-receipt.html", "sha256": "93bc709c46dff73b09a325d3b8d6951abbe9d4ee6233fb97f4f64823658f0ff6"},
       {"path": "web/session-receipt.js", "sha256": "30c261d3ef09f7ed3a686e7a7b08700c34a770794f401be60c40059d82517f3e"},
       {"path": "web/session-receipt.json", "sha256": "e58ee6c36b9739a0047b897bb5a8b301f1ccbe9fb5c2b346864559b1f49d2cf8"},
+      {"path": "scripts/demo-doctor.sh", "sha256": "a786d7b1da3f0bfc767f9f7531bd6ce7e3f1c57ed298a1d72c830edb84f69730"},
       {"path": "web/voice.js", "sha256": "e8119ee5e54d65f08d26bb5632f184352d0c20890d8750cec12ee61d087e5b29"},
       {"path": "web/audio-core.mjs", "sha256": "fbe0fd22791407648bb7cae7b01b2d7f08021f098f0c4da5be87814963b3656c"},
       {"path": "web/audio-capture.worklet.js", "sha256": "a5f020285e9d85b36b1f858d9ef1ba4c95b0b8e7ec069387fba314ef76361706"},
@@ -56,6 +57,6 @@
     "algorithm": "Ed25519",
     "canonicalization": "recursive-lexicographic-json-v1",
     "public_key_spki_base64": "MCowBQYDK2VwAyEAMXMDzDbuQQiWdswDF8tsReiIEJaUa4QaS9G6HGN88R4=",
-    "value_base64": "7xXbN3JvNrZl/4TbLhtNicwEEUbk8eVXR09+Kb9+tCdL42+zJY/npeqlLLdfviI6FN7Gy3do7g0JMHAkh8VHCw=="
+    "value_base64": "e53MKknQOW/XJMu/R274mURTaUMZdQihwFV/CxLmoMmvk1kURcLfuEb4AK/kgpeDX4Uw4TXjwu2Hirp1uif/AQ=="
   }
 }
