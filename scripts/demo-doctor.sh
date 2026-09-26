@@ -39,12 +39,14 @@ check_command curl
 
 for file in \
   web/index.html web/voice.html web/provider.html web/caregiver.html web/child.html \
-  web/replay.html web/release-receipt.json web/release-proof.js \
+  web/replay.html web/session-receipt.html web/session-receipt.json \
+  web/session-receipt.js web/release-receipt.json web/release-proof.js \
   src/carescribe/live_server.py src/carescribe/sonic_server.py; do
   [[ -f "$file" ]] && pass "$file" || fail "$file missing"
 done
 
 if node --check web/release-proof.js >/dev/null 2>&1 &&
+   node --check web/session-receipt.js >/dev/null 2>&1 &&
    node --check web/voice.js >/dev/null 2>&1; then
   pass "browser JavaScript parses"
 else
@@ -85,8 +87,10 @@ fi
 
 if [[ -n "$CURL" ]] &&
    [[ "$(http_status https://biobitworks.github.io/carescribe/)" == "200" ]] &&
-   [[ "$(http_status https://biobitworks.github.io/carescribe/release-receipt.json)" == "200" ]]; then
-  pass "public presentation and signed receipt"
+   [[ "$(http_status https://biobitworks.github.io/carescribe/release-receipt.json)" == "200" ]] &&
+   [[ "$(http_status https://biobitworks.github.io/carescribe/session-receipt.html)" == "200" ]] &&
+   [[ "$(http_status https://biobitworks.github.io/carescribe/session-receipt.json)" == "200" ]]; then
+  pass "public presentation, signed release, and session receipt"
 else
   warn "public presentation could not be verified"
 fi
