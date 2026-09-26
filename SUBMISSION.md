@@ -66,7 +66,9 @@ https://github.com/biobitworks/carescribe
 ## 8. Slides or additional material (videos)
 
 - Slides: https://biobitworks.github.io/carescribe/slides.html
-- Demo video: https://biobitworks.github.io/carescribe/assets/carescribe-three-actor-demo.mp4
+- Revised PowerPoint: https://biobitworks.github.io/carescribe/assets/carescribe-revised-pitch-deck.pptx
+- Latest local Nova Sonic capture: https://biobitworks.github.io/carescribe/assets/carescribe-live-nova-sonic-demo.mp4
+- Synthetic fallback: https://biobitworks.github.io/carescribe/assets/carescribe-three-actor-demo.mp4
 
 ## Hackathon Submission Confirmation
 

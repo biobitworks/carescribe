@@ -11,7 +11,9 @@ the provider keeps source evidence, uncertainty, and clinical judgment.
 - **Projector:** https://biobitworks.github.io/carescribe/projector.html?room=JUDGES
 - **Model proof:** https://biobitworks.github.io/carescribe/models.html?room=JUDGES
 - **Judge deck:** https://biobitworks.github.io/carescribe/slides.html
+- **Revised PowerPoint:** https://biobitworks.github.io/carescribe/assets/carescribe-revised-pitch-deck.pptx
 - **Recorded fallback:** https://biobitworks.github.io/carescribe/replay.html
+- **Latest local Nova Sonic capture:** https://biobitworks.github.io/carescribe/assets/carescribe-live-nova-sonic-demo.mp4
 
 The public site is static: it demonstrates the interface, fictional sample, local browser
 state, review controls, and recorded replay. It does not host the Python room backend,
