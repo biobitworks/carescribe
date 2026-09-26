@@ -1,0 +1,50 @@
+{
+  "schema_version": "carescribe.adapter-proof.v1",
+  "execution_date": "2026-09-26",
+  "execution_state": "OBSERVED_PASS_WITH_LIMITS",
+  "installed": [
+    {
+      "component": "Ollama",
+      "version": "0.32.15",
+      "model": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+      "model_manifest_id": "5791ac70d52d",
+      "size": "730 MB",
+      "invocation": "observed local response"
+    },
+    {
+      "component": "boto3",
+      "version": "1.43.14",
+      "purpose": "Amazon Bedrock Runtime Converse adapter"
+    },
+    {
+      "component": "@strands-agents/cli",
+      "version": "0.1.4",
+      "installation": "global npm package",
+      "binary": "package binary resolves as strands; direct package entry returned 0.1.4",
+      "path_note": "The global npm binary directory was not on the active shell PATH."
+    }
+  ],
+  "observed_model_routes": [
+    {
+      "model": "amazon.nova-micro-v1:0",
+      "function": "event atomization",
+      "status": "live synthetic invocation and browser custody checkpoint"
+    },
+    {
+      "model": "amazon.nova-pro-v1:0",
+      "function": "handoff synthesis",
+      "status": "live synthetic invocation and browser custody checkpoint"
+    }
+  ],
+  "not_observed": [
+    {
+      "model": "amazon.nova-2-sonic-v1:0",
+      "status": "not run"
+    },
+    {
+      "model": "gpt-realtime-2.1",
+      "status": "client-secret API access verified previously; no browser duplex invocation"
+    }
+  ],
+  "claim_boundary": "Installation and synthetic invocation receipts do not establish production availability, security, clinical validity, regulatory compliance, or PHI suitability."
+}

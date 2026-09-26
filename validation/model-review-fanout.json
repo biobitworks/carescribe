@@ -1,0 +1,32 @@
+{
+  "schema_version": "carescribe.model-review-fanout.v1",
+  "execution_date": "2026-09-26",
+  "purpose": "Independent deadline review lanes, separate from product inference",
+  "successful_lanes": [
+    {
+      "model_family": "GPT-5.6 Sol",
+      "functions": ["deployment review", "privacy and claims audit"],
+      "artifacts": ["docs/DEPLOYMENT_CHECKLIST.md", "docs/PRIVACY_CLAIMS_AUDIT.md"]
+    },
+    {
+      "model_family": "GPT-5.6 Terra",
+      "functions": ["replay media QA", "judge demo runbook"],
+      "artifacts": ["docs/REPLAY_QA.md", "docs/JUDGE_DEMO_RUNBOOK.md"]
+    }
+  ],
+  "failed_lanes": [
+    {
+      "model_family": "GPT-6 Luna",
+      "result": "authorization failure; no output used"
+    },
+    {
+      "model_family": "GPT-6 Astra",
+      "result": "model unavailable; no output used"
+    },
+    {
+      "model_family": "GPT-6 Sol",
+      "result": "authorization failure; no output used"
+    }
+  ],
+  "claim_boundary": "This records task fan-out outcomes. It is not a product runtime, clinical ensemble, or quality benchmark."
+}

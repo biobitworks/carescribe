@@ -1,0 +1,34 @@
+{
+  "schema_version": "carescribe.replay-voice-manifest.v1",
+  "scenario": "Fully fictional Julie, Maya, and Leo encounter",
+  "fallback_audio": {
+    "engine": "macOS local speech synthesis",
+    "network_required": false,
+    "voices": [
+      {
+        "actor": "Julie",
+        "voice": "Samantha",
+        "locale": "en_US",
+        "turns": ["00:00-00:10", "00:30-00:40"]
+      },
+      {
+        "actor": "Maya",
+        "voice": "Karen",
+        "locale": "en_AU",
+        "turns": ["00:10-00:20", "00:40-00:50"]
+      },
+      {
+        "actor": "Narrator",
+        "voice": "Daniel",
+        "locale": "en_GB",
+        "turns": ["00:20-00:30", "00:50-01:00"]
+      }
+    ]
+  },
+  "replacement": {
+    "environment_variable": "CARESCRIBE_REPLAY_AUDIO_FILE",
+    "requirement": "Use only the team's consented recording; never use patient audio or PHI.",
+    "behavior": "The build pads or trims replacement audio to 60 seconds and retains the verified visuals and captions."
+  },
+  "claim_boundary": "Distinct fallback voices are presentation media, not voice identification, diarization, biometric inference, or full-duplex model execution."
+}

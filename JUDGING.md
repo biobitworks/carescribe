@@ -2,18 +2,23 @@
 
 ## Current status
 
-This repository contains a local-only browser workflow, privacy-first domain contracts,
-and an independently validated Amazon Bedrock Runtime inference boundary. The static web
-demo is intentionally disconnected from AWS inference and clinical systems.
+This repository contains a local live workflow, separate actor/projector/model pages,
+privacy-bound domain contracts, and narrow model receipts. The public web demo is a
+static presentation/replay fallback disconnected from model and clinical systems.
 
 | Check | Status |
 | --- | --- |
-| Bedrock-only inference boundary | Implemented; offline tested |
+| Local LiquidAI privacy gate | **LIVE BENCHMARKED** on synthetic input |
+| Bedrock text inference boundary | Implemented; offline tested |
 | Bedrock `Converse` request shape | Implemented; offline tested |
-| Live AWS inference | **OBSERVED PASS** on 2026-09-26; see `validation/bedrock-smoke.json` |
+| Nova Micro AWS inference | **OBSERVED PASS**; committed smoke receipt |
+| Nova Pro AWS inference | **OBSERVED LIVE ROUTE**; untrusted synthetic handoff only |
 | Browser interaction workflow | **IMPLEMENTED**; live transcription depends on browser support |
 | Speaker-role controls and fictional fallback | **IMPLEMENTED**; browser-tested |
-| Evidence-linked observations and review | **IMPLEMENTED IN STATIC DEMO**; deterministic, not Bedrock-connected |
+| Focused Provider/Caregiver/Child/Projector pages | **IMPLEMENTED** |
+| Three-actor recorded fallback | **IMPLEMENTED**; 60 seconds with captions |
+| Full-duplex voice / Nova Sonic | **NOT RUN / NOT IMPLEMENTED** |
+| Authenticated private rooms / AgentCore | **NOT IMPLEMENTED** |
 | AWS-hosted end-to-end workflow | **NOT IMPLEMENTED**; target architecture only |
 
 ## Review path

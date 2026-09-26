@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/></svg>">
+  <title>CareScribe · Projector Focus</title><link rel="stylesheet" href="focus.css"><script src="focus.js" defer></script>
+</head>
+<body data-focus="projector">
+  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a data-page="provider" href="provider.html">Provider</a><a data-page="caregiver" href="caregiver.html">Caregiver</a><a data-page="child" href="child.html">Child</a><a data-page="projector" href="projector.html">Projector</a><a data-page="models" href="models.html">Models</a><a data-page="replay" href="replay.html">Replay</a><a href="slides.html">Presentation</a></nav></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">Judge projector · shared story</p><h1>One room. Three roles. One reviewed handoff.</h1><p class="lead">The projector tells the story without pretending the record is final: family voice on the left, advocate and uncertainty in the middle, provider evidence on the right.</p></div><div id="runtime-state" class="runtime-state"><strong>Checking local server</strong><span>Model status will appear here.</span></div></section>
+    <form id="join-form" class="join"><label for="room-input">Room</label><input id="room-input" maxlength="12"><button class="button">Join room</button><a id="workspace-link" class="button secondary" href="index.html">Drive full live demo</a></form>
+    <section class="projector-grid">
+      <article class="card accent"><p class="eyebrow">Family voice</p><h2>Maya + Leo</h2><p>Maya worries she will forget the plan. Leo may communicate with words, gestures, actions, sounds, or loud vocalizations.</p></article>
+      <article class="card center"><div class="avatar">C</div><p class="eyebrow">Room advocate</p><h2>Keep the question open</h2><p>Is the next visit therapy, or more evaluating? What should Maya notice before then?</p></article>
+      <article class="card evidence"><p class="eyebrow">Provider review</p><h2>Julie decides</h2><p>The evaluation is incomplete. Evidence and unknowns stay separate, and the handoff requires human confirmation.</p></article>
+    </section>
+    <section class="room"><p class="eyebrow">Room <span id="room-label"></span></p><h2>Live caregiver-approved events</h2><div id="room-feed" class="feed"><p class="empty">Connecting…</p></div></section>
+    <section class="models"><p class="eyebrow">Live routing evidence</p><h2>Different models, bounded functions</h2><div id="model-list" class="model-list"><p>Checking routes…</p></div></section>
+  </main><footer>Integrity checkpoints show recorded-byte consistency, not clinical truth</footer>
+</body></html>

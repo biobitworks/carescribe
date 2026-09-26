@@ -77,6 +77,17 @@
     };
     const predecessor = predecessorId ?? input.predecessorId ?? input.predecessor_id;
     if (predecessor != null) payload.predecessor_id = predecessor;
+    const optionalFields = {
+      fco_type: input.fcoType ?? input.fco_type,
+      model_provider: input.modelProvider ?? input.model_provider,
+      model_id: input.modelId ?? input.model_id,
+      prompt_hash: input.promptHash ?? input.prompt_hash,
+      invocation_outcome: input.invocationOutcome ?? input.invocation_outcome,
+      error_code: input.errorCode ?? input.error_code,
+    };
+    for (const [key, value] of Object.entries(optionalFields)) {
+      if (value !== undefined) payload[key] = value;
+    }
     for (const [key, value] of Object.entries(payload)) {
       if (value === undefined) throw new TypeError(`missing FCO field: ${key}`);
     }
@@ -97,6 +108,12 @@
       status: payload.status,
     };
     if (payload.predecessor_id != null) result.predecessorId = payload.predecessor_id;
+    if (payload.fco_type != null) result.fcoType = payload.fco_type;
+    if (payload.model_provider != null) result.modelProvider = payload.model_provider;
+    if (payload.model_id != null) result.modelId = payload.model_id;
+    if (payload.prompt_hash != null) result.promptHash = payload.prompt_hash;
+    if (payload.invocation_outcome != null) result.invocationOutcome = payload.invocation_outcome;
+    if (payload.error_code != null) result.errorCode = payload.error_code;
     return Object.freeze(result);
   }
 
@@ -115,6 +132,71 @@
   function createEdge(source, target, kind) {
     if (!edgeKinds.has(kind)) throw new TypeError(`unsupported FCG edge kind: ${kind}`);
     return Object.freeze({ source, target, kind });
+  }
+
+  function createRoomRoster(names = {}, activeRole = "provider") {
+    const fallback = { provider: "Provider", caregiver: "Caregiver", child: "Child" };
+    return ["provider", "caregiver", "child"].map((role) => ({
+      role,
+      name: String(names[role] || fallback[role]).trim() || fallback[role],
+      active: role === activeRole,
+    }));
+  }
+
+  function describeChildSignal(kind, childName = "Child") {
+    const signal = kind === "scream"
+      ? ["[Scream / loud vocalization]", "NONVERBAL_VOCALIZATION"]
+      : ["[Nonverbal communication observed]", "NONVERBAL_COMMUNICATION"];
+    return {
+      speaker: String(childName).trim() || "Child",
+      role: "child",
+      statement: signal[0],
+      observation: signal[1],
+      confidence: "NEEDS_REVIEW",
+      clinicalRelevance: "UNKNOWN",
+      status: "UNCERTAIN",
+    };
+  }
+
+  function normalizeRoomCode(value) {
+    const code = String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+    return code || "ROOM4";
+  }
+
+  function createRoomPublication(input = {}) {
+    if (input.approved !== true) throw new TypeError("caregiver approval is required");
+    const role = ["provider", "caregiver", "child", "uncertain"].includes(input.role)
+      ? input.role
+      : "uncertain";
+    const publicUpdate = String(input.publicUpdate || "").trim();
+    if (!publicUpdate) throw new TypeError("minimized public update is required");
+    return {
+      room: normalizeRoomCode(input.room),
+      role,
+      public_update: publicUpdate,
+      uncertainty: String(input.uncertainty || "UNKNOWN"),
+      synthetic: true,
+    };
+  }
+
+  function createVoiceRoleHint(input = {}) {
+    const roles = { provider: "Provider", caregiver: "Caregiver", child: "Child" };
+    const selectedRole = roles[input.selectedRole] ? input.selectedRole : "uncertain";
+    const platformLabel = String(input.platformLabel || "").trim();
+    if (selectedRole !== "uncertain") {
+      return {
+        role: selectedRole,
+        label: `Selected: ${roles[selectedRole]}${platformLabel ? ` · device hint: ${platformLabel}` : ""}`,
+        source: "selected",
+      };
+    }
+    return {
+      role: "uncertain",
+      label: platformLabel
+        ? `Uncertain speaker · device hint: ${platformLabel}`
+        : "Uncertain speaker · select a toy person",
+      source: platformLabel ? "platform-hint" : "uncertain",
+    };
   }
 
   async function hashNode(prefix, ...parts) {
@@ -166,11 +248,35 @@
     constructor() {
       this.fcos = [];
       this.edges = [];
+      this.checkpoints = [];
       this.mmr = new MMRAccumulator();
       this._byId = new Map();
     }
 
     get root() { return this.mmr.root; }
+    get latestCheckpoint() { return this.checkpoints.at(-1) || null; }
+
+    static async replay(fcos) {
+      const ledger = new CustodyLedger();
+      for (const fco of fcos) await ledger.appendFCO(fco);
+      return ledger;
+    }
+
+    async _checkpoint(fco) {
+      const previous = this.latestCheckpoint;
+      const fields = {
+        root: this.root,
+        leafCount: this.mmr.size,
+        triggerId: fco.id,
+        triggerType: fco.fcoType || "fco",
+        previousCheckpointId: previous ? previous.id : null,
+        previousRoot: previous ? previous.root : null,
+      };
+      const id = hex(await sha256Bytes(encoder.encode(canonicalStringify(fields))));
+      const checkpoint = Object.freeze({ id, ...fields });
+      this.checkpoints.push(checkpoint);
+      return checkpoint;
+    }
 
     async appendFCO(input) {
       const fco = input.id ? input : await createFCO(input);
@@ -179,7 +285,45 @@
       this.fcos.push(fco);
       this._byId.set(fco.id, fco);
       await this.mmr.append(fco.id);
+      await this._checkpoint(fco);
       return fco;
+    }
+
+    async appendActorFCO(input) {
+      const role = input.role;
+      if (!["provider", "caregiver", "child", "uncertain"].includes(role)) {
+        throw new TypeError(`unsupported actor role: ${role}`);
+      }
+      const fco = await this.appendFCO({ ...input, fcoType: "actor" });
+      return Object.freeze({ fco, checkpoint: this.latestCheckpoint });
+    }
+
+    async appendModelInvocationFCO(input) {
+      if (!["success", "failure"].includes(input.outcome)) {
+        throw new TypeError("model invocation outcome must be success or failure");
+      }
+      const promptHash = hex(await sha256Bytes(encoder.encode(String(input.prompt ?? ""))));
+      const succeeded = input.outcome === "success";
+      const fco = await this.appendFCO({
+        timestamp: input.timestamp,
+        speaker: input.provider,
+        role: "model",
+        statement: succeeded
+          ? String(input.responseSummary || "Model invocation completed.")
+          : "Model invocation failed.",
+        observation: "MODEL_INVOCATION",
+        confidence: "UNKNOWN",
+        source: "model invocation",
+        clinicalRelevance: "UNKNOWN",
+        status: succeeded ? "COMPLETED" : "FAILED",
+        fcoType: "model-invocation",
+        modelProvider: input.provider,
+        modelId: input.model,
+        promptHash,
+        invocationOutcome: input.outcome,
+        errorCode: succeeded ? undefined : String(input.errorCode || "UNKNOWN"),
+      });
+      return Object.freeze({ fco, checkpoint: this.latestCheckpoint });
     }
 
     appendEdge(edge) {
@@ -202,6 +346,7 @@
 
   return Object.freeze({
     FCG_EDGE_TYPES, PRESERVED_VALUES, canonicalStringify, createFCO, verifyFCO,
-    createEdge, MMRAccumulator, CustodyLedger,
+    createEdge, createRoomRoster, describeChildSignal, normalizeRoomCode,
+    createRoomPublication, createVoiceRoleHint, MMRAccumulator, CustodyLedger,
   });
 });

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/></svg>">
+  <title>CareScribe · Recorded Replay</title><link rel="stylesheet" href="focus.css"><script src="focus.js" defer></script>
+</head>
+<body data-focus="replay">
+  <header class="site-head"><a class="brand" href="index.html">CareScribe</a><nav aria-label="Focused pages"><a data-page="provider" href="provider.html">Provider</a><a data-page="caregiver" href="caregiver.html">Caregiver</a><a data-page="child" href="child.html">Child</a><a data-page="projector" href="projector.html">Projector</a><a data-page="models" href="models.html">Models</a><a data-page="replay" href="replay.html">Replay</a><a href="slides.html">Presentation</a></nav></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">Recorded fallback · 60 seconds</p><h1>What happened in there?</h1><p class="lead">A clearly labeled synthetic replay of the incomplete Julie/Maya/Leo evaluation. This recording is not a current end-to-end model invocation.</p></div><div id="runtime-state" class="runtime-state"><strong>Checking local server</strong><span>The video remains available in static mode.</span></div></section>
+    <form id="join-form" class="join"><label for="room-input">Room</label><input id="room-input" maxlength="12"><button class="button">Use room</button><a id="workspace-link" class="button secondary" href="index.html">Open full live workspace</a></form>
+    <video class="replay" controls preload="metadata" src="assets/carescribe-three-actor-demo.mp4"><track kind="captions" srclang="en" label="English" src="assets/replay-captions.vtt" default></video>
+    <p class="audio-note"><b>Audio handoff:</b> the committed replay uses three distinct local synthetic voices. The media build keeps visuals and captions separate so the team’s consented in-person recording can replace the fallback mix before final presentation.</p>
+    <section class="models"><p class="eyebrow">Model context</p><h2>What the local server can demonstrate separately</h2><div id="model-list" class="model-list"><p>Checking routes…</p></div></section>
+    <section class="room"><p class="eyebrow">Room <span id="room-label"></span></p><h2>Live path status</h2><div id="room-feed" class="feed"><p class="empty">Connecting…</p></div></section>
+  </main><footer>Recorded synthetic fallback · captions included · no patient recording</footer>
+</body></html>

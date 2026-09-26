@@ -1,0 +1,57 @@
+{
+  "schema_version": "carescribe.browser-custody-proof.v1",
+  "execution_date": "2026-09-26",
+  "execution_state": "OBSERVED_PASS",
+  "browser_context": "isolated in-memory Chrome context on local synthetic server",
+  "room": "JUDGES",
+  "actor_breakpoints": [
+    {
+      "role": "provider",
+      "fco_id": "266b5d023b42c194518be209f045406348ab77fd5da6cdfe38ad9e7aa053271a"
+    },
+    {
+      "role": "caregiver",
+      "fco_id": "4c951b5451f5452caca71aa6c08a6800489a317b38fc284d4dc8207432fc623a"
+    },
+    {
+      "role": "child",
+      "fco_id": "6b6594f3eefc40ed0093e98cec7ea242c16e0a07c2843c7e5a7a2d6ac613721f"
+    },
+    {
+      "role": "uncertain",
+      "fco_id": "dedf1c84fb9a4e72e34d907fd76a9ee1b1ee2c09bfdb7f13a1ebd13700ebd56e"
+    }
+  ],
+  "model_breakpoints": [
+    {
+      "model": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+      "fco_id": "ab743cb411129f1e12f4647886573eaf3a6a0dc8653005528559e32d453c188c",
+      "prompt_hash": "7f890693709626aca3965c63d3e1584583eb344a44d1739ca7a2e5bfee3d9a51",
+      "outcome": "success"
+    },
+    {
+      "model": "amazon.nova-micro-v1:0",
+      "fco_id": "eb858fdabc3ec4f267eacfd8092760165c21d738c41a54c36ea544b7ff8e2572",
+      "prompt_hash": "31c8a53529cb392ccd5020667a42384de594179498d191dd381b422cdd9c0804",
+      "outcome": "success"
+    },
+    {
+      "model": "amazon.nova-pro-v1:0",
+      "fco_id": "6642e2cee2d6133034bd6a4d6e6d02d6958f710733c5cc0a14ba4b97562dadd7",
+      "prompt_hash": "432c521bf1e28c02c1412df3e7c514eb3c49aaf5c6b4f5079db1bb35c42e7b0c",
+      "outcome": "success"
+    }
+  ],
+  "latest_checkpoint": {
+    "checkpoint_id": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
+    "mmr_root": "c4a55e35dd8844595b1c29ca31849684a671c02f792d2edd88713eed9bf99313",
+    "leaf_count": 8,
+    "trigger_type": "model-invocation",
+    "previous_root": "b101757b4d1a8bd97465a8016419f1a433b05838b0e2e3d3090912fae356b49e"
+  },
+  "not_invoked": [
+    "amazon.nova-2-sonic-v1:0",
+    "gpt-realtime-2.1"
+  ],
+  "claim_boundary": "The local MMR/checkpoint demonstrator proves deterministic consistency of these recorded synthetic event bytes. It does not prove actor identity, clinical truth, immutability, non-repudiation, or external custody."
+}

@@ -4,15 +4,15 @@ const STORAGE_KEY = "carescribe-live-session-v1";
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const sampleLines = [
-  { role: "provider", text: "What changes have you noticed in play or communication since the last visit?" },
-  { role: "caregiver", text: "They have started using short phrases more often and point to show us things they find interesting." },
-  { role: "caregiver", text: "I read that this could be autism. Is that what this means?" },
-  { role: "provider", text: "That is an important concern. These observations alone cannot answer it; we can discuss development broadly and whether further evaluation is appropriate." },
-  { role: "provider", text: "Can you share a recent example of a phrase they used on their own?" },
-  { role: "caregiver", text: "Yesterday they said, “more red blocks,” while we were building together." },
-  { role: "child", text: "More red blocks, please." },
-  { role: "provider", text: "Thank you. How do transitions between activities usually go at home?" },
-  { role: "caregiver", text: "A short warning helps. Without one, stopping a favorite activity can be difficult." }
+  { role: "provider", text: "Tell me what led you to schedule the evaluation." },
+  { role: "caregiver", text: "Leo says “mama,” “no,” and maybe “go.” His daycare teacher thinks he should be talking more." },
+  { role: "child", text: "[Scream / loud vocalization]" },
+  { role: "provider", text: "Today I am looking at how Leo communicates, what he understands, and how he plays." },
+  { role: "caregiver", text: "I am worried I will forget what you tell me." },
+  { role: "provider", text: "We did not observe everything needed today, so a second visit will continue the evaluation." },
+  { role: "caregiver", text: "Is the next visit therapy, or more evaluating? What should I notice at home?" },
+  { role: "provider", text: "Notice two or three examples of how Leo asks for help, asks for more, or wants something to stop." },
+  { role: "child", text: "[Nonverbal reach toward bubbles]" }
 ];
 
 const state = loadState();
@@ -21,11 +21,17 @@ let timerHandle = null;
 let simulationHandle = null;
 let toastHandle = null;
 let advocateMuted = false;
-const custody = window.CareScribeCustody
+let custody = window.CareScribeCustody
   ? new window.CareScribeCustody.CustodyLedger()
   : null;
+let sessionGeneration = 0;
 let previousFcoId = null;
 let correctionPredecessorId = null;
+let custodyChain = Promise.resolve();
+let localGateChain = Promise.resolve();
+let pendingPublicUpdates = [];
+let roomPollHandle = null;
+const seenRoomEvents = new Set();
 
 const els = Object.fromEntries([
   "session-title", "session-date", "timer", "status-chip", "start-session", "pause-session",
@@ -33,8 +39,17 @@ const els = Object.fromEntries([
   "transcript-empty", "manual-form", "manual-text", "observations-list", "observations-empty",
   "observation-count", "questions-list", "questions-empty", "question-count", "consent-dialog",
   "consent-check", "privacy-check", "confirm-consent", "end-dialog", "confirm-end",
-  "delete-dialog", "confirm-delete", "info-dialog", "open-info", "toast"
+  "delete-dialog", "confirm-delete", "info-dialog", "open-info", "toast", "room-dialog",
+  "provider-name", "caregiver-name", "child-name", "child-mode", "confirm-room",
+  "room-code", "room-code-input", "room-link", "copy-room-link", "room-sync-state",
+  "voice-role-label", "platform-voice-label"
 ].map(id => [id, document.getElementById(id)]));
+
+function requestedRoomCode() {
+  return window.CareScribeCustody.normalizeRoomCode(
+    new URLSearchParams(window.location.search).get("room"),
+  );
+}
 
 function blankState() {
   return {
@@ -51,7 +66,13 @@ function blankState() {
     mmrRoot: null,
     startedOn: Date.now(),
     simulationIndex: 0,
-    mode: null
+    mode: null,
+    participantNames: { provider: "Julie, SLP", caregiver: "Maya", child: "Leo" },
+    childMode: "mixed",
+    roomCode: requestedRoomCode(),
+    platformVoiceLabel: "",
+    handoff: null,
+    handoffReview: { version: null, caregiver: false, provider: false, finalized: false }
   };
 }
 
@@ -115,11 +136,128 @@ function render() {
     button.classList.toggle("active", active);
     button.setAttribute("aria-checked", String(active));
   });
+  renderRoom();
+  renderRoomConnection();
+  renderVoiceRoleHint();
   renderTranscript();
   renderObservations();
   renderQuestions();
+  renderHandoff();
   updateAudioState();
   renderOperationalViews();
+}
+
+function renderHandoff() {
+  const handoff = state.handoff;
+  if (handoff) {
+    const caregiverList = document.getElementById("caregiver-action-list");
+    const providerList = document.getElementById("provider-evidence-list");
+    if (caregiverList) caregiverList.innerHTML = handoff.caregiverItems.map(item => `
+      <div class="handoff-item"><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>`).join("");
+    if (providerList) providerList.innerHTML = handoff.providerItems.map(item => `
+      <div class="handoff-item"><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>`).join("");
+  }
+  const review = state.handoffReview || (state.handoffReview = { version: null, caregiver: false, provider: false, finalized: false });
+  if (!handoff || review.version !== handoff.version) {
+    state.handoffReview = { version: handoff?.version || null, caregiver: false, provider: false, finalized: false };
+  }
+  const currentReview = state.handoffReview;
+  const caregiverButton = document.getElementById("approve-caregiver-card");
+  const providerButton = document.getElementById("approve-provider-brief");
+  const finalizeButton = document.getElementById("finalize-handoff");
+  const status = document.getElementById("handoff-status");
+  const message = document.getElementById("handoff-review-message");
+  if (caregiverButton) {
+    caregiverButton.textContent = currentReview.caregiver ? "✓ Caregiver card approved" : "Approve caregiver card";
+    caregiverButton.classList.toggle("approved", currentReview.caregiver);
+    caregiverButton.setAttribute("aria-pressed", String(currentReview.caregiver));
+  }
+  if (providerButton) {
+    providerButton.textContent = currentReview.provider ? "✓ Provider reviewed" : "Mark provider reviewed";
+    providerButton.classList.toggle("approved", currentReview.provider);
+    providerButton.setAttribute("aria-pressed", String(currentReview.provider));
+  }
+  const ready = currentReview.caregiver && currentReview.provider;
+  if (finalizeButton) {
+    finalizeButton.disabled = !ready || currentReview.finalized;
+    finalizeButton.textContent = currentReview.finalized ? "✓ Reviewed handoff finalized" : "Finalize reviewed handoff";
+  }
+  if (status) status.textContent = currentReview.finalized ? "FINALIZED · HUMAN REVIEWED" : ready ? "READY TO FINALIZE" : "DRAFT · REVIEW REQUIRED";
+  if (message) message.textContent = currentReview.finalized
+    ? "The exact handoff was confirmed by caregiver and provider."
+    : ready ? "Both reviewers confirmed the draft." : "Caregiver and provider approvals are both required.";
+}
+
+function populateHandoffFromSession() {
+  const unresolved = state.questions.find(item => !item.asked)?.text
+    || "Confirm when the second evaluation visit will occur.";
+  const caregiverEvidence = state.transcript.find(item => item.role === "caregiver")?.text || "No caregiver statement captured yet.";
+  const childEvidence = state.transcript.find(item => item.role === "child")?.text || "No direct child communication captured yet.";
+  state.handoff = {
+    version: crypto.randomUUID(),
+    caregiverItems: [
+      { label: "TODAY", title: "Leo’s evaluation started and is not complete.", detail: "No therapy recommendation or diagnosis was made today." },
+      { label: "NEXT", title: "Capture 2–3 examples of HELP, MORE, or STOP.", detail: "Words, gestures, sounds, and actions all count; do not interpret them." },
+      { label: "WHO", title: `${state.participantNames.caregiver} observes; ${state.participantNames.provider} reviews.`, detail: "The clinician completes the evaluation and explains the result." },
+      { label: "WHEN", title: "Before and at the second evaluation visit.", detail: "Confirm the appointment date with the clinic." }
+    ],
+    providerItems: [
+      { label: "CAREGIVER REPORT", title: caregiverEvidence, detail: "Source: caregiver transcript · attribution preserved" },
+      { label: "DIRECT COMMUNICATION", title: childEvidence, detail: "Source: child transcript or labeled synthetic event" },
+      { label: "EVIDENCE STILL NEEDED", title: "Complete observations of understanding, play, speech, sounds, and gestures.", detail: "The first visit was incomplete; no diagnostic conclusion is supported." },
+      { label: "FOLLOW-UP NEEDED", title: unresolved, detail: "Second visit continues evaluation; confirm owner, timing, and caregiver understanding." }
+    ]
+  };
+  state.handoffReview = { version: state.handoff.version, caregiver: false, provider: false, finalized: false };
+  saveState();
+  renderHandoff();
+}
+
+function renderRoom() {
+  const roster = window.CareScribeCustody.createRoomRoster(state.participantNames, state.role);
+  roster.forEach(person => {
+    const actor = document.querySelector(`[data-actor-role="${person.role}"]`);
+    if (actor) {
+      actor.classList.toggle("speaking", person.active && state.status === "live");
+      actor.querySelector("h3").textContent = person.name;
+    }
+    const roleButton = document.querySelector(`#role-tabs [data-role="${person.role}"]`);
+    if (roleButton) roleButton.lastChild.textContent = ` ${person.name}`;
+  });
+  const labels = {
+    verbal: "Mostly verbal · other signals still welcome",
+    nonverbal: "Nonverbal communication · no speech expected",
+    mixed: "Verbal and nonverbal communication",
+  };
+  const communication = document.getElementById("child-communication");
+  if (communication) communication.textContent = labels[state.childMode] || labels.mixed;
+}
+
+function roomJoinUrl() {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("room", state.roomCode);
+  return url.toString();
+}
+
+function renderRoomConnection() {
+  if (els["room-code"]) els["room-code"].textContent = state.roomCode;
+  if (els["room-code-input"] && document.activeElement !== els["room-code-input"]) {
+    els["room-code-input"].value = state.roomCode;
+  }
+  if (els["room-link"]) els["room-link"].textContent = roomJoinUrl();
+}
+
+function renderVoiceRoleHint() {
+  const hint = window.CareScribeCustody.createVoiceRoleHint({
+    selectedRole: state.role,
+    platformLabel: state.platformVoiceLabel,
+  });
+  if (els["voice-role-label"]) els["voice-role-label"].textContent = hint.label;
+  if (els["platform-voice-label"] && document.activeElement !== els["platform-voice-label"]) {
+    els["platform-voice-label"].value = state.platformVoiceLabel;
+  }
 }
 
 function renderOperationalViews() {
@@ -132,12 +270,68 @@ function renderOperationalViews() {
   }
   const count = document.getElementById("mmr-count");
   const root = document.getElementById("mmr-root");
+  const checkpointTrigger = document.getElementById("checkpoint-trigger");
+  const checkpointCount = document.getElementById("checkpoint-count");
   const custodyCount = custody?.fcos.length || state.custodyEvents.length;
   const custodyRoot = custody?.root || state.mmrRoot;
+  const checkpoints = custody?.checkpoints || state.custodyCheckpoints || [];
+  const latestCheckpoint = checkpoints.at(-1);
   if (count) count.textContent = `${custodyCount} EVENTS`;
   if (root) root.textContent = custodyRoot
     ? `${custodyRoot.slice(0, 20)}… computed from canonical persisted bytes`
     : "No canonical events appended yet.";
+  if (checkpointTrigger) checkpointTrigger.textContent = latestCheckpoint
+    ? `${latestCheckpoint.triggerType} · ${latestCheckpoint.triggerId.slice(0, 12)}…`
+    : "Waiting for actor or model event";
+  if (checkpointCount) checkpointCount.textContent = `${checkpoints.length} roots`;
+}
+
+function persistCustodyLedger() {
+  if (!custody) return;
+  state.custodyEvents = custody.fcos.map(event => ({ ...event }));
+  state.custodyEdges = custody.edges.map(edge => ({ ...edge }));
+  state.custodyCheckpoints = custody.checkpoints.map(checkpoint => ({ ...checkpoint }));
+  state.mmrRoot = custody.root;
+  saveState();
+  renderOperationalViews();
+}
+
+function initializeActorCustody() {
+  if (!custody) return;
+  const roles = ["provider", "caregiver", "child", "uncertain"];
+  custodyChain = custodyChain.then(async () => {
+    if (custody.fcos.some(event => event.fcoType === "actor")) return;
+    for (const role of roles) {
+      await custody.appendActorFCO({
+        timestamp: new Date().toISOString(),
+        speaker: role,
+        role,
+        statement: `${role} joined with a session-scoped identity.`,
+        observation: "ACTOR_JOINED",
+        confidence: role === "uncertain" ? "UNCERTAIN" : "NEEDS_REVIEW",
+        source: "room setup",
+        clinicalRelevance: "UNKNOWN",
+        status: "LOCAL_ONLY",
+      });
+    }
+    persistCustodyLedger();
+  });
+}
+
+function checkpointModelInvocation({ provider, model, prompt, outcome, responseSummary, errorCode }) {
+  if (!custody) return;
+  custodyChain = custodyChain.then(async () => {
+    await custody.appendModelInvocationFCO({
+      timestamp: new Date().toISOString(),
+      provider,
+      model,
+      prompt,
+      outcome,
+      responseSummary,
+      errorCode,
+    });
+    persistCustodyLedger();
+  });
 }
 
 function renderTranscript() {
@@ -147,7 +341,7 @@ function renderTranscript() {
     const article = document.createElement("article");
     article.className = "transcript-entry";
     article.innerHTML = `
-      <div class="speaker-label ${item.role}">${escapeHtml(item.role)}</div>
+      <div class="speaker-label ${item.role}">${escapeHtml(state.participantNames[item.role] || item.role)}</div>
       <p class="transcript-copy">${escapeHtml(item.text)}${item.simulated ? '<span class="simulation-tag">Sample</span>' : ""}
         <time class="transcript-time">${formatTime(item.timestamp)}</time>
       </p>`;
@@ -197,21 +391,33 @@ function updateAudioState() {
 function addTranscript(text, role = state.role, simulated = false) {
   const clean = String(text).trim();
   if (!clean) return;
+  if (state.handoff) {
+    state.handoff = null;
+    state.handoffReview = { version: null, caregiver: false, provider: false, finalized: false };
+  }
   const item = { id: crypto.randomUUID(), role, text: clean, timestamp: Date.now(), simulated };
   state.transcript.push(item);
   deriveInsight(item);
-  appendCustodyEvent(item);
-  maybeRequestRemoteReview(item);
+  appendCustodyEvent(item, sessionGeneration);
+  queueLocalGate(item, sessionGeneration);
   saveState();
   render();
 }
 
-async function appendCustodyEvent(item) {
+async function appendCustodyEvent(item, generation) {
+  custodyChain = custodyChain.then(() => {
+    if (generation !== sessionGeneration) return undefined;
+    return appendCustodyEventNow(item);
+  });
+  return custodyChain;
+}
+
+async function appendCustodyEventNow(item) {
   if (!custody) return;
   const status = item.role === "provider" ? "NEEDS_REVIEW" : "UNCERTAIN";
   const fields = {
     timestamp: new Date(item.timestamp).toISOString(),
-    speaker: item.role,
+    speaker: state.participantNames[item.role] || item.role,
     role: item.role,
     statement: item.text,
     observation: "Transcript event captured; meaning not inferred.",
@@ -226,7 +432,7 @@ async function appendCustodyEvent(item) {
     : await custody.appendFCO(fields);
   correctionPredecessorId = null;
   if (previousFcoId && !wasCorrection) {
-    const edgeKind = /\\?|autism/i.test(item.text) ? "QUESTION" : "FOLLOW_UP";
+    const edgeKind = /\?|autism/i.test(item.text) ? "QUESTION" : "FOLLOW_UP";
     custody.appendEdge({ source: previousFcoId, target: fco.id, kind: edgeKind });
   }
   previousFcoId = fco.id;
@@ -248,7 +454,61 @@ async function appendCustodyEvent(item) {
   renderOperationalViews();
 }
 
-async function maybeRequestRemoteReview(item) {
+function queueLocalGate(item, generation) {
+  localGateChain = localGateChain
+    .then(() => generation === sessionGeneration
+      ? requestLocalGate(item, generation)
+      : undefined)
+    .catch(() => {
+      const boundary = document.getElementById("local-boundary-state");
+      if (boundary) boundary.textContent = "Local deterministic privacy fallback active";
+    });
+}
+
+async function requestLocalGate(item, generation) {
+  const modelPrompt = `${item.role}:${item.text}`;
+  const response = await fetch("/api/local-gate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      role: item.role,
+      speaker: state.participantNames[item.role] || item.role,
+      text: item.text,
+      approved: false,
+      synthetic: true,
+    }),
+  });
+  if (!response.ok) {
+    if (generation !== sessionGeneration) return;
+    checkpointModelInvocation({
+      provider: "local",
+      model: "LiquidAI LFM2.5 or deterministic fallback",
+      prompt: modelPrompt,
+      outcome: "failure",
+      errorCode: `HTTP_${response.status}`,
+    });
+    throw new Error("local gate unavailable");
+  }
+  const result = await response.json();
+  if (generation !== sessionGeneration) return;
+  checkpointModelInvocation({
+    provider: result.inference_location || "local",
+    model: result.model,
+    prompt: modelPrompt,
+    outcome: "success",
+    responseSummary: "Local privacy gate produced a bounded disclosure decision.",
+  });
+  pendingPublicUpdates.push({
+    role: item.role,
+    publicUpdate: result.public_update,
+    uncertainty: result.uncertainty || "UNKNOWN",
+  });
+  const model = document.getElementById("local-model-name");
+  const boundary = document.getElementById("local-boundary-state");
+  const preview = document.getElementById("public-update-preview");
+  if (model) model.textContent = result.model;
+  if (boundary) boundary.textContent = `${result.disclosure} · exact event stays on the local Python host`;
+  if (preview) preview.textContent = result.public_update;
   if (!/autism/i.test(item.text) || item.role !== "caregiver") return;
   state.questions.unshift({
     id: crypto.randomUUID(),
@@ -262,23 +522,113 @@ async function maybeRequestRemoteReview(item) {
   if (feed) {
     feed.insertAdjacentHTML("afterbegin", '<article class="update"><small>CAREGIVER CONCERN · REVIEW NEEDED</small><b>Possible autism mentioned by caregiver</b><span>Not a diagnosis · clarify scope and next evaluation steps</span></article>');
   }
+}
+
+async function sharePendingUpdate() {
+  const pending = pendingPublicUpdates[0];
+  if (!pending) return showToast("No minimized update is waiting");
+  const publication = window.CareScribeCustody.createRoomPublication({
+    room: state.roomCode,
+    role: pending.role,
+    publicUpdate: pending.publicUpdate,
+    uncertainty: pending.uncertainty,
+    approved: true,
+  });
+  const feed = document.getElementById("provider-live-feed");
+  try {
+    const response = await fetch("/api/room", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(publication),
+    });
+    if (!response.ok) throw new Error("unavailable");
+    pendingPublicUpdates.shift();
+    const preview = document.getElementById("public-update-preview");
+    if (preview) {
+      preview.textContent = pendingPublicUpdates[0]?.publicUpdate
+        || "Nothing enters the shared room without approval.";
+    }
+    if (feed) {
+      feed.insertAdjacentHTML("afterbegin", `<article class="update approved"><small>CAREGIVER APPROVED · SHARED ROOM</small><b>${escapeHtml(pending.publicUpdate)}</b><span>Minimized room event · names and exact transcript excluded from this publication</span></article>`);
+    }
+    requestRemoteAtomization(pending, sessionGeneration);
+    showToast("Caregiver-approved minimized update shared to the room");
+  } catch {
+    showToast("Room unavailable — update remains in the local approval queue");
+  }
+}
+
+async function requestRemoteAtomization(pending, generation) {
+  const prompt = pending.publicUpdate;
   try {
     const response = await fetch("/api/bedrock", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task: "atomize", text: item.text, synthetic: true })
+      body: JSON.stringify({ task: "atomize", text: prompt, synthetic: true }),
     });
-    if (!response.ok) throw new Error("unavailable");
+    if (!response.ok) throw new Error(`HTTP_${response.status}`);
     const result = await response.json();
-    const status = document.getElementById("bedrock-status");
-    if (status) status.textContent = `Bedrock remote · ${result.model_id.replace("amazon.", "")}`;
+    if (generation !== sessionGeneration) return;
+    checkpointModelInvocation({
+      provider: "Amazon Bedrock",
+      model: result.model_id,
+      prompt,
+      outcome: "success",
+      responseSummary: "Approved minimized update received a remote atomization review.",
+    });
+    const feed = document.getElementById("provider-live-feed");
     if (feed) {
-      feed.insertAdjacentHTML("afterbegin", '<article class="update approved"><small>REMOTE BEDROCK · CLINICIAN REVIEW</small><b>Concern atomized without diagnostic promotion</b><span>Caregiver statement preserved; unknowns remain explicit</span></article>');
+      feed.insertAdjacentHTML("afterbegin", `<article class="update"><small>REMOTE ${escapeHtml(result.model_id)} · REVIEW NEEDED</small><b>Approved minimized event atomized</b><span>Model output remains untrusted until provider review</span></article>`);
     }
-  } catch {
-    const status = document.getElementById("bedrock-status");
-    if (status) status.textContent = "Bedrock remote · disconnected";
+  } catch (error) {
+    if (generation !== sessionGeneration) return;
+    checkpointModelInvocation({
+      provider: "Amazon Bedrock",
+      model: "amazon.nova-micro-v1:0",
+      prompt,
+      outcome: "failure",
+      errorCode: String(error.message || "BEDROCK_UNAVAILABLE"),
+    });
   }
+}
+
+function roomEventKey(event) {
+  return String(event.id || event.event_id || `${event.role}|${event.public_update}|${event.timestamp || ""}`);
+}
+
+function renderPublicRoomEvents(events) {
+  const feed = document.getElementById("provider-live-feed");
+  if (!feed || !Array.isArray(events)) return;
+  events.forEach(event => {
+    if (!event || typeof event.public_update !== "string") return;
+    const key = roomEventKey(event);
+    if (seenRoomEvents.has(key)) return;
+    seenRoomEvents.add(key);
+    feed.insertAdjacentHTML("afterbegin", `<article class="update approved"><small>ROOM UPDATE · ${escapeHtml(event.role || "uncertain")}</small><b>${escapeHtml(event.public_update)}</b><span>${escapeHtml(event.uncertainty || "UNKNOWN")} · public minimized event</span></article>`);
+  });
+}
+
+async function pollRoom() {
+  try {
+    const response = await fetch(`/api/room?room=${encodeURIComponent(state.roomCode)}`, {
+      headers: { "Accept": "application/json" },
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error("room unavailable");
+    const result = await response.json();
+    renderPublicRoomEvents(result.events);
+    els["room-sync-state"].textContent = `Connected · ${result.events?.length || 0} public updates`;
+    els["room-sync-state"].className = "room-sync-state connected";
+  } catch {
+    els["room-sync-state"].textContent = "Room server unavailable · local data safe";
+    els["room-sync-state"].className = "room-sync-state error";
+  }
+}
+
+function startRoomPolling() {
+  if (roomPollHandle) clearInterval(roomPollHandle);
+  pollRoom();
+  roomPollHandle = window.setInterval(pollRoom, 2000);
 }
 
 function deriveInsight(item) {
@@ -287,18 +637,18 @@ function deriveInsight(item) {
   const lower = item.text.toLowerCase();
   let insight = null;
   let question = null;
-  if (/autism/.test(lower)) {
-    insight = { summary: "Caregiver raised a question about possible autism; no conclusion supported", confidence: 100 };
-    question = "What observations and broader developmental history should inform whether further evaluation is appropriate?";
-  } else if (/phrase|words|said|communication|point/.test(lower)) {
-    insight = { summary: "Caregiver reports emerging functional communication", confidence: 86 };
-    question = "Does this communication happen across settings and with different people?";
-  } else if (/transition|warning|stopping|difficult/.test(lower)) {
-    insight = { summary: "Advance notice may support activity transitions", confidence: 82 };
-    question = "What length of warning seems most helpful before a transition?";
-  } else if (/play|blocks|building/.test(lower)) {
-    insight = { summary: "Shared play example described during the visit", confidence: 78 };
-    question = "How does the child invite others to join their play?";
+  if (/next visit|more evaluating|therapy/.test(lower)) {
+    insight = { summary: "Caregiver needs clarification that the second visit continues the evaluation", confidence: 100 };
+    question = "When is the second evaluation visit, and what should the caregiver bring?";
+  } else if (/help|more|stop/.test(lower)) {
+    insight = { summary: "Home observation prompt covers HELP, MORE, and STOP", confidence: 92 };
+    question = "Can the caregiver bring two or three examples without interpreting their meaning?";
+  } else if (/mama|daycare|talking|words|communication|gesture/.test(lower)) {
+    insight = { summary: "Caregiver reported current words and concern about communication", confidence: 88 };
+    question = "What communication is seen across home and daycare settings?";
+  } else if (/scream|vocalization|nonverbal|reach/.test(lower)) {
+    insight = { summary: "A child signal was captured without assigning meaning", confidence: 70 };
+    question = "What happened immediately before and after the signal?";
   }
   if (insight && !state.observations.some(o => o.summary === insight.summary)) {
     state.observations.push({
@@ -317,7 +667,7 @@ function deriveInsight(item) {
 
 async function beginSession() {
   if (state.status === "ready") {
-    els["consent-dialog"].showModal();
+    els["room-dialog"].showModal();
     return;
   }
   await activateSession();
@@ -372,7 +722,7 @@ function startRecognition() {
     recognition.start();
     saveState();
     render();
-    showToast("Microphone active — transcript stays in this browser");
+    showToast("Microphone active — transcript is stored here; recognition may use the browser vendor");
   } catch {
     startSimulation("Couldn’t start live transcription. Playing a fictional sample.");
   }
@@ -461,8 +811,18 @@ els["confirm-end"].addEventListener("click", endSession);
 els["confirm-delete"].addEventListener("click", () => {
   stopCapture();
   stopTimer();
+  sessionGeneration += 1;
   localStorage.removeItem(STORAGE_KEY);
   Object.assign(state, blankState());
+  custody = window.CareScribeCustody
+    ? new window.CareScribeCustody.CustodyLedger()
+    : null;
+  previousFcoId = null;
+  correctionPredecessorId = null;
+  custodyChain = Promise.resolve();
+  localGateChain = Promise.resolve();
+  pendingPublicUpdates = [];
+  seenRoomEvents.clear();
   render();
   showToast("Session permanently deleted");
 });
@@ -480,12 +840,57 @@ els["confirm-consent"].addEventListener("click", event => {
   window.setTimeout(activateSession, 0);
 });
 
+els["confirm-room"].addEventListener("click", () => {
+  state.participantNames = {
+    provider: els["provider-name"].value.trim() || "Provider",
+    caregiver: els["caregiver-name"].value.trim() || "Caregiver",
+    child: els["child-name"].value.trim() || "Child",
+  };
+  state.childMode = els["child-mode"].value;
+  state.roomCode = window.CareScribeCustody.normalizeRoomCode(els["room-code-input"].value);
+  saveState();
+  initializeActorCustody();
+  render();
+  startRoomPolling();
+  window.setTimeout(() => els["consent-dialog"].showModal(), 0);
+});
+
 els["role-tabs"].addEventListener("click", event => {
   const button = event.target.closest("button[data-role]");
   if (!button) return;
   state.role = button.dataset.role;
   saveState();
   render();
+});
+
+els["platform-voice-label"]?.addEventListener("input", event => {
+  state.platformVoiceLabel = event.target.value.trim();
+  saveState();
+  renderVoiceRoleHint();
+});
+
+els["copy-room-link"]?.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(roomJoinUrl());
+    showToast("Room join link copied");
+  } catch {
+    showToast("Copy unavailable — select the displayed join link");
+  }
+});
+
+function addChildSignal(kind) {
+  const signal = window.CareScribeCustody.describeChildSignal(kind, state.participantNames.child);
+  state.role = "child";
+  const expression = document.getElementById("child-expression");
+  if (expression) expression.textContent = signal.statement;
+  addTranscript(signal.statement, "child", true);
+  showToast(`${signal.speaker}: event captured without interpreting its cause`);
+}
+
+document.getElementById("child-nonverbal")?.addEventListener("click", () => addChildSignal("nonverbal"));
+document.getElementById("child-scream")?.addEventListener("click", () => addChildSignal("scream"));
+document.getElementById("child-random")?.addEventListener("click", () => {
+  addChildSignal(Math.random() < 0.5 ? "nonverbal" : "scream");
 });
 
 els["manual-form"].addEventListener("submit", event => {
@@ -537,15 +942,16 @@ document.querySelector(".care-controls")?.addEventListener("click", event => {
     showToast("Add a successor correction; history will not be rewritten");
   } else if (action === "approve") {
     const next = state.questions.find(item => !item.asked);
-    if (!next) return showToast("No intervention is waiting");
-    if (!advocateMuted && "speechSynthesis" in window) {
+    if (!next && !pendingPublicUpdates.length) return showToast("No intervention or update is waiting");
+    if (next && !advocateMuted && "speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(`Before we move on, the caregiver still has an unresolved question. ${next.text}`);
       utterance.rate = 1.05;
       window.speechSynthesis.speak(utterance);
     }
-    next.asked = true;
+    if (next) next.asked = true;
     saveState();
     render();
+    sharePendingUpdate();
     showToast("Caregiver approved a brief advocate intervention");
   }
 });
@@ -560,10 +966,28 @@ fetch("/api/health")
     if (status) status.textContent = health.inference_location === "remote"
       ? "Bedrock remote · connected"
       : "Bedrock remote · disconnected";
+    const list = document.getElementById("model-runtime-list");
+    if (list && Array.isArray(health.models)) {
+      list.innerHTML = health.models.map(model => `<article>
+        <small>${escapeHtml(model.location)}</small>
+        <b>${escapeHtml(model.id)}</b>
+        <span>${escapeHtml(model.purpose)}</span>
+        <i class="${escapeHtml(model.status)}">${escapeHtml(model.status)}</i>
+      </article>`).join("");
+    }
   })
   .catch(() => {
     const status = document.getElementById("bedrock-status");
     if (status) status.textContent = "Bedrock remote · static demo";
+    const list = document.getElementById("model-runtime-list");
+    if (list) {
+      list.innerHTML = `<article>
+        <small>github-pages</small>
+        <b>Recorded/static fallback</b>
+        <span>No model process or room backend runs on this static host</span>
+        <i class="not-run">static-only</i>
+      </article>`;
+    }
   });
 
 const journeyLabels = [
@@ -652,12 +1076,14 @@ document.getElementById("read-story")?.addEventListener("click", () => {
 });
 document.getElementById("run-concern")?.addEventListener("click", () => {
   state.role = "caregiver";
-  addTranscript("I read that this could be autism. Is that what this means?", "caregiver", true);
+  addTranscript("Is the next visit therapy, or more evaluating? What should I notice at home?", "caregiver", true);
   journeyStep = 4;
   renderJourney();
 });
 document.getElementById("generate-handoff")?.addEventListener("click", async () => {
   const preview = document.getElementById("handoff-preview");
+  populateHandoffFromSession();
+  document.querySelector(".handoff-workspace")?.scrollIntoView({ behavior: "smooth", block: "start" });
   preview.innerHTML = "<b>Requesting remote Nova Pro review…</b><p>No plan is final until confirmed.</p>";
   try {
     const text = state.transcript.map(item => `${item.role}: ${item.text}`).join("\n");
@@ -668,10 +1094,48 @@ document.getElementById("generate-handoff")?.addEventListener("click", async () 
     });
     if (!response.ok) throw new Error("unavailable");
     const result = await response.json();
+    checkpointModelInvocation({
+      provider: "Amazon Bedrock",
+      model: result.model_id,
+      prompt: text,
+      outcome: "success",
+      responseSummary: "Remote model returned a bounded synthetic handoff draft.",
+    });
     preview.innerHTML = `<b>Remote ${escapeHtml(result.model_id)} draft</b><p>${escapeHtml(result.output)}</p><small>Clinician and caregiver confirmation required.</small>`;
   } catch {
+    checkpointModelInvocation({
+      provider: "Amazon Bedrock",
+      model: "amazon.nova-pro-v1:0",
+      prompt: state.transcript.map(item => `${item.role}:${item.text}`).join("\n"),
+      outcome: "failure",
+      errorCode: "BEDROCK_UNAVAILABLE",
+    });
     preview.innerHTML = "<b>Remote synthesis unavailable</b><p>Use the evidence-linked local draft and preserve all unresolved items.</p>";
   }
+});
+
+document.getElementById("approve-caregiver-card")?.addEventListener("click", () => {
+  state.handoffReview.caregiver = !state.handoffReview.caregiver;
+  state.handoffReview.finalized = false;
+  saveState();
+  renderHandoff();
+  showToast(state.handoffReview.caregiver ? "Caregiver approved the exact action card" : "Caregiver approval removed");
+});
+
+document.getElementById("approve-provider-brief")?.addEventListener("click", () => {
+  state.handoffReview.provider = !state.handoffReview.provider;
+  state.handoffReview.finalized = false;
+  saveState();
+  renderHandoff();
+  showToast(state.handoffReview.provider ? "Provider review recorded" : "Provider review removed");
+});
+
+document.getElementById("finalize-handoff")?.addEventListener("click", () => {
+  if (!state.handoffReview.caregiver || !state.handoffReview.provider) return;
+  state.handoffReview.finalized = true;
+  saveState();
+  renderHandoff();
+  showToast("Reviewed handoff finalized on this device");
 });
 
 window.addEventListener("beforeunload", () => {
@@ -680,8 +1144,19 @@ window.addEventListener("beforeunload", () => {
     state.lastStartedAt = Date.now();
   }
   saveState();
+  if (roomPollHandle) clearInterval(roomPollHandle);
 });
 
 render();
 renderJourney();
+custodyChain = custodyChain.then(async () => {
+  if (!custody || !Array.isArray(state.custodyEvents) || !state.custodyEvents.length) return;
+  for (const event of state.custodyEvents) await custody.appendFCO(event);
+  for (const edge of state.custodyEdges || []) custody.appendEdge(edge);
+  previousFcoId = custody.fcos.at(-1)?.id || null;
+  persistCustodyLedger();
+}).catch(() => {
+  showToast("Saved custody data failed integrity replay; starting a new local ledger");
+});
+startRoomPolling();
 if (state.status === "paused") showToast("Saved session restored — resume when ready");

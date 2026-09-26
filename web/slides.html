@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173d38">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23173d38'/></svg>">
+  <title>CareScribe — Judge Deck</title>
+  <link rel="stylesheet" href="slides.css">
+</head>
+<body>
+  <nav aria-label="Presentation controls">
+    <a href="projector.html?room=JUDGES">Projector</a>
+    <a href="models.html?room=JUDGES">Models</a>
+    <a href="index.html?room=JUDGES">Live demo</a>
+    <a href="replay.html">Replay</a>
+    <span>Scroll or use Page Down</span>
+  </nav>
+
+  <main>
+    <section class="slide title">
+      <p class="eyebrow">CareScribe Room</p>
+      <h1>What happened in there?</h1>
+      <p class="lead">Julie started Leo’s evaluation, but it is not complete. Maya should
+        still leave knowing what happened, what comes next, who owns it, and when.</p>
+      <div class="boundary">Clinician-reviewed support · simulated data · never diagnosis</div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">The problem</p>
+      <h2>Two people leave the same room with unfinished work.</h2>
+      <div class="two">
+        <article><b>Julie · provider</b><p>Needs to preserve observations before they blur,
+          finish the evaluation, and avoid keeping the next family waiting.</p></article>
+        <article><b>Maya · caregiver</b><p>Needs quick, actionable instructions—not a
+          diagnosis—and clarity that the next visit is still evaluation.</p></article>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">One room · three roles</p>
+      <h2>The conversation becomes a shared, reviewable plan.</h2>
+      <div class="actors">
+        <article><span>1</span><b>Maya</b><p>Controls capture, corrections, and sharing.</p></article>
+        <article><span>2</span><b>Leo</b><p>May use words, gestures, actions, or loud vocalizations.</p></article>
+        <article><span>3</span><b>Julie</b><p>Reviews evidence and retains clinical judgment.</p></article>
+      </div>
+      <p class="callout">The projector shows the reviewed story: transcript, advocate,
+        evidence, uncertainty, and handoff.</p>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Two audiences</p>
+      <h2>Action for Maya. Evidence for Julie.</h2>
+      <div class="two">
+        <article class="mint"><b>Caregiver Action Card</b>
+          <ul><li>Today: evaluation started, not complete</li>
+            <li>Next: capture 2–3 HELP / MORE / STOP examples</li>
+            <li>Who: Maya observes; Julie reviews</li>
+            <li>When: before and at the second visit</li></ul></article>
+        <article><b>Provider Evidence Card</b>
+          <ul><li>Caregiver report stays attributed</li>
+            <li>Child signals keep uncertain meaning</li>
+            <li>Missing evidence stays explicit</li>
+            <li>Both people approve the exact handoff</li></ul></article>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Model routing · evidence ceiling</p>
+      <h2>Different models, bounded functions.</h2>
+      <table>
+        <tr><th>Function</th><th>Model and location</th><th>Proof status</th></tr>
+        <tr><td>Privacy gate</td><td>LiquidAI LFM2.5 · local laptop</td><td>Live benchmarked</td></tr>
+        <tr><td>Event atomization</td><td>Nova Micro · Amazon Bedrock</td><td>Live verified</td></tr>
+        <tr><td>Handoff synthesis</td><td>Nova Pro · Amazon Bedrock</td><td>Live verified</td></tr>
+        <tr><td>Full-duplex audio</td><td>Nova Sonic</td><td>Not run</td></tr>
+        <tr><td>Realtime fallback</td><td>OpenAI gpt-realtime-2.1</td><td>API access only; UI not wired</td></tr>
+      </table>
+      <p class="fine">FCO/MMR checkpoints demonstrate byte integrity and lineage—not
+        clinical truth. The prototype is not approved for PHI and makes no HIPAA
+        compliance claim.</p>
+    </section>
+
+    <section class="slide title">
+      <p class="eyebrow">The narrow promise</p>
+      <h2>Preserve the family’s voice. Make the next step clear.</h2>
+      <p class="lead">CareScribe does not decide what Leo’s observations mean. It gives
+        Julie evidence and uncertainty to review, and gives Maya a clear, correctable
+        handoff.</p>
+      <div class="links">
+        <a href="index.html">Open the live/static demo</a>
+        <a href="assets/carescribe-three-actor-demo.mp4">Play the recorded fallback</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

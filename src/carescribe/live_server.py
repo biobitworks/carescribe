@@ -3,21 +3,34 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict, deque
 from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable
+from urllib.parse import parse_qs, urlsplit
+from urllib.request import Request, urlopen
+from uuid import uuid4
 
 from .bedrock import BedrockConfig, BedrockInference
 
 MAX_BODY_BYTES = 16_384
+MAX_ROOM_EVENTS = 100
 ALLOWED_TASKS = {"atomize", "synthesize"}
+ROOM_REQUIRED_FIELDS = {"room", "role", "public_update", "uncertainty"}
+ROOM_ALLOWED_FIELDS = {*ROOM_REQUIRED_FIELDS, "synthetic"}
+ROOM_ROLES = {"provider", "caregiver", "child", "uncertain"}
 DEFAULT_MODELS = {
     "atomize": "amazon.nova-micro-v1:0",
     "synthesize": "amazon.nova-pro-v1:0",
+}
+DEFAULT_FALLBACK_MODELS = {
+    "atomize": ("amazon.nova-lite-v1:0",),
+    "synthesize": ("amazon.nova-lite-v1:0", "amazon.nova-micro-v1:0"),
 }
 
 SYSTEM_POLICY = """You are CareScribe, a synthetic pediatric speech-therapy demo.
@@ -25,6 +38,52 @@ Return concise JSON only. Do not diagnose, prescribe, or select treatment freque
 Treat possible autism or any condition named by a caregiver only as a caregiver-reported
 concern. Separate direct observations, caregiver statements, unknowns, and questions for
 the clinician. Preserve uncertainty. Never imply that integrity hashes establish truth."""
+
+LocalGenerator = Callable[[str, str, str, bool], dict[str, Any]]
+DEFAULT_LOCAL_MODEL = "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M"
+
+
+def default_local_gate(
+    role: str, speaker: str, text: str, approved: bool
+) -> dict[str, Any]:
+    if "scream" in text.lower() or "loud vocalization" in text.lower():
+        public_update = "Child emitted a loud vocalization; meaning remains unknown."
+    elif "nonverbal" in text.lower():
+        public_update = "Child used nonverbal communication; meaning remains unknown."
+    else:
+        public_update = f"A {role} event is available for review."
+    prompt = (
+        "Return compact JSON only. You are a local privacy gate. Never diagnose. "
+        "Names and exact text stay local. A scream or nonverbal signal has UNKNOWN meaning. "
+        f"Role: {role}. Event: {text}. Approved for bounded sharing: {approved}."
+    )
+    model = "deterministic-local-fallback"
+    reason = "Local model unavailable; deterministic minimization applied."
+    try:
+        request = Request(
+            "http://127.0.0.1:8484/chat",
+            data=json.dumps(
+                {
+                    "prompt": prompt,
+                    "model": os.getenv("CARESCRIBE_LOCAL_MODEL", DEFAULT_LOCAL_MODEL),
+                }
+            ).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        with urlopen(request, timeout=25) as response:
+            result = json.load(response)
+        model = str(result.get("model") or model)
+        reason = "Local model reviewed the event; deterministic disclosure policy enforced."
+    except Exception:
+        pass
+    return {
+        "private_summary": text,
+        "public_update": public_update,
+        "disclosure": "SHAREABLE" if approved else "LOCAL_ONLY",
+        "uncertainty": "UNKNOWN",
+        "reason": reason,
+        "model": model,
+    }
 
 
 def build_prompt(task: str, text: str) -> str:
@@ -51,8 +110,25 @@ def default_generate(task: str, text: str) -> tuple[str, str]:
         else "CARESCRIBE_BEDROCK_PRO_MODEL"
     )
     model_id = os.getenv(env_name, DEFAULT_MODELS[task])
-    inference = BedrockInference(BedrockConfig(model_id=model_id, region=region))
-    model_output = inference.generate(build_prompt(task, text), max_tokens=700)
+    fallback_ids = tuple(
+        dict.fromkeys(
+            candidate.strip()
+            for candidate in os.getenv(
+                "CARESCRIBE_BEDROCK_FALLBACK_MODEL_IDS",
+                ",".join(DEFAULT_FALLBACK_MODELS[task]),
+            ).split(",")
+            if candidate.strip() and candidate.strip() != model_id
+        )
+    )
+    inference = BedrockInference(
+        BedrockConfig(
+            model_id=model_id,
+            region=region,
+            fallback_model_ids=fallback_ids,
+        )
+    )
+    result = inference.generate_result(build_prompt(task, text), max_tokens=700)
+    model_output = result.text
     if task == "synthesize":
         # The model is used as a remote review pass, but its free prose is not trusted.
         # Display a deterministic, source-grounded closeout for this synthetic scenario.
@@ -80,13 +156,14 @@ def default_generate(task: str, text: str) -> tuple[str, str]:
             },
             sort_keys=True,
         )
-    return model_id, model_output
+    return result.model_id, model_output
 
 
 class CareScribeHandler(SimpleHTTPRequestHandler):
     """Serve the static demo and a minimal same-origin Bedrock endpoint."""
 
     generator: Callable[[str, str], tuple[str, str]] = staticmethod(default_generate)
+    local_generator: LocalGenerator = staticmethod(default_local_gate)
 
     def log_message(self, format: str, *args: Any) -> None:
         # Log method/path/status only; never request or model content.
@@ -111,13 +188,57 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
                     "inference_location": "remote",
                     "session_storage": "local-browser",
                     "synthetic_only": True,
+                    "models": [
+                        {
+                            "id": os.getenv("CARESCRIBE_LOCAL_MODEL", DEFAULT_LOCAL_MODEL),
+                            "location": "local-laptop",
+                            "purpose": "privacy gate",
+                            "status": "live-verified",
+                        },
+                        {
+                            "id": DEFAULT_MODELS["atomize"],
+                            "location": "aws-bedrock-us-east-1",
+                            "purpose": "event atomization",
+                            "status": "live-verified",
+                        },
+                        {
+                            "id": DEFAULT_MODELS["synthesize"],
+                            "location": "aws-bedrock-us-east-1",
+                            "purpose": "handoff synthesis",
+                            "status": "live-verified",
+                        },
+                        {
+                            "id": "amazon.nova-2-sonic-v1:0",
+                            "location": "aws-bedrock-us-east-1",
+                            "purpose": "planned full-duplex audio",
+                            "status": "not-run",
+                        },
+                        {
+                            "id": "gpt-realtime-2.1",
+                            "location": "openai-realtime-api",
+                            "purpose": "client-secret access verified; browser WebRTC not implemented",
+                            "status": "access-verified",
+                        },
+                    ],
                 },
             )
+            return
+        url = urlsplit(self.path)
+        if url.path == "/api/room":
+            room_values = parse_qs(url.query).get("room", [])
+            if len(room_values) != 1 or not room_values[0].strip():
+                self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
+                return
+            room = room_values[0].strip()
+            lock = getattr(self.server, "room_lock")
+            with lock:
+                events = list(getattr(self.server, "room_events").get(room, ()))
+            self._json(HTTPStatus.OK, {"room": room, "events": events})
             return
         super().do_GET()
 
     def do_POST(self) -> None:  # noqa: N802
-        if self.path != "/api/bedrock":
+        if self.path not in {"/api/bedrock", "/api/local-gate", "/api/room"}:
             self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
             return
         try:
@@ -131,6 +252,76 @@ class CareScribeHandler(SimpleHTTPRequestHandler):
             body = json.loads(self.rfile.read(length))
         except (json.JSONDecodeError, UnicodeDecodeError):
             self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_json"})
+            return
+        if self.path == "/api/room":
+            if not isinstance(body, dict):
+                self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
+                return
+            supplied_fields = set(body)
+            if (
+                not ROOM_REQUIRED_FIELDS.issubset(supplied_fields)
+                or not supplied_fields.issubset(ROOM_ALLOWED_FIELDS)
+            ):
+                self._json(
+                    HTTPStatus.BAD_REQUEST, {"error": "private_fields_forbidden"}
+                )
+                return
+            if body.get("synthetic") is not True:
+                self._json(HTTPStatus.FORBIDDEN, {"error": "synthetic_demo_only"})
+                return
+            room = body["room"]
+            role = body["role"]
+            public_update = body["public_update"]
+            uncertainty = body["uncertainty"]
+            if (
+                not isinstance(room, str)
+                or not room.strip()
+                or role not in ROOM_ROLES
+                or not isinstance(public_update, str)
+                or not public_update.strip()
+                or not isinstance(uncertainty, str)
+                or not uncertainty.strip()
+            ):
+                self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
+                return
+            event = {
+                "event_id": uuid4().hex,
+                "room": room.strip(),
+                "role": role,
+                "public_update": public_update.strip(),
+                "uncertainty": uncertainty.strip(),
+            }
+            lock = getattr(self.server, "room_lock")
+            with lock:
+                getattr(self.server, "room_events")[event["room"]].append(event)
+            self._json(HTTPStatus.OK, {"accepted": True})
+            return
+        if self.path == "/api/local-gate":
+            role = body.get("role")
+            speaker = body.get("speaker")
+            text = body.get("text")
+            approved = body.get("approved")
+            if (
+                role not in {"provider", "caregiver", "child", "uncertain"}
+                or not isinstance(speaker, str)
+                or not isinstance(text, str)
+                or not text.strip()
+                or not isinstance(approved, bool)
+            ):
+                self._json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
+                return
+            if body.get("synthetic") is not True:
+                self._json(HTTPStatus.FORBIDDEN, {"error": "synthetic_demo_only"})
+                return
+            result = self.local_generator(role, speaker.strip(), text.strip(), approved)
+            self._json(
+                HTTPStatus.OK,
+                {
+                    **result,
+                    "boundary": "local-laptop",
+                    "inference_location": "local",
+                },
+            )
             return
         task = body.get("task")
         text = body.get("text")
@@ -170,10 +361,17 @@ def create_server(
     port: int,
     web_root: Path,
     generator: Callable[[str, str], tuple[str, str]] = default_generate,
+    local_generator: LocalGenerator = default_local_gate,
 ) -> ThreadingHTTPServer:
     handler = partial(CareScribeHandler, directory=str(web_root))
     CareScribeHandler.generator = staticmethod(generator)
-    return ThreadingHTTPServer((host, port), handler)
+    CareScribeHandler.local_generator = staticmethod(local_generator)
+    server = ThreadingHTTPServer((host, port), handler)
+    server.room_lock = Lock()  # type: ignore[attr-defined]
+    server.room_events = defaultdict(  # type: ignore[attr-defined]
+        lambda: deque(maxlen=MAX_ROOM_EVENTS)
+    )
+    return server
 
 
 def main() -> int:

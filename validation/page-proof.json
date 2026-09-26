@@ -1,0 +1,40 @@
+{
+  "schema_version": "carescribe.page-proof.v1",
+  "execution_date": "2026-09-26",
+  "origin": "http://127.0.0.1:8080",
+  "room": "JUDGES",
+  "http_200_pages": [
+    "provider.html",
+    "caregiver.html",
+    "child.html",
+    "projector.html",
+    "models.html",
+    "replay.html",
+    "slides.html"
+  ],
+  "isolated_browser_contexts": [
+    {
+      "page": "provider.html",
+      "console_errors": 0,
+      "screenshot": "validation/screenshots/final-provider-focus.png"
+    },
+    {
+      "page": "caregiver.html",
+      "console_errors": 0,
+      "screenshot": "validation/screenshots/final-caregiver-focus.png"
+    },
+    {
+      "page": "projector.html",
+      "console_errors": 0,
+      "screenshot": "validation/screenshots/final-projector-focus.png"
+    },
+    {
+      "page": "models.html",
+      "console_errors": 0,
+      "screenshot": "validation/screenshots/final-models-focus.png"
+    }
+  ],
+  "runtime_observation": "Each checked focused page displayed Local server connected, five bounded routes, and the same caregiver-approved JUDGES room event.",
+  "static_boundary": "On a host without /api/health or /api/room, focus.js renders Static presentation mode and states that no model process or synchronized room is running.",
+  "claim_boundary": "HTTP and browser checks prove these local synthetic pages rendered. They do not establish authentication, production deployment, cross-device privacy, or clinical validity."
+}

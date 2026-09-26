@@ -25,30 +25,29 @@ information. Use simulated interactions only.
 
 | Area | Owner | Pull request | Demo or evidence | Status |
 | --- | --- | --- | --- | --- |
-| Responsive web interaction | Unassigned | Add URL | `web/` | Implemented locally |
-| Live transcription and speaker roles | Unassigned | Add URL | `web/` | Implemented; verify deployed |
-| Bedrock observations and summaries | Byron | Add URL | Tests and smoke receipt | Boundary validated |
-| Real-time questions and duplex voice | Unassigned | Add URL | Questions in `web/`; voice pending | Partial |
-| Session persistence and deletion | Unassigned | Add URL | Browser demo and tests | Implemented locally |
-| AWS hosting and deployment | Unassigned | Add URL | Add AWS URL | Blocked by workshop IAM |
-| Clinical safety and privacy review | Unassigned | Add URL | `docs/` | Draft complete |
-| Slides and backup demo video | Unassigned | Add URL | Add URL | Not started |
+| Responsive web interaction | Byron | Main | `web/` | Implemented; deployment verification pending |
+| Live transcription and speaker roles | Byron | Main | `web/` | Implemented; browser/vendor dependent |
+| Bedrock observations and summaries | Byron | Main | Tests and receipts | Nova Micro and Pro paths live-verified |
+| Real-time questions and duplex voice | Byron | Main | Questions in `web/`; voice fallback documented | Partial; duplex not implemented |
+| Session persistence and deletion | Byron | Main | Browser demo and tests | Browser-local only |
+| AWS hosting and deployment | Julie | Issue 3 | GitHub Pages fallback below | Blocked by workshop IAM |
+| Clinical safety and privacy review | Byron | Main | `docs/` | Prototype audit complete; not PHI-ready |
+| Slides and backup demo video | Byron | Main | Public Pages paths below | Prepared; deployment verification pending |
 
 ## Shared links
 
 - Repository: https://github.com/biobitworks/carescribe
 - Live application: https://biobitworks.github.io/carescribe/
-- Slides: Add shared URL
-- Backup video: Add shared URL
-- Team lead workspace: Add shared URL
+- Slides: https://biobitworks.github.io/carescribe/slides.html
+- Backup video: https://biobitworks.github.io/carescribe/assets/carescribe-three-actor-demo.mp4
 - Submission form:
   https://docs.google.com/forms/d/e/1FAIpQLSfWlRj2fPWD0bdkF57VJxkKp49qtdzXR66z40jxxuC9HLsC4w/viewform
 
 ## Remaining deadline issues
 
-- [AWS hosting deployment](https://github.com/biobitworks/carescribe/issues/1)
+- [Final form submission](https://github.com/biobitworks/carescribe/issues/1)
 - [Slides and backup video](https://github.com/biobitworks/carescribe/issues/2)
-- [Final form submission](https://github.com/biobitworks/carescribe/issues/3)
+- [AWS hosting deployment](https://github.com/biobitworks/carescribe/issues/3)
 
 ## Definition of done
 

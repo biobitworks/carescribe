@@ -1,0 +1,63 @@
+{
+  "receipt_version": "1.0",
+  "created_at": "2026-09-26T20:44:13.397834Z",
+  "runtime": {
+    "engine": "Ollama",
+    "engine_version": "0.32.15",
+    "location": "local_laptop",
+    "endpoint": "http://127.0.0.1:11434",
+    "processor": "100% GPU"
+  },
+  "model": {
+    "repository": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
+    "repository_revision": "8ed288026e23958ad9dfa92d53ed773a8eee7125",
+    "ollama_id": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+    "ollama_manifest_id": "5791ac70d52d",
+    "quantization": "Q4_K_M",
+    "blob_sha256": "b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5",
+    "size_bytes_reported": 730000000
+  },
+  "cold_start": {
+    "total_ms": 55901.78275,
+    "load_ms": 54630.553083,
+    "prompt_tokens": 33,
+    "output_tokens": 5,
+    "output_tokens_per_second": 105.5308146897425,
+    "response": "Four-word request"
+  },
+  "warm_trials": [
+    {
+      "trial": 1,
+      "total_ms": 820.631125,
+      "load_ms": 608.481583,
+      "prompt_tokens": 34,
+      "output_tokens": 15,
+      "output_tokens_per_second": 140.94432699083862
+    },
+    {
+      "trial": 2,
+      "total_ms": 131.4675,
+      "load_ms": 1.691875,
+      "prompt_tokens": 34,
+      "output_tokens": 15,
+      "output_tokens_per_second": 136.73406136624675
+    },
+    {
+      "trial": 3,
+      "total_ms": 127.417583,
+      "load_ms": 1.367166,
+      "prompt_tokens": 34,
+      "output_tokens": 15,
+      "output_tokens_per_second": 141.04239734464178
+    }
+  ],
+  "warm_output": "The caregiver notes that a two-minute warning aids in managing transitions effectively.",
+  "adapter_proof": {
+    "endpoint": "http://127.0.0.1:8484/chat",
+    "requested_model": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+    "response": "OK",
+    "returned_model": "hf.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF:Q4_K_M",
+    "status": "answered"
+  },
+  "safety_scope": "Synthetic, non-diagnostic benchmark input only."
+}

@@ -1,6 +1,6 @@
 # CareScribe submission copy
 
-> Final owner: complete every bracketed item and use simulated data only.
+> Final owner: verify every public link and use simulated data only.
 
 ## 1. Team Members Name (Please list individual names)
 
@@ -21,22 +21,24 @@ diagnosis, prescription, treatment recommendation, or replacement for clinical j
 
 ## 4. Describe what you built today
 
-We built the validated AI inference foundation for CareScribe. The repository provides a
-single Amazon Bedrock Runtime boundary using the `Converse` API through `boto3`, with
-configuration checks, deterministic generation settings, offline request-shape tests, and
-an opt-in live smoke command. A committed receipt records one successful synthetic
-Bedrock invocation on September 26, 2026 using Amazon Nova Micro in `us-east-1`.
+We built a three-role CareScribe Room for a fictional incomplete pediatric speech
+evaluation. Julie, Maya, and Leo can be named in the room; the active speaker is
+highlighted; verbal, nonverbal, and loud child events remain explicitly uncertain. The
+projector view combines a role-labeled transcript, caregiver advocate, evidence-linked
+provider review, and append-only custody checkpoints.
 
-We also built a privacy-first browser workflow that captures live speech when the browser
-supports it, provides a clearly labeled fictional fallback, tracks provider, caregiver,
-child, or uncertain speaker roles, and displays evidence-linked observations and
-follow-up questions for clinician review. Its five-step journey includes separate
-camera/microphone permissions, a bounded child story, caregiver-controlled advocate,
-provider EHR-style review, and shared closeout. Sessions persist only in that browser and
-can be deleted by the user. The public static demonstration remains disconnected from
-clinical systems. A local MagicPro path invokes remote Amazon Nova Micro and Nova Pro
-through server-side Bedrock credentials while local FCO/FCG/MMR custody preserves
-append-only evidence and corrections.
+At closeout, Maya receives a correctable **Today / Next / Who / When** Action Card while
+Julie receives a separate Evidence Card with source, uncertainty, missing observations,
+and decisions still needed. Both people must approve the exact handoff before it can be
+finalized.
+
+The local-server demo includes a benchmarked LiquidAI LFM2.5 privacy-gate adapter on the
+laptop, Amazon Nova Micro for synthetic event atomization, Amazon Nova Pro for synthetic
+handoff review, bounded in-memory room synchronization, and model-invocation custody
+events. Nova Sonic has not been run. OpenAI Realtime client-secret access was verified as
+a possible fallback, but browser WebRTC/full-duplex voice is not implemented. The public
+GitHub Pages site is a static interaction and recorded-replay fallback; it is not the
+model or room backend and is disconnected from clinical systems.
 
 ## 5. What is the path to real-world impact?
 
@@ -63,8 +65,8 @@ https://github.com/biobitworks/carescribe
 
 ## 8. Slides or additional material (videos)
 
-- Slides: [PASTE SHAREABLE SLIDES URL]
-- Demo video: [PASTE SHAREABLE VIDEO URL]
+- Slides: https://biobitworks.github.io/carescribe/slides.html
+- Demo video: https://biobitworks.github.io/carescribe/assets/carescribe-three-actor-demo.mp4
 
 ## Hackathon Submission Confirmation
 
@@ -97,9 +99,8 @@ Do not check until every team member responsible for submission confirms:
 
 ## Final paste checklist
 
-- [ ] Replace all square-bracket placeholders.
-- [ ] Keep the verified Bedrock claim narrow: one synthetic successful smoke invocation,
-  not proof of clinical validity, availability, security completeness, or compliance.
+- [ ] Keep every model claim at its documented evidence ceiling; Nova Sonic and browser
+  full-duplex voice are not implemented.
 - [ ] Paste each answer into the matching numbered form field.
 - [ ] Open every submitted link from a private/logged-out browser window.
 - [ ] Submit one response for the team before the deadline.

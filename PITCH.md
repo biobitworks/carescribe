@@ -1,11 +1,11 @@
 # CareScribe: 3-minute pitch and demo run-of-show
 
-> Use simulated encounter content only. Before presenting, replace every bracketed item
-> and rehearse the final deployed build.
+> Use simulated encounter content only. The public Pages build is static; use the local
+> server for live model/room proof and label the replay when used.
 
 ## 0:00–0:25 — Problem
 
-**Speaker:** [NAME]
+**Speaker:** Julie
 
 “A clinical conversation can be rich and human, but converting it into clear
 documentation creates extra cognitive and administrative work. That burden can pull a
@@ -17,7 +17,7 @@ firmly in control?”
 
 ## 0:25–0:45 — Product and safety boundary
 
-**Speaker:** [NAME]
+**Speaker:** Byron
 
 “CareScribe is clinician-reviewed documentation support. It is not a medical device, and
 it does not autonomously diagnose, prescribe, choose treatment, or replace clinical
@@ -28,8 +28,8 @@ must review, edit, and approve.”
 
 ## 0:45–1:50 — Live demo
 
-**Driver:** [NAME]  
-**Narrator:** [NAME]
+**Driver:** Byron
+**Narrator:** Julie
 
 1. **0:45–0:55 — Open**
 
@@ -41,17 +41,18 @@ must review, edit, and approve.”
 
    “We’ll use a fictional encounter—no patient data or protected health information.”
 
-   Start a consented simulated session. Use the prepared fictional transcript fallback,
-   or live speech in a supported browser with: “Mom reports that Maya uses short phrases
-   at home. Maya says, more bubbles.”
+   Start a consented simulated session with Julie, Maya, and Leo. Use the prepared
+   fictional transcript fallback, or say: “Is the next visit therapy, or more
+   evaluating? What should I notice at home?”
 
 3. **1:15–1:35 — Generate**
 
-   “CareScribe sends this content through our Amazon Bedrock inference boundary.”
+   “CareScribe first uses the laptop-local privacy gate. Only a caregiver-approved,
+   minimized room event is sent to the atomization path.”
 
-   Show the transcript populating and switch among provider, caregiver, child, and
-   uncertain speaker roles. Explain that this static demo does not call Bedrock; the
-   separately tested Bedrock boundary is shown in the repository.
+   Show the transcript and switch among provider, caregiver, child, and uncertain roles.
+   Use `projector.html` for the shared story and `models.html` for exact route status.
+   If using the public static build, say that it does not call the local or AWS backend.
 
 4. **1:35–1:50 — Review**
 
@@ -63,20 +64,20 @@ must review, edit, and approve.”
 
 ## 1:50–2:15 — What is validated
 
-**Speaker:** [NAME]
+**Speaker:** Byron
 
-“Under the hood, all implemented AI inference crosses one boundary: Amazon Bedrock
-Runtime’s `Converse` API through `boto3`. We added offline tests for the exact request
-shape and configuration checks. We also committed a receipt for one successful synthetic
-live invocation on September 26 using Amazon Nova Micro in `us-east-1`. That receipt
-proves that smoke call succeeded—not clinical validity, production availability,
-security completeness, or regulatory compliance.”
+“Under the hood, implemented text inference uses two explicit boundaries: LiquidAI
+LFM2.5 on the laptop host for the local synthetic privacy-gate path, and Amazon Bedrock
+Runtime’s `Converse` API for Nova Micro and Nova Pro. We committed a LiquidAI benchmark,
+a Nova Micro smoke receipt, and browser custody checkpoints for successful synthetic
+LiquidAI, Nova Micro, and Nova Pro calls. Those receipts prove only those checks—not
+clinical validity, production availability, security completeness, or compliance.”
 
 **On screen:** Architecture slide or `validation/bedrock-smoke.json`.
 
 ## 2:15–2:45 — Impact and path forward
 
-**Speaker:** [NAME]
+**Speaker:** Julie
 
 “The near-term opportunity is to reduce documentation time and correction burden while
 preserving clinician oversight. Next, we would co-design with clinicians, evaluate note
@@ -86,7 +87,7 @@ work needed before any clinical use.”
 
 ## 2:45–3:00 — Close
 
-**Speaker:** [NAME]
+**Speaker:** Byron
 
 “CareScribe keeps the promise deliberately narrow: AI helps structure the draft; the
 clinician owns the judgment. Our goal is more attention available for care, with a clear
@@ -101,9 +102,10 @@ If the deployed app fails, say: “The live interface is unavailable, so we’ll
 recorded path and show the validated inference evidence rather than imply a successful
 live workflow.”
 
-1. Switch immediately to [PASTE SHAREABLE BACKUP VIDEO URL].
+1. Switch immediately to
+   https://biobitworks.github.io/carescribe/replay.html.
 2. If the video also fails, show pre-captured screenshots of the simulated workflow:
-   [PASTE SCREENSHOT/SLIDES LOCATION].
+   https://biobitworks.github.io/carescribe/slides.html.
 3. Open `validation/bedrock-smoke.json` in the repository and explain its narrow claim:
    one successful synthetic Bedrock `Converse` call.
 4. Show `src/carescribe/bedrock.py` and `tests/test_bedrock.py` to establish the Bedrock
