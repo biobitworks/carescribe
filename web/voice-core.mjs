@@ -39,3 +39,56 @@ export function canonicalJson(value) {
   }
   return JSON.stringify(value);
 }
+
+export function createCheckpointChain(hash) {
+  let root = "GENESIS";
+  let count = 0;
+  let generation = 0;
+  let tail = Promise.resolve();
+
+  function append(event, activeGeneration = generation) {
+    tail = tail.then(async () => {
+      const eventHash = await hash(canonicalJson(event));
+      if (activeGeneration !== generation) return;
+      const nextRoot = await hash(`${root}:${eventHash}`);
+      if (activeGeneration !== generation) return;
+      root = nextRoot;
+      count += 1;
+    });
+    return tail;
+  }
+
+  function reset() {
+    generation += 1;
+    root = "GENESIS";
+    count = 0;
+  }
+
+  return {
+    append,
+    reset,
+    settled: () => tail,
+    snapshot: () => ({ count, root }),
+    token: () => generation,
+  };
+}
+
+export function canSendAudio(socket, highWatermark = 262_144) {
+  return Boolean(
+    socket
+    && socket.readyState === 1
+    && Number(socket.bufferedAmount || 0) <= highWatermark
+  );
+}
+
+export function voiceWebSocketUrl(runtimeLocation) {
+  const scheme = runtimeLocation.protocol === "https:" ? "wss" : "ws";
+  const localDevelopment = (
+    ["127.0.0.1", "localhost"].includes(runtimeLocation.hostname)
+    && runtimeLocation.port === "8080"
+  );
+  if (localDevelopment) {
+    return `${scheme}://${runtimeLocation.hostname}:8081/ws?synthetic=true&consent=true`;
+  }
+  return `${scheme}://${runtimeLocation.host}/voice/ws?synthetic=true&consent=true`;
+}

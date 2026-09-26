@@ -1,4 +1,11 @@
-import { canonicalJson, minimizedPublicUpdate, normalizeActor } from "./voice-core.mjs";
+import { StreamingPcmEncoder } from "./audio-core.mjs";
+import {
+  canSendAudio,
+  createCheckpointChain,
+  minimizedPublicUpdate,
+  normalizeActor,
+  voiceWebSocketUrl,
+} from "./voice-core.mjs";
 
 const byId = id => document.getElementById(id);
 const els = Object.fromEntries([
@@ -16,9 +23,6 @@ let captureNode;
 let playbackContext;
 let playbackCursor = 0;
 let latestUserTranscript = "";
-let checkpointRoot = "GENESIS";
-let checkpointCount = 0;
-let generation = 0;
 
 function staticHost() {
   return location.hostname.endsWith("github.io");
@@ -48,14 +52,25 @@ async function digest(value) {
   return [...new Uint8Array(hash)].map(byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function checkpoint(event, activeGeneration = generation) {
-  const eventHash = await digest(canonicalJson(event));
-  const nextRoot = await digest(`${checkpointRoot}:${eventHash}`);
-  if (activeGeneration !== generation) return;
-  checkpointRoot = nextRoot;
-  checkpointCount += 1;
-  els["checkpoint-count"].textContent = String(checkpointCount);
-  els["checkpoint-root"].textContent = nextRoot;
+const checkpointChain = createCheckpointChain(digest);
+
+function renderCheckpoint() {
+  const { count, root } = checkpointChain.snapshot();
+  els["checkpoint-count"].textContent = String(count);
+  els["checkpoint-root"].textContent = count ? root : "none";
+}
+
+async function checkpoint(event, token = checkpointChain.token()) {
+  await checkpointChain.append(event, token);
+  renderCheckpoint();
+}
+
+function setRuntime(title, detail) {
+  const strong = document.createElement("strong");
+  strong.textContent = title;
+  const span = document.createElement("span");
+  span.textContent = detail;
+  els["runtime-state"].replaceChildren(strong, span);
 }
 
 function addTranscript(role, text, isFinal) {
@@ -75,6 +90,7 @@ function addTranscript(role, text, isFinal) {
   }
   line.querySelector("span").textContent = text;
   if (isFinal) {
+    const checkpointToken = checkpointChain.token();
     delete line.dataset.liveRole;
     if (key === "user") {
       latestUserTranscript = text;
@@ -85,7 +101,7 @@ function addTranscript(role, text, isFinal) {
       actor: key === "assistant" ? "advocate" : actor.role,
       disclosure: "LOCAL_ONLY",
       transcript_sha256: transcriptHash,
-    }));
+    }, checkpointToken));
   }
   els["voice-transcript"].scrollTop = els["voice-transcript"].scrollHeight;
 }
@@ -121,7 +137,7 @@ async function playPcm(encoded, sampleRate = 16000) {
 
 function handleVoiceEvent(event) {
   if (event.type === "bidi_connection_start") {
-    els["runtime-state"].innerHTML = `<strong>Nova Sonic connected</strong><span>${event.model} · Bedrock us-east-1 · raw audio cloud boundary</span>`;
+    setRuntime("Nova Sonic connected", `${event.model} · Bedrock us-east-1 · raw audio cloud boundary`);
     els["start-mic"].disabled = false;
     els["end-voice"].disabled = false;
     checkpoint({ kind: "model-invocation", actor: "amazon-bedrock", model: event.model, disclosure: "REMOTE_AUDIO" });
@@ -145,9 +161,7 @@ function handleVoiceEvent(event) {
 }
 
 function voiceUrl() {
-  const scheme = location.protocol === "https:" ? "wss" : "ws";
-  const host = location.hostname || "127.0.0.1";
-  return `${scheme}://${host}:8081/ws?synthetic=true&consent=true`;
+  return voiceWebSocketUrl(location);
 }
 
 async function connect(event) {
@@ -175,7 +189,7 @@ async function connect(event) {
   };
   socket.onerror = () => setError("Could not connect to the local Nova Sonic bridge on port 8081.");
   socket.onclose = () => {
-    stopMicrophone();
+    stopMicrophone({ record: false, sendSilence: false });
     els["connect-voice"].disabled = false;
     els["start-mic"].disabled = true;
     els["end-voice"].disabled = true;
@@ -186,26 +200,29 @@ async function connect(event) {
 async function startMicrophone() {
   setError();
   if (!socket || socket.readyState !== WebSocket.OPEN) return setError("Connect the advocate first.");
+  if (!els["synthetic-consent"].checked || !els["cloud-consent"].checked) {
+    return setError("Consent was revoked. Reconnect after both acknowledgements.");
+  }
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
     });
     captureContext = new AudioContext({ sampleRate: 16000 });
+    if (!playbackContext || playbackContext.state === "closed") {
+      playbackContext = new AudioContext({ sampleRate: 16000 });
+    }
+    await Promise.all([captureContext.resume(), playbackContext.resume()]);
     await captureContext.audioWorklet.addModule("audio-capture.worklet.js");
     const source = captureContext.createMediaStreamSource(mediaStream);
     captureNode = new AudioWorkletNode(captureContext, "carescribe-audio-capture");
     const silent = captureContext.createGain();
     silent.gain.value = 0;
     captureNode.port.onmessage = message => {
-      if (message.data.type !== "audio" || socket.readyState !== WebSocket.OPEN) return;
-      const bytes = new Uint8Array(message.data.pcm.buffer);
-      socket.send(JSON.stringify({
-        type: "bidi_audio_input",
-        audio: bytesToBase64(bytes),
-        format: "pcm",
-        sample_rate: 16000,
-        channels: 1,
-      }));
+      if (message.data.type !== "audio") return;
+      if (!sendAudioFrame(message.data.pcm)) {
+        setError("Audio paused because the network buffer is full.");
+        stopMicrophone({ record: true, sendSilence: false });
+      }
     };
     source.connect(captureNode);
     captureNode.connect(silent).connect(captureContext.destination);
@@ -218,7 +235,30 @@ async function startMicrophone() {
   }
 }
 
-function stopMicrophone() {
+function sendAudioFrame(pcm) {
+  if (!canSendAudio(socket)) return false;
+  const bytes = new Uint8Array(pcm.buffer, pcm.byteOffset, pcm.byteLength);
+  socket.send(JSON.stringify({
+    type: "bidi_audio_input",
+    audio: bytesToBase64(bytes),
+    format: "pcm",
+    sample_rate: 16000,
+    channels: 1,
+  }));
+  return true;
+}
+
+function stopMicrophone({ record = true, sendSilence = true } = {}) {
+  if (sendSilence && mediaStream && canSendAudio(socket)) {
+    const silence = new StreamingPcmEncoder({
+      inputRate: 16_000,
+      outputRate: 16_000,
+      frameSamples: 640,
+    });
+    for (const frame of silence.trailingSilence(800)) {
+      if (!sendAudioFrame(frame)) break;
+    }
+  }
   if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
   if (captureNode) captureNode.disconnect();
   if (captureContext && captureContext.state !== "closed") captureContext.close();
@@ -227,7 +267,9 @@ function stopMicrophone() {
   captureContext = undefined;
   els["stop-mic"].disabled = true;
   els["start-mic"].disabled = !socket || socket.readyState !== WebSocket.OPEN;
-  if (socket?.readyState === WebSocket.OPEN) checkpoint({ kind: "microphone-stop", actor: actor?.role || "uncertain" });
+  if (record && socket?.readyState === WebSocket.OPEN) {
+    checkpoint({ kind: "microphone-stop", actor: actor?.role || "uncertain" });
+  }
   setAvatar("");
 }
 
@@ -248,31 +290,35 @@ async function approveUpdate() {
 }
 
 function endSession() {
-  generation += 1;
-  stopMicrophone();
+  checkpointChain.reset();
+  stopMicrophone({ record: false, sendSilence: false });
   clearPlayback();
   if (socket) socket.close(1000, "user ended private session");
   socket = undefined;
   latestUserTranscript = "";
-  checkpointRoot = "GENESIS";
-  checkpointCount = 0;
-  els["checkpoint-count"].textContent = "0";
-  els["checkpoint-root"].textContent = "none";
+  renderCheckpoint();
   els["voice-transcript"].innerHTML = '<p class="empty">Private transcript cleared.</p>';
   els["approve-update"].disabled = true;
-  els["runtime-state"].innerHTML = "<strong>Private session ended</strong><span>DOM transcript and session-local checkpoint chain cleared.</span>";
+  setRuntime("Private session ended", "DOM transcript and session-local checkpoint chain cleared.");
 }
 
 els["voice-setup"].addEventListener("submit", connect);
 els["start-mic"].addEventListener("click", startMicrophone);
-els["stop-mic"].addEventListener("click", stopMicrophone);
+els["stop-mic"].addEventListener("click", () => stopMicrophone());
 els["approve-update"].addEventListener("click", () => approveUpdate().catch(() => setError("Room publication failed.")));
 els["end-voice"].addEventListener("click", endSession);
 window.addEventListener("pagehide", () => {
-  stopMicrophone();
+  checkpointChain.reset();
+  stopMicrophone({ record: false, sendSilence: false });
   if (socket) socket.close();
 });
 
+for (const consentId of ["synthetic-consent", "cloud-consent"]) {
+  els[consentId].addEventListener("change", () => {
+    if (socket && !els[consentId].checked) endSession();
+  });
+}
+
 if (staticHost()) {
-  els["runtime-state"].innerHTML = "<strong>Static presentation only</strong><span>No WebSocket or model runs on GitHub Pages.</span>";
+  setRuntime("Static presentation only", "No WebSocket or model runs on GitHub Pages.");
 }

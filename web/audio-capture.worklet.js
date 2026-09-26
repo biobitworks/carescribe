@@ -1,13 +1,21 @@
+import { StreamingPcmEncoder } from "./audio-core.mjs";
+
 class CareScribeAudioCapture extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.encoder = new StreamingPcmEncoder({
+      inputRate: sampleRate,
+      outputRate: 16_000,
+      frameSamples: 640,
+    });
+  }
+
   process(inputs) {
     const channel = inputs[0]?.[0];
     if (!channel) return true;
-    const pcm = new Int16Array(channel.length);
-    for (let index = 0; index < channel.length; index += 1) {
-      const sample = Math.max(-1, Math.min(1, channel[index]));
-      pcm[index] = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+    for (const pcm of this.encoder.push(channel)) {
+      this.port.postMessage({ type: "audio", pcm }, [pcm.buffer]);
     }
-    this.port.postMessage({ type: "audio", pcm }, [pcm.buffer]);
     return true;
   }
 }
