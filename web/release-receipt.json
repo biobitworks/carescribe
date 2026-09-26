@@ -1,10 +1,10 @@
 {
   "schema_version": "carescribe.fcg-release-receipt.v1",
   "payload": {
-    "release_id": "carescribe-2026-09-26T22:21:12Z",
-    "issued_at": "2026-09-26T22:21:12Z",
+    "release_id": "carescribe-2026-09-26T22:29:21Z",
+    "issued_at": "2026-09-26T22:29:21Z",
     "public_url": "https://biobitworks.github.io/carescribe/",
-    "audited_parent_commit": "de563bcfab6cef87ae56c7fec4c6f64ba39582fa",
+    "audited_parent_commit": "b54c0bfd8c27a41e780485176dde7f8ad42dff6d",
     "artifact_scope": "Bytes read from audited_parent_commit before this receipt commit.",
     "fcg": {
       "node": {
@@ -16,13 +16,13 @@
       },
       "edges": [
         {
-          "from": "carescribe-2026-09-26T22:21:12Z",
+          "from": "carescribe-2026-09-26T22:29:21Z",
           "to": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
           "type": "attests_to_prior_checkpoint"
         },
         {
-          "from": "carescribe-2026-09-26T22:21:12Z",
-          "to": "de563bcfab6cef87ae56c7fec4c6f64ba39582fa",
+          "from": "carescribe-2026-09-26T22:29:21Z",
+          "to": "b54c0bfd8c27a41e780485176dde7f8ad42dff6d",
           "type": "built_from_commit"
         }
       ]
@@ -31,6 +31,9 @@
       {"path": "web/index.html", "sha256": "66c9cfbb5a17f55e953c2c402ff9624a0b56e835a0bd923f788004d1007b05e1"},
       {"path": "web/replay.html", "sha256": "fb3c194a264085e8b4c893c2d220749f3ad5d147ca588f413a7b5f6aa48e82e2"},
       {"path": "web/voice.html", "sha256": "6d13870c78f4f4336d7d94051a398e2811bf507b9a6dfad11b0e4bff7a9b9e43"},
+      {"path": "web/voice.js", "sha256": "e8119ee5e54d65f08d26bb5632f184352d0c20890d8750cec12ee61d087e5b29"},
+      {"path": "web/audio-core.mjs", "sha256": "fbe0fd22791407648bb7cae7b01b2d7f08021f098f0c4da5be87814963b3656c"},
+      {"path": "web/audio-capture.worklet.js", "sha256": "a5f020285e9d85b36b1f858d9ef1ba4c95b0b8e7ec069387fba314ef76361706"},
       {"path": "src/carescribe/sonic_server.py", "sha256": "8ace16a915fe9c10b9fb22d969cd36c595ee970669927f4be27a17a59858554d"},
       {"path": "validation/nova-sonic-smoke.json", "sha256": "f9ab0373605f6f49a72336454484fb7f13b69672452327c58390dbb6c5e8ac23"},
       {"path": "web/assets/carescribe-live-nova-sonic-demo.mp4", "sha256": "c1f53b9eee499b6193ca36c05a90400eb95ffbff8e5b2cfd6e5dd5d31fb31ca3"},
@@ -44,6 +47,6 @@
     "algorithm": "Ed25519",
     "canonicalization": "recursive-lexicographic-json-v1",
     "public_key_spki_base64": "MCowBQYDK2VwAyEAMXMDzDbuQQiWdswDF8tsReiIEJaUa4QaS9G6HGN88R4=",
-    "value_base64": "zb06bUszwNRuH+GXiANaGPK+RoLvGRlj+KGgnWOeT0FBTrqYK9CpCAfN28Jo+qWEBBARlakDkE/kCXML6KBZCw=="
+    "value_base64": "/VG4oSw2zmPkJvHjBteJsIrQbEFJMCKfeWm2/wkgHJd4XbQWZ2AV023f0vgMKuBwkK4Eg6/YDPP8HZVHkr1EAQ=="
   }
 }
