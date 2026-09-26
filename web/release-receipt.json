@@ -1,10 +1,11 @@
 {
   "schema_version": "carescribe.fcg-release-receipt.v1",
   "payload": {
-    "release_id": "carescribe-2026-09-26T22:07:07Z",
-    "issued_at": "2026-09-26T22:07:07Z",
+    "release_id": "carescribe-2026-09-26T22:15:30Z",
+    "issued_at": "2026-09-26T22:15:30Z",
     "public_url": "https://biobitworks.github.io/carescribe/",
-    "audited_parent_commit": "c554ccb1ae9d31aae42b8235aadf0563aee4becf",
+    "audited_parent_commit": "51c651e3ed283cb697ff84d763d3ae2e4d2e58c4",
+    "artifact_scope": "Bytes read from audited_parent_commit before this receipt commit.",
     "fcg": {
       "node": {
         "type": "release-receipt",
@@ -15,22 +16,25 @@
       },
       "edges": [
         {
-          "from": "carescribe-2026-09-26T22:07:07Z",
+          "from": "carescribe-2026-09-26T22:15:30Z",
           "to": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
           "type": "attests_to_prior_checkpoint"
         },
         {
-          "from": "carescribe-2026-09-26T22:07:07Z",
-          "to": "c554ccb1ae9d31aae42b8235aadf0563aee4becf",
+          "from": "carescribe-2026-09-26T22:15:30Z",
+          "to": "51c651e3ed283cb697ff84d763d3ae2e4d2e58c4",
           "type": "built_from_commit"
         }
       ]
     },
     "artifacts": [
-      {"path": "index.html", "sha256": "eeaa8f14f79ade8e576908b725ff1802013e5e410419713536ad41f91341af47"},
-      {"path": "replay.html", "sha256": "51f602bf39e0a363f4e8b9a2f06448fbd266cbfc591d676da3c4fc0f16fa3424"},
-      {"path": "assets/carescribe-real-team-example.mp4", "sha256": "cd2620af7a99ff0416ad96b26a57e79f372d976f55e5c8dfee28376ed419db68"},
-      {"path": "assets/real-team-example.vtt", "sha256": "b39ccc3c6528fbf1e04ade34ca400d9c92cc0a3c9a6d566c916184f8cde17684"}
+      {"path": "web/index.html", "sha256": "cf9cf75e9b64b2d8b12f980cab278757d1cf786a435f227ec5f1d79cd2ea2ef9"},
+      {"path": "web/replay.html", "sha256": "4a7a7e078fed9d635ee43b676f81d92c1b845f157917286cf761588c5a67a6ae"},
+      {"path": "web/voice.html", "sha256": "6d13870c78f4f4336d7d94051a398e2811bf507b9a6dfad11b0e4bff7a9b9e43"},
+      {"path": "src/carescribe/sonic_server.py", "sha256": "8ace16a915fe9c10b9fb22d969cd36c595ee970669927f4be27a17a59858554d"},
+      {"path": "validation/nova-sonic-smoke.json", "sha256": "f9ab0373605f6f49a72336454484fb7f13b69672452327c58390dbb6c5e8ac23"},
+      {"path": "web/assets/carescribe-real-team-example.mp4", "sha256": "cd2620af7a99ff0416ad96b26a57e79f372d976f55e5c8dfee28376ed419db68"},
+      {"path": "web/assets/real-team-example.vtt", "sha256": "b39ccc3c6528fbf1e04ade34ca400d9c92cc0a3c9a6d566c916184f8cde17684"}
     ],
     "claim_boundary": "The Ed25519 signature authenticates this release receipt relative to the separately held private key. Artifact hashes and FCG/MMR links demonstrate recorded-byte consistency and lineage; they do not prove clinical truth, actor identity, regulatory compliance, immutability, or suitability for PHI."
   },
@@ -38,6 +42,6 @@
     "algorithm": "Ed25519",
     "canonicalization": "recursive-lexicographic-json-v1",
     "public_key_spki_base64": "MCowBQYDK2VwAyEAMXMDzDbuQQiWdswDF8tsReiIEJaUa4QaS9G6HGN88R4=",
-    "value_base64": "Wx7jtTZxziQgDu6KBMeTE35liCdM7w6ZNnREIUNdLIyG8Dznsu8h/0LeB1G05ZSoIcwrlyonChUTdHJXVZPfAg=="
+    "value_base64": "4a3ZKkj0wq00AvVlPdew+4rzleA/N74Q3njNEJVSIl2YSaRCNRJYMJtLOUuSxBdiex+syM0OgmPfytgXq3e3Ag=="
   }
 }
