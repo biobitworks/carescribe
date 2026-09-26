@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "carescribe"
+version = "0.1.0"
+description = "CareScribe prototype using Amazon Bedrock for AI inference"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["boto3>=1.34.131"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+
+[project.scripts]
+carescribe-bedrock-smoke = "carescribe.smoke:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+

@@ -1,0 +1,12 @@
+{
+  "schema_version": "carescribe.bedrock-smoke.v1",
+  "execution_date": "2026-09-26",
+  "execution_state": "OBSERVED_PASS",
+  "provider": "AMAZON_BEDROCK",
+  "api": "Converse",
+  "region": "us-east-1",
+  "model_id": "amazon.nova-micro-v1:0",
+  "expected_response": "CARESCRIBE_BEDROCK_OK",
+  "observed_response": "CARESCRIBE_BEDROCK_OK",
+  "claim_boundary": "This receipt demonstrates one successful synthetic smoke invocation; it does not establish clinical validity, availability, security completeness, or regulatory compliance."
+}
