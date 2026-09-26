@@ -12,7 +12,14 @@
     <section class="hero"><div><p class="eyebrow">Recorded fallback · 60 seconds</p><h1>What happened in there?</h1><p class="lead">A clearly labeled synthetic replay of the incomplete Julie/Maya/Leo evaluation. This recording is not a current end-to-end model invocation.</p></div><div id="runtime-state" class="runtime-state"><strong>Checking local server</strong><span>The video remains available in static mode.</span></div></section>
     <form id="join-form" class="join"><label for="room-input">Room</label><input id="room-input" maxlength="12"><button class="button">Use room</button><a id="workspace-link" class="button secondary" href="index.html">Open full live workspace</a></form>
     <video class="replay" controls preload="metadata" src="assets/carescribe-three-actor-demo.mp4"><track kind="captions" srclang="en" label="English" src="assets/replay-captions.vtt" default></video>
-    <p class="audio-note"><b>Audio handoff:</b> the committed replay uses three distinct local synthetic voices. The media build keeps visuals and captions separate so the team’s consented in-person recording can replace the fallback mix before final presentation.</p>
+    <p class="audio-note"><b>Synthetic fallback:</b> this 60-second replay uses three generated voices and remains available when a live demonstration is not practical.</p>
+    <section class="real-example" aria-labelledby="real-example-title">
+      <p class="eyebrow">Consented team simulation · 2 minutes 20 seconds</p>
+      <h2 id="real-example-title">A real-world evaluation rehearsal</h2>
+      <p>Julie performs the provider role, Deb performs the caregiver role, and Byron makes occasional sounds in the simulated child role. This is a fictional rehearsal by consenting teammates—not patient audio, clinical evidence, or voice identification.</p>
+      <video class="replay" controls preload="metadata" src="assets/carescribe-real-team-example.mp4"><track kind="captions" srclang="en" label="English" src="assets/real-team-example.vtt" default></video>
+      <p class="audio-note"><b>Model receipt:</b> Amazon Bedrock Mistral Voxtral Mini transcribed the consented recording successfully. Captions were human-corrected; the source and transcoded audio hashes are recorded in the public evidence manifest.</p>
+    </section>
     <section class="models"><p class="eyebrow">Model context</p><h2>What the local server can demonstrate separately</h2><div id="model-list" class="model-list"><p>Checking routes…</p></div></section>
     <section class="room"><p class="eyebrow">Room <span id="room-label"></span></p><h2>Live path status</h2><div id="room-feed" class="feed"><p class="empty">Connecting…</p></div></section>
   </main><footer>Recorded synthetic fallback · captions included · no patient recording</footer>

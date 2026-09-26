@@ -1,0 +1,74 @@
+{
+  "schema_version": "carescribe.real-team-audio.v1",
+  "execution_date": "2026-09-26",
+  "consent": {
+    "status": "CONFIRMED_BY_OPERATOR",
+    "scope": "Public CareScribe hackathon demonstration",
+    "participants": [
+      "Julie — provider role",
+      "Deb — caregiver role",
+      "Byron — simulated child/noise role"
+    ]
+  },
+  "scenario": "Fictional speech-therapy evaluation performed by consenting team members; no patient audio or PHI.",
+  "selected_public_take": {
+    "source_name": "New Recording 2.m4a",
+    "source_sha256": "f09a750420e4a398912d723894177add3afdbbf7fbfc0c9ab975eb8fc0db626a",
+    "duration_seconds": 140.010667,
+    "channels": 2,
+    "sample_rate_hz": 48000,
+    "track_structure": "One mixed recording containing all three participants; not isolated actor tracks."
+  },
+  "bedrock_transcription": {
+    "provider": "Mistral AI through Amazon Bedrock",
+    "model_id": "mistral.voxtral-mini-3b-2507",
+    "region": "us-east-1",
+    "input_format": "mp3",
+    "transcoded_sha256": "3a3e494a1938cdd41bdb451283551527c4eb9bbdab1c602112eb17285a6d5e3c",
+    "execution_state": "OBSERVED_PASS",
+    "latency_ms": 2972,
+    "request_id": "a0359531-d0c3-475e-b507-a7548a07db6c",
+    "usage": {
+      "input_tokens": 1905,
+      "output_tokens": 485,
+      "total_tokens": 2390
+    }
+  },
+  "additional_takes": [
+    {
+      "source_name": "Market St.m4a",
+      "source_sha256": "4bc7be501977ef4ced3e928da3428604c09347953500aabc8d4073b1e0766d88",
+      "duration_seconds": 141.802667,
+      "execution_state": "OBSERVED_PASS",
+      "model_id": "mistral.voxtral-mini-3b-2507",
+      "request_id": "1c139592-c1f8-4313-a6ee-957eede42966",
+      "latency_ms": 3049
+    },
+    {
+      "source_name": "525 Market.m4a",
+      "source_sha256": "ae911fd2a47a9c7db954aa51162a816798ee73f71ca1ecd4ff8dee46549e7b0f",
+      "duration_seconds": 228.16,
+      "execution_state": "OBSERVED_PASS_WITH_SETUP_CHATTER",
+      "model_id": "mistral.voxtral-mini-3b-2507",
+      "request_id": "dcc5b85e-3c77-47ec-af8c-2d81761341ca",
+      "latency_ms": 4735
+    }
+  ],
+  "failed_attempt": {
+    "model_id": "mistral.voxtral-mini-3b-2507",
+    "source_format": "m4a",
+    "execution_state": "OBSERVED_FAIL",
+    "error": "ValidationException: model accepts mp3 or wav for user audio",
+    "resolution": "Transcoded a temporary 16 kHz mono MP3 and retried successfully."
+  },
+  "custody": {
+    "source_hash_algorithm": "SHA-256",
+    "caption_file": "web/assets/real-team-example.vtt",
+    "caption_sha256": "b39ccc3c6528fbf1e04ade34ca400d9c92cc0a3c9a6d566c916184f8cde17684",
+    "caption_status": "Human-curated from Bedrock Voxtral and local Whisper transcripts",
+    "original_audio_committed": false,
+    "public_video": "web/assets/carescribe-real-team-example.mp4",
+    "public_video_sha256": "cd2620af7a99ff0416ad96b26a57e79f372d976f55e5c8dfee28376ed419db68"
+  },
+  "claim_boundary": "These receipts support consented team-audio provenance and successful synthetic transcription. They do not prove speaker identity, diarization, voice biometrics, clinical truth, HIPAA compliance, or model accuracy."
+}
