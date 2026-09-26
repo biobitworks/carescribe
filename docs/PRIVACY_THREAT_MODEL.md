@@ -1,0 +1,45 @@
+# Privacy Threat Model
+
+## Scope and current status
+
+CareScribe is an early pediatric speech-therapy ambient-scribe prototype. The repository implements a local-only browser demonstration and a separate text prompt/response boundary to Amazon Bedrock. The browser can request microphone access, use browser-provided speech recognition, assign temporary speaker roles, persist a simulated session in local browser storage, and delete that local state. It does **not** implement AWS audio transport, biometric speaker identification, cloud persistence, authentication, verified deletion beyond the browser, or clinical-record integration. The cloud workflow below is therefore a required design threat model, not a claim that those safeguards are implemented.
+
+The demo is simulated-data-only: no real patient information, protected health information, child audio, names, dates of birth, contact details, record identifiers, or identifying voice samples. This project does not claim HIPAA compliance.
+
+## Data flow and trust boundaries
+
+An intended future flow is: supervised browser capture → authenticated application service → transcription/speaker separation → Bedrock-assisted draft → clinician review → optional clinician-approved export. Trust boundaries exist at the microphone and browser, browser-to-service connection, speech/model providers, application storage and logs, clinician approval, and export destination.
+
+Protected assets include raw audio, transcripts, voice identity/biometrics, child and caregiver identity, clinical context, credentials and browser tokens, generated drafts, approval records, and deletion/retention metadata. Primary actors are the child, caregiver, clinician, authorized operator, service providers, and an attacker controlling a webpage, nearby audio source, stolen browser session, dependency, log sink, or crafted prompt content.
+
+Privacy objectives are data minimization, purpose limitation, authenticated least-privilege access, correct speaker attribution, clinician-controlled release, bounded retention with verifiable deletion, and separation of untrusted encounter content from system instructions.
+
+## Threats, mitigations, and demo limitations
+
+These are design risks, not validated vulnerabilities.
+
+| Threat | Harm | Required mitigation | Current demo limitation |
+|---|---|---|---|
+| **Audio over-collection or background capture** | Records bystanders, unrelated conversation, or audio after the session. | Explicit clinician start/stop; prominent recording indicator; short capture windows; pause control; device-local gating where possible; no wake-word/background mode; discard pre-roll and post-stop buffers. | Browser capture controls exist in the demo, but vendor speech handling and stop behavior are not clinically or independently validated. |
+| **Transcript exposure or tampering** | Sensitive content leaks or altered text drives an unsafe note. | Encrypt in transit and at rest; per-session authorization; integrity/version history; redact logs; segregate tenants; clinician compares material claims with source evidence before approval. | No transcript store, access-control layer, or integrity mechanism exists. |
+| **Voice identity/biometric use** | A child or family member is tracked, reidentified, or impersonated. | Do not create voiceprints or use voice biometric identification; use ephemeral session roles; prohibit voice cloning; strip unnecessary identifiers; contractually restrict provider reuse. | Speaker/voice processing is not implemented; the demo proves no biometric protections. |
+| **Minor’s data and consent/assent** | A child lacks meaningful notice or sensitive developmental data is used beyond care. | Verified guardian/organizational authorization as applicable; age-appropriate notice and assent process; clinician supervision; minimum-necessary collection; no advertising, profiling, sale, or secondary research use; safeguarding escalation outside the model. | Simulated data only; consent, assent, identity, and safeguarding workflows are not implemented. |
+| **Browser token theft** | XSS, extensions, shared devices, or leaked storage grants session/data access. | Secure, HttpOnly, SameSite cookies; short-lived scoped sessions; CSRF protection; strict CSP and output encoding; avoid tokens in URLs or `localStorage`; reauthenticate for export/deletion; revoke on logout; dependency review. | The static demo has no authentication and stores fictional session content in `localStorage`; it must not receive real clinical data. |
+| **Excessive or unclear retention** | Audio, drafts, backups, logs, or provider copies persist indefinitely. | Default to no raw-audio retention; publish purpose-specific TTLs; clinician-visible deletion; propagate deletion to derived data, caches, logs, backups, and vendors; legal-hold exception with audit trail; test deletion. | No retention/deletion system exists. For the demo, do not ingest sensitive data and do not commit generated encounter content. |
+| **Model/provider leakage** | Prompt content appears in logs, evaluation, training, another user’s output, or unauthorized regions/services. | Send the minimum necessary text; redact identifiers before inference; use approved Bedrock account/region/model settings; disable provider data reuse where contract/configuration permits; restrict IAM to required model actions; prevent prompts/responses in telemetry; vendor and configuration review. | Only the Bedrock text invocation boundary is tested. Data-use terms, region policy, logging, isolation, and deletion are deployment responsibilities not established here. |
+| **Speaker misattribution** | Child, caregiver, and clinician statements are confused, producing false clinical claims. | Treat diarization as uncertain; display speaker/time provenance; allow replay and relabeling; never infer identity from voice; attribute caregiver reports explicitly; block approval when material speaker identity is unresolved. | No diarization or accuracy evaluation exists. |
+| **Full-duplex prompt injection** | Spoken audio, media, or a participant tells the model to ignore rules, expose data, change tools, or speak unsafe content while listening and responding overlap. | Treat transcript/audio as untrusted data; separate system policy from encounter text; permit-list tools and destinations; no model-controlled export/deletion/recording; require clinician confirmation for consequential actions; filter child-facing output; isolate sessions; rate/turn limits; immediate mute/stop; test adversarial audio, quoted instructions, cross-talk, and delayed transcription. | No full-duplex agent, tool use, or child-facing voice is implemented. Text generation alone does not validate resistance to prompt injection. |
+| **Unauthorized export or approval spoofing** | A draft reaches a chart or caregiver without review. | Role-based export; exact-text approval bound to clinician identity, timestamp, patient/session, and version; preview destination; step-up authentication; immutable audit event; edits invalidate approval. | No approval, audit, or export integration exists. |
+| **Operational leakage** | Secrets or sensitive content enter source control, console output, traces, analytics, crash reports, or support tickets. | Structured redaction; secret manager/normal AWS credential chain; least-privilege logs; production debug disabled; repository and telemetry scanning; restricted support process; incident response and notification plan. | The smoke command prints its model response; it must only receive a synthetic non-sensitive prompt. |
+
+## Safe demo policy
+
+- Use invented names and scripted synthetic dialogue only. Do not use de-identified real encounters: voices and context may remain identifying.
+- Announce that no real child is being recorded and show the simulation label throughout.
+- Use a dedicated least-privilege AWS account/role and approved Bedrock resource; never place credentials in the repository or browser.
+- Keep prompts free of sensitive data. Do not preserve demo audio/transcripts after the presentation; clear local artifacts and verify the intended storage locations.
+- Do not imply that synthetic success measures transcription accuracy, speaker attribution, privacy, clinical safety, consent, deletion, or production readiness.
+
+## Deployment gates
+
+Before any real-world pilot, complete a privacy/legal review; child-data and consent/assent workflow; documented data inventory and retention schedule; vendor/data-use review; authentication and tenant isolation testing; threat-driven security testing; deletion verification; incident response; accessibility and child-safety review; and clinician-supervised accuracy evaluation. Resolve applicable laws, contracts, institutional policy, and jurisdiction with qualified counsel. HIPAA eligibility or a business associate agreement, where applicable, would be only part of that assessment—not proof of compliance or product safety.

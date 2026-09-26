@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#123e3a" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='32' fill='%23123e3a'/><path d='M20 34h7l5-14 6 27 5-13h5' fill='none' stroke='%23a9ded2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+    <meta
+      name="description"
+      content="CareScribe Live — a privacy-first, non-diagnostic session documentation demo."
+    />
+    <title>CareScribe Live</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="CareScribe Live home">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>CareScribe</strong>
+          <small>LIVE</small>
+        </span>
+      </a>
+      <div class="header-meta">
+        <span class="privacy-pill">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3m-9 0h8a2 2 0 0 1 2 2v7H6v-7a2 2 0 0 1 2-2Z"/></svg>
+          Stored on this device
+        </span>
+        <button class="icon-button" id="open-info" aria-label="Privacy and demo information">?</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="session-bar" aria-label="Session controls">
+        <div>
+          <p class="eyebrow">Current session</p>
+          <div class="session-title-row">
+            <h1 id="session-title">Developmental visit</h1>
+            <span class="status-chip ready" id="status-chip"><i></i> Ready</span>
+          </div>
+          <p class="session-subtitle"><span id="session-date"></span> <span aria-hidden="true">•</span> <span id="timer">00:00</span></p>
+        </div>
+        <div class="session-actions">
+          <button class="button button-primary" id="start-session">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Zm-6 9a6 6 0 0 0 12 0m-6 6v3m-3 0h6"/></svg>
+            Start session
+          </button>
+          <button class="button button-secondary hidden" id="pause-session">
+            <span class="pause-icon" aria-hidden="true"></span> Pause
+          </button>
+          <button class="button button-danger hidden" id="end-session">End session</button>
+          <button class="button button-ghost" id="delete-session" title="Delete session">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/></svg>
+            <span>Delete</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="notice" role="note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-14v5m0 4h.01"/></svg>
+        <p><strong>Documentation support only.</strong> CareScribe does not diagnose, assess, or replace clinical judgment. Review all generated notes before use.</p>
+      </section>
+
+      <div class="workspace">
+        <section class="panel transcript-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Live capture</p>
+              <h2>Conversation</h2>
+            </div>
+            <div class="audio-state" id="audio-state"><span class="audio-dot"></span><span id="audio-label">Mic off</span></div>
+          </div>
+
+          <div class="speaker-control">
+            <span>Speaking as</span>
+            <div class="role-tabs" id="role-tabs" role="radiogroup" aria-label="Current speaker">
+              <button data-role="provider" role="radio" aria-checked="true" class="active"><i></i> Provider</button>
+              <button data-role="caregiver" role="radio" aria-checked="false"><i></i> Caregiver</button>
+              <button data-role="child" role="radio" aria-checked="false"><i></i> Child</button>
+              <button data-role="uncertain" role="radio" aria-checked="false"><i></i> Uncertain</button>
+            </div>
+          </div>
+
+          <div class="transcript-list" id="transcript-list" aria-live="polite">
+            <div class="empty-state" id="transcript-empty">
+              <div class="empty-visual">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <h3>Ready when you are</h3>
+              <p>Start the session to capture the conversation. If live transcription is unavailable, a clearly labeled sample will play.</p>
+            </div>
+          </div>
+
+          <form class="manual-entry" id="manual-form">
+            <label for="manual-text">Add or correct transcript</label>
+            <div>
+              <input id="manual-text" type="text" maxlength="500" placeholder="Type a spoken line…" autocomplete="off" />
+              <button class="button button-secondary" type="submit">Add</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="insights-column">
+          <section class="panel observations-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Structured notes</p>
+                <h2>Observations <span class="count" id="observation-count">0</span></h2>
+              </div>
+              <span class="review-label">Requires review</span>
+            </div>
+            <div id="observations-list" class="card-list">
+              <div class="mini-empty" id="observations-empty">Observations will appear here as the conversation unfolds.</div>
+            </div>
+          </section>
+
+          <section class="panel questions-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Consider asking</p>
+                <h2>Follow-up questions <span class="count" id="question-count">0</span></h2>
+              </div>
+            </div>
+            <div id="questions-list" class="question-list">
+              <div class="mini-empty" id="questions-empty">Contextual prompts will appear during the session.</div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      <span>CareScribe Live demo</span>
+      <span>Local-only browser experience · No data is sent to a server</span>
+    </footer>
+
+    <dialog id="consent-dialog" class="modal consent-modal">
+      <form method="dialog">
+        <div class="modal-icon consent-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Zm-3 9 2 2 4-5"/></svg>
+        </div>
+        <p class="eyebrow">Before you begin</p>
+        <h2>Confirm privacy & consent</h2>
+        <p class="modal-copy">Only capture a conversation after everyone present understands and agrees. This demo stores session data in this browser only.</p>
+        <label class="check-row">
+          <input type="checkbox" id="consent-check" />
+          <span><strong>I have informed consent</strong><small>Everyone present has agreed to audio capture and transcription.</small></span>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="privacy-check" />
+          <span><strong>I understand this is a demo</strong><small>Content is non-diagnostic and must be reviewed by a qualified clinician.</small></span>
+        </label>
+        <div class="modal-actions">
+          <button class="button button-ghost" value="cancel">Cancel</button>
+          <button class="button button-primary" id="confirm-consent" value="default" disabled>Agree & start</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="end-dialog" class="modal">
+      <form method="dialog">
+        <div class="modal-icon end-icon">✓</div>
+        <h2>End this session?</h2>
+        <p class="modal-copy">The transcript and reviewed observations will remain saved on this device.</p>
+        <div class="modal-actions">
+          <button class="button button-ghost" value="cancel">Keep recording</button>
+          <button class="button button-danger" id="confirm-end" value="default">End session</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="delete-dialog" class="modal">
+      <form method="dialog">
+        <div class="modal-icon delete-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7"/></svg>
+        </div>
+        <h2>Delete this session?</h2>
+        <p class="modal-copy">This permanently removes the transcript, observations, and questions from this browser.</p>
+        <div class="modal-actions">
+          <button class="button button-ghost" value="cancel">Cancel</button>
+          <button class="button button-danger" id="confirm-delete" value="default">Delete permanently</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="info-dialog" class="modal">
+      <form method="dialog">
+        <div class="modal-icon consent-icon">i</div>
+        <h2>About this demo</h2>
+        <p class="modal-copy">CareScribe Live demonstrates browser-based documentation support. Live transcription depends on browser support and may use the browser vendor’s speech service. The safe simulation contains fictional, non-identifying sample content.</p>
+        <p class="modal-copy"><strong>No AWS service or clinical system is connected.</strong> Data remains in local browser storage until you delete it.</p>
+        <div class="modal-actions"><button class="button button-primary" value="default">Got it</button></div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

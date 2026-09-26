@@ -2,6 +2,8 @@
 
 CareScribe is an early, public prototype for collaborative development and judging.
 
+**Live static demo:** https://biobitworks.github.io/carescribe/
+
 > **Validation status:** the Amazon Bedrock inference boundary has offline test coverage,
 > and a live smoke invocation was observed successfully on 2026-09-26. Teammates and judges
 > can reproduce that check with their own authorized AWS account.
@@ -41,6 +43,12 @@ for the selected resource.
 
 See [JUDGING.md](JUDGING.md) for an honest status matrix and [CONTRIBUTING.md](CONTRIBUTING.md)
 for the pull-request workflow.
+
+## Team collaboration
+
+Teammates should claim an area and attach their pull request, validation evidence, and
+shareable demo link in [TEAM.md](TEAM.md). The team lead's workspace remains the planning
+hub; this repository is the durable source for code and judge-facing evidence.
 
 ## Security and clinical scope
 
