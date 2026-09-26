@@ -1,10 +1,10 @@
 {
   "schema_version": "carescribe.fcg-release-receipt.v1",
   "payload": {
-    "release_id": "carescribe-2026-09-26T23:02:57Z",
-    "issued_at": "2026-09-26T23:02:57Z",
+    "release_id": "carescribe-2026-09-26T23:15:59Z",
+    "issued_at": "2026-09-26T23:15:59Z",
     "public_url": "https://biobitworks.github.io/carescribe/",
-    "audited_parent_commit": "85d4a95f1c824fce6d528011ce4b96102dab31fd",
+    "audited_parent_commit": "2f7984debb11c1b5ee217f33a4abee72e2cfd7f7",
     "artifact_scope": "Bytes read from audited_parent_commit before this receipt commit.",
     "fcg": {
       "node": {
@@ -16,13 +16,13 @@
       },
       "edges": [
         {
-          "from": "carescribe-2026-09-26T23:02:57Z",
+          "from": "carescribe-2026-09-26T23:15:59Z",
           "to": "0762bcee5f971a6f9572476dc92f1bd3f11df0d1b293d14455fb863a31302062",
           "type": "attests_to_prior_checkpoint"
         },
         {
-          "from": "carescribe-2026-09-26T23:02:57Z",
-          "to": "85d4a95f1c824fce6d528011ce4b96102dab31fd",
+          "from": "carescribe-2026-09-26T23:15:59Z",
+          "to": "2f7984debb11c1b5ee217f33a4abee72e2cfd7f7",
           "type": "built_from_commit"
         }
       ]
@@ -35,14 +35,14 @@
       {"path": "SUBMISSION.md", "sha256": "e464d44d8fde2540f2f5275539b0b8c2730ce6a604e9ec994da756fc0b0c96d2"},
       {"path": "docs/MODEL_EVIDENCE.md", "sha256": "ecc6ab305720f1b0b8400f701e02e7fc0100ed753af86b0026bd3f15c9ff6a83"},
       {"path": "docs/JUDGE_AUDIT_2026-09-26.md", "sha256": "085de994137a08a0dbf857232d6aad3035cbc713a90ae5de85751d5410229387"},
-      {"path": "web/voice.html", "sha256": "6075fd6d9377c96c9c23aa1e06fc6d3ee86aae09b01c0b9ff1c58bd4b94cddc6"},
-      {"path": "web/voice.css", "sha256": "0a1a99500d8c88e3ebe17df041aebda8f71fe566907aa38b6421eac2468f9bcc"},
+      {"path": "web/voice.html", "sha256": "d72c391520d96588202d0ff47db12f2f3fada93b79d61daff5ef5844e16ec66d"},
+      {"path": "web/voice.css", "sha256": "504f0edd529a075e8d3ba49f866ca4b9c589285a37567b320aa8cbd9deaf9b5a"},
       {"path": "web/focus.css", "sha256": "00563aa7c699f6c69ae9d6d7ce64f9cb8d24b18284bb66e702860993be961ae6"},
       {"path": "web/session-receipt.html", "sha256": "93bc709c46dff73b09a325d3b8d6951abbe9d4ee6233fb97f4f64823658f0ff6"},
       {"path": "web/session-receipt.js", "sha256": "30c261d3ef09f7ed3a686e7a7b08700c34a770794f401be60c40059d82517f3e"},
       {"path": "web/session-receipt.json", "sha256": "e58ee6c36b9739a0047b897bb5a8b301f1ccbe9fb5c2b346864559b1f49d2cf8"},
-      {"path": "scripts/demo-doctor.sh", "sha256": "a786d7b1da3f0bfc767f9f7531bd6ce7e3f1c57ed298a1d72c830edb84f69730"},
-      {"path": "web/voice.js", "sha256": "5255f1df25acac00bd7397b2bcc4055ffc9bd168c8d5b87524e391c37b371ecd"},
+      {"path": "scripts/demo-doctor.sh", "sha256": "b660ff0a2f412b88a4d5c5f37f70f0605384f2ddc6482f252f8382e3a65efadb"},
+      {"path": "web/voice.js", "sha256": "eebe6820de9aa8bf99e6af841130acfd63262072c53126c1c6e35cf1beea96a9"},
       {"path": "web/audio-core.mjs", "sha256": "fbe0fd22791407648bb7cae7b01b2d7f08021f098f0c4da5be87814963b3656c"},
       {"path": "web/audio-capture.worklet.js", "sha256": "a5f020285e9d85b36b1f858d9ef1ba4c95b0b8e7ec069387fba314ef76361706"},
       {"path": "src/carescribe/sonic_server.py", "sha256": "b1d40dcfb52d5fef5742b98f366a1b2c573e90d9a6df52de7b522d11d43fc7d5"},
@@ -54,7 +54,10 @@
       {"path": "README.md", "sha256": "3f372a4185174264cbad9304ec7a289c7e3ce414d273c412f6cb1a6ff9d5c770"},
       {"path": "src/carescribe/bedrock.py", "sha256": "42265a3da7a300c920b4af7597a9188d6fc00acc78a5b3a33bb4f9d350a0a62f"},
       {"path": "src/carescribe/live_server.py", "sha256": "2dc4c70259fc234cc6a14d91d2f9b659855911afb481ac127618e291b226b04c"},
-      {"path": "validation/frontier-orchestrator-smoke.json", "sha256": "616a55cedf09b2c71096ca088cbaef40e9468d31907ec5f7c45fe268216d0f78"}
+      {"path": "validation/frontier-orchestrator-smoke.json", "sha256": "616a55cedf09b2c71096ca088cbaef40e9468d31907ec5f7c45fe268216d0f78"},
+      {"path": "web/focus.js", "sha256": "42fe14ae05537b57e5074c8ea86ec3dbc1d64d1b62311b1307cc8113bfccade9"},
+      {"path": "web/voice-accessibility.test.mjs", "sha256": "787a23e5b71d732e9ca9208f476216b18b4dc13f7a893f8f62b835af85a48400"},
+      {"path": "validation/speech-pathology-context-matrix.json", "sha256": "017cd8dc6d948dc9587dadd4bbe9b2deec03ed8db8f289ca2c39e2f904969305"}
     ],
     "claim_boundary": "The Ed25519 signature authenticates this release receipt relative to the separately held private key. Artifact hashes and FCG/MMR links demonstrate recorded-byte consistency and lineage; they do not prove clinical truth, actor identity, regulatory compliance, immutability, or suitability for PHI."
   },
@@ -62,6 +65,6 @@
     "algorithm": "Ed25519",
     "canonicalization": "recursive-lexicographic-json-v1",
     "public_key_spki_base64": "MCowBQYDK2VwAyEAMXMDzDbuQQiWdswDF8tsReiIEJaUa4QaS9G6HGN88R4=",
-    "value_base64": "1TLkj8ese3PK8O3DWkgxjZl5iPrunjqN2lN/vHO9arD9p35fE0jH6AC6rk9m5DQs12hW6h2jM4fiighfm98DAQ=="
+    "value_base64": "QI+cze7MbYZ9gr633QN79xBDDJXkJk1uxz/fqxy/S2nB4wKQ67TxUHjuxNqj7UUz5rWFhxLlGJtEVIfCJPEfDw=="
   }
 }
