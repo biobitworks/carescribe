@@ -114,3 +114,5 @@ This prototype is not a medical device, is not approved for PHI, and does not cl
 compliance. Browser deletion clears this app's `localStorage`; it does not prove deletion
 from browser-vendor services, server memory, logs, caches, backups, or cloud systems.
 Custody hashes demonstrate recorded-byte integrity and lineage, not clinical truth.
+
+**License:** Unless otherwise explicitly licensed, original Biobitworks material in this repository is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/); third-party components remain under their respective licenses.
